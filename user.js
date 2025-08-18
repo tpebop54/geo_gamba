@@ -59,8 +59,6 @@ const getChatLog = () => {
 
 // ------------------------------------------------------------------------------------------------------------------------------------
 
-let PLAYERS = null;
-
 const getUserInfo = async (userId) => {
     try {
         const response = await fetch(`https://www.geoguessr.com/api/v3/users/${userId}`);
@@ -96,27 +94,17 @@ const fetchMatchData = async () => {
     return data;
 };
 
-const _GAMBA_KEY_LAST_MSG = 'gamba_last_msg';
-
-const USER_ACTIONS = {
+const PLAYER_ACTIONS = {
     call: ['call'],
     fold: ['fold'],
     raise: ['raise'],
     allin: ['allin', 'all in', 'all-in'],
 };
 
-const MASTER_ACTIONS = {
+const GAME_MASTER_ACTIONS = {
     ante: ['ante'],
     max: ['max', 'maximum'],
     blink: ['blink'],
-};
-
-const getAllChatMessages = () => {
-    const chatLog = getChatLog();
-    if (!chatLog) {
-        return [];
-    }
-    return chatLog.querySelectorAll('div[class^="chat-message_normalMessageRoot__"');
 };
 
 const parseChatMessage = (msg) => {
@@ -126,29 +114,43 @@ const parseChatMessage = (msg) => {
     return { username, text, parts };
 };
 
-window.addEventListener('load', async () => {
-    try {
-        const data = await fetchMatchData();
-        console.log(data);
-    } catch (e) {
-        console.error('Error fetching duel data:', e);
-        return;
-    }
-
+const getChats = () => {
     const chatLog = getChatLog();
     if (!chatLog) {
+        return [];
+    }
+    const msgElements = chatLog.querySelectorAll('div[class^="chat-message_normalMessageRoot__"');
+
+    const chats = [];
+    for (const element of msgElements) {
+        const chat = parseChatMessage(element);
+        chats.push(chat);
+    }
+    return chats
+};
+
+let _GAMBA_USERS = null;
+let _GAMBA_MATCH_DATA = null;
+let _GAMBA_CHATS = null;
+
+window.addEventListener('load', async () => {
+    try {
+        _GAMBA_MATCH_DATA = await fetchMatchData();
+        console.log(_GAMBA_MATCH_DATA);
+
+        _GAMBA_USERS = usersFromLiveChallenge(_GAMBA_MATCH_DATA);
+        console.log(_GAMBA_USERS);
+    } catch (err) {
+        console.error(err);
         return;
     }
 
-    const callback = (mutationsList, observer) => {
-        const currentCount = getAllChatMessages().length;
-        if (currentCount !== lastMessageCount) {
-            lastMessageCount = currentCount;
-            debugger
-        }
+    const readChat = () => {
+        _GAMBA_CHATS = getChats();
     };
-    const observer = new MutationObserver(callback);
-    observer.observe(chatLog, { childList: true, subtree: true });
+
+    const observer = new MutationObserver(getChatInput);
+    observer.observe(readChat, { childList: true, subtree: true });
 });
 
 
