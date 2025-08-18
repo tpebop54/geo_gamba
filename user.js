@@ -129,28 +129,60 @@ const getChats = () => {
     return chats
 };
 
+const setupGlobalKeyBindings = () => {
+    document.addEventListener('keydown', (evt) => {
+        if (evt.ctrlKey && evt.shiftKey && evt.key === '<') {
+            () => {
+                debugger;
+            };
+        }
+    });
+};
+
 let _GAMBA_USERS = null;
 let _GAMBA_MATCH_DATA = null;
 let _GAMBA_CHATS = null;
+let _GAMBA_CHAT_LOG = null;
+let _GAMBA_CHAT_LAST_READ = -Infinity;
 
-window.addEventListener('load', async () => {
-    try {
-        _GAMBA_MATCH_DATA = await fetchMatchData();
-        console.log(_GAMBA_MATCH_DATA);
+const initGamba = async () => {
+    setupGlobalKeyBindings();
 
-        _GAMBA_USERS = usersFromLiveChallenge(_GAMBA_MATCH_DATA);
-        console.log(_GAMBA_USERS);
-    } catch (err) {
-        console.error(err);
-        return;
-    }
+    _GAMBA_MATCH_DATA = await fetchMatchData();
+    console.log(_GAMBA_MATCH_DATA);
+
+    _GAMBA_USERS = await usersFromLiveChallenge(_GAMBA_MATCH_DATA);
+    console.log(_GAMBA_USERS);
+
+    _GAMBA_CHATS = getChats();
+    console.log(_GAMBA_CHATS);
 
     const readChat = () => {
-        _GAMBA_CHATS = getChats();
+        if (!_GAMBA_CHAT_LOG) {
+            _GAMBA_CHAT_LOG = getChatLog();
+            if (!_GAMBA_CHAT_LOG) {
+                return;
+            }
+        }
+        if (Date.now() - _GAMBA_CHAT_LAST_READ > 250) {
+            _GAMBA_CHAT_LAST_READ = Date.now();
+        } else {
+            return;
+        }
+        if (_GAMBA_CHAT_LOG) {
+            _GAMBA_CHATS = getChats();
+            console.log(_GAMBA_CHATS);
+        }
     };
 
-    const observer = new MutationObserver(getChatInput);
-    observer.observe(readChat, { childList: true, subtree: true });
-});
+    const observer = new MutationObserver(readChat);
+    observer.observe(document.body, { childList: true, subtree: true });
+};
 
-
+if (document.readyState !== 'loading') {
+    initGamba();
+} else {
+    document.addEventListener('DOMContentLoaded', async () => {
+        initGamba();
+    });
+}
