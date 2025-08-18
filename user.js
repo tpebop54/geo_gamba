@@ -28,8 +28,6 @@ console.log('GEO GAMBAAAAA');
 
 
 
-
-
 // DOM utils =========================================================================================================================
 
 const _tryMultiple = (selectors) => { // Different modes, different versions, GeoGuessr changing around stuff, etc.
@@ -61,6 +59,45 @@ const getChatLog = () => {
 
 // ------------------------------------------------------------------------------------------------------------------------------------
 
+let PLAYERS = null;
+
+const getUserInfo = async (userId) => {
+    try {
+        const response = await fetch(`https://www.geoguessr.com/api/v3/users/${userId}`);
+        const data = await response.json();
+        return data;
+    } catch (err) {
+        console.error(err);
+        return null;
+    }
+};
+
+const usersFromLiveChallenge = async (data) => {
+    const users = [];
+    for (const userId of data.playerIds) {
+        const user = await getUserInfo(userId);
+        users.push({
+            id: userId,
+            name: user.nick,
+        });
+    }
+    return users;
+};
+
+const fetchMatchData = async () => {
+    const parts = location.pathname.split('/');
+    const duelType = parts[parts.length - 2];
+    const duelId = parts[parts.length - 1];
+    const resp = await fetch(
+        `https://game-server.geoguessr.com/api/${duelType}/${duelId}`,
+        { method: 'GET', credentials: 'include' },
+    );
+    const data = await resp.json();
+    return data;
+};
+
+const _GAMBA_KEY_LAST_MSG = 'gamba_last_msg';
+
 const USER_ACTIONS = {
     call: ['call'],
     fold: ['fold'],
@@ -74,24 +111,6 @@ const MASTER_ACTIONS = {
     blink: ['blink'],
 };
 
-const getUserInfo = async (userId) => {
-    try {
-        const response = await fetch(`https://www.geoguessr.com/api/v3/users/${userId}`);
-        const data = await response.json();
-        return data;
-    } catch (err) {
-        console.error(err);
-        return null;
-    }
-};
-
-
-const parseChatMessage = (msg) => {
-    const username = msg.querySelector('span[class^="chat-message_nick__"]').innerText.toLowerCase();
-    const text = msg.querySelector('span[class^="chat-message_messageText__"]').innerText.toLowerCase();
-    const isMaster = false; // TODO
-};
-
 const getAllChatMessages = () => {
     const chatLog = getChatLog();
     if (!chatLog) {
@@ -100,36 +119,11 @@ const getAllChatMessages = () => {
     return chatLog.querySelectorAll('div[class^="chat-message_normalMessageRoot__"');
 };
 
-
-const parseLiveChallenge = (data) => {
-    const players = data.players.map(player => ({
-        id: player.id,
-        name: player.name,
-        points: player.points,
-    }));
-    const rounds = data.rounds.map(round => ({
-        id: round.id,
-        ante: round.ante,
-        pot: round.pot,
-        actions: round.actions.map(action => ({
-            playerId: action.playerId,
-            type: action.type,
-            amount: action.amount,
-        })),
-    }));
-    return { players, rounds };
-};
-
-const fetchMatchData = async () => {
-    const parts = location.pathname.split('/');
-    const duelType = parts[parts.length - 2];
-    const duelId = parts[parts.length - 1];
-    const resp = await fetch(
-        `https://game-server.geoguessr.com/api/${duelType}/${duelId}`,
-        { method: 'GET', credentials: 'include' },
-    );
-    const data = await resp.json();
-    return data;
+const parseChatMessage = (msg) => {
+    const username = msg.querySelector('span[class^="chat-message_nick__"]').innerText.toLowerCase();
+    const text = msg.querySelector('span[class^="chat-message_messageText__"]').innerText.toLowerCase();
+    const parts = text.split(' ').map(part => part.trim()).filter(part => part.length > 0);
+    return { username, text, parts };
 };
 
 window.addEventListener('load', async () => {
@@ -146,7 +140,6 @@ window.addEventListener('load', async () => {
         return;
     }
 
-    let lastMessageCount = getAllChatMessages().length;
     const callback = (mutationsList, observer) => {
         const currentCount = getAllChatMessages().length;
         if (currentCount !== lastMessageCount) {
