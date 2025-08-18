@@ -1,0 +1,191 @@
+{
+    "gameId": "40d4df74-bfe3-4f5b-93a4-0099ee427d3b",
+    "status": "Ongoing",
+    "options": {
+        "movementOptions": {
+            "forbidMoving": false,
+            "forbidZooming": false,
+            "forbidRotating": false
+        },
+        "roundCount": 50,
+        "mapSlug": "world",
+        "roundTime": 600,
+        "isSinglePlayer": false,
+        "scoringType": "Unknown",
+        "context": ""
+    },
+    "playerIds": [
+        "6153defece28750001db0226",
+        "6845463df65c0105364c2405"
+    ],
+    "currentRoundNumber": 2,
+    "rounds": [
+        {
+            "id": "4fc41d6d-ca7a-4c7d-8b7a-7a69568d0267",
+            "quizBankEntryId": null,
+            "roundNumber": 1,
+            "panorama": null,
+            "startTime": "2025-08-18T17:23:06.856+00:00",
+            "endTime": "2025-08-18T17:51:34.813+00:00",
+            "state": "Ended",
+            "roundTime": 600,
+            "maxRoundScore": 5000,
+            "question": {
+                "type": "Panorama",
+                "panoramaQuestionPayload": {
+                    "panorama": {
+                        "panoId": "683670326479476F624E5353344C45525052515F5A67",
+                        "lat": 31.577463150024414,
+                        "lng": 74.30944061279297,
+                        "countryCode": "pk",
+                        "heading": 0,
+                        "pitch": 0,
+                        "zoom": 0
+                    },
+                    "movementOptions": {
+                        "forbidMoving": false,
+                        "forbidZooming": false,
+                        "forbidRotating": false
+                    },
+                    "mapBounds": {
+                        "min": {
+                            "lat": -54.853378,
+                            "lng": -159.778792
+                        },
+                        "max": {
+                            "lat": 78.655743,
+                            "lng": 178.4508514404297
+                        }
+                    },
+                    "mapName": "World",
+                    "mapSlug": "world",
+                    "context": ""
+                },
+                "quizQuestionPayload": null,
+                "staticContentPayload": null,
+                "customPanoramaQuestionPayload": null,
+                "fullScreenImageQuestionPayload": null
+            },
+            "answer": {
+                "type": "Coordinate",
+                "coordinateAnswerPayload": {
+                    "coordinate": {
+                        "lat": 31.577463150024414,
+                        "lng": 74.30944061279297
+                    }
+                },
+                "countryAnswerPayload": null,
+                "singleChoicePayload": null,
+                "singleChoiceCoordinatePayload": null,
+                "orderingAnswerPayload": null,
+                "rangeAnswerPayload": null,
+                "multipleAnswerAnswerPayload": null
+            },
+            "hints": null
+        },
+        {
+            "id": "f49d6700-9d65-4068-bbd7-0c09b52873dd",
+            "quizBankEntryId": null,
+            "roundNumber": 2,
+            "panorama": null,
+            "startTime": "2025-08-18T17:51:39.813+00:00",
+            "endTime": "2025-08-18T18:01:39.813+00:00",
+            "state": "Ongoing",
+            "roundTime": 600,
+            "maxRoundScore": 5000,
+            "question": {
+                "type": "Panorama",
+                "panoramaQuestionPayload": {
+                    "panorama": {
+                        "panoId": "4B5A4931333653546F4F4A3433483632745F30347151",
+                        "lat": 50.40850067138672,
+                        "lng": 4.453883647918701,
+                        "countryCode": "be",
+                        "heading": 0,
+                        "pitch": 0,
+                        "zoom": 0
+                    },
+                    "movementOptions": {
+                        "forbidMoving": false,
+                        "forbidZooming": false,
+                        "forbidRotating": false
+                    },
+                    "mapBounds": {
+                        "min": {
+                            "lat": -54.853378,
+                            "lng": -159.778792
+                        },
+                        "max": {
+                            "lat": 78.655743,
+                            "lng": 178.4508514404297
+                        }
+                    },
+                    "mapName": "World",
+                    "mapSlug": "world",
+                    "context": ""
+                },
+                "quizQuestionPayload": null,
+                "staticContentPayload": null,
+                "customPanoramaQuestionPayload": null,
+                "fullScreenImageQuestionPayload": null
+            },
+            "answer": {
+                "type": "Coordinate",
+                "coordinateAnswerPayload": {
+                    "coordinate": {
+                        "lat": 50.40850067138672,
+                        "lng": 4.453883647918701
+                    }
+                },
+                "countryAnswerPayload": null,
+                "singleChoicePayload": null,
+                "singleChoiceCoordinatePayload": null,
+                "orderingAnswerPayload": null,
+                "rangeAnswerPayload": null,
+                "multipleAnswerAnswerPayload": null
+            },
+            "hints": null
+        }
+    ],
+    "roundCount": 50,
+    "currentStepNumber": 2,
+    "totalSteps": 50,
+    "guesses": [],
+    "claimedHints": [],
+    "totalScore": 0,
+    "leaderboards": {
+        "roundGuessTime": {
+            "roundNumber": 2,
+            "entries": []
+        },
+        "round": {
+            "roundNumber": 2,
+            "totalGuessesOnRound": 0,
+            "guesses": [],
+            "entries": []
+        },
+        "game": {
+            "entries": []
+        }
+    },
+    "playerPositions": {
+        "gameEntry": null,
+        "roundEntry": null,
+        "roundNumber": 2
+    },
+    "mapName": "",
+    "mapBounds": {
+        "min": {
+            "lat": 90,
+            "lng": 180
+        },
+        "max": {
+            "lat": -90,
+            "lng": -180
+        }
+    },
+    "hostId": "6153defece28750001db0226",
+    "aggregatedAnswerStats": null,
+    "version": 5,
+    "playerCount": 2
+}

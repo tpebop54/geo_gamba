@@ -1,0 +1,67 @@
+{
+    "nick": "Tpebop",
+    "created": "2021-09-29T03:35:26.0040000Z",
+    "isProUser": true,
+    "type": "Unlimited",
+    "consumedTrial": false,
+    "isVerified": false,
+    "pin": {
+        "url": "pin/65645daa5eab119de90c61d3d68c8c95.png",
+        "anchor": "center-center",
+        "isDefault": false
+    },
+    "fullBodyPin": "pin/267f4464d65aeb1635e1197fd43e0569.png",
+    "color": 0,
+    "url": "/user/6153defece28750001db0226",
+    "id": "6153defece28750001db0226",
+    "countryCode": "us",
+    "br": {
+        "level": 62,
+        "division": 50
+    },
+    "streakProgress": null,
+    "explorerProgress": null,
+    "dailyChallengeProgress": 0,
+    "progress": {
+        "xp": 118178,
+        "level": 62,
+        "levelXp": 116600,
+        "nextLevel": 63,
+        "nextLevelXp": 121630,
+        "title": {
+            "id": 190,
+            "tierId": 70
+        },
+        "competitionMedals": {
+            "bronze": 0,
+            "silver": 0,
+            "gold": 0,
+            "platinum": 0
+        }
+    },
+    "competitive": {
+        "elo": 0,
+        "rating": 0,
+        "lastRatingChange": 0,
+        "division": {
+            "type": 10,
+            "startRating": 0,
+            "endRating": 450
+        },
+        "onLeaderboard": true
+    },
+    "lastNameChange": "2024-10-31T22:37:52.8430000Z",
+    "lastNickOrCountryChange": "2024-10-31T22:37:52.8430000Z",
+    "isBanned": false,
+    "chatBan": false,
+    "nameChangeAvailableAt": null,
+    "avatar": {
+        "fullBodyPath": "pin/267f4464d65aeb1635e1197fd43e0569.png"
+    },
+    "isBotUser": false,
+    "suspendedUntil": null,
+    "wallet": null,
+    "flair": 0,
+    "isCreator": false,
+    "isAppAnonymous": false
+}

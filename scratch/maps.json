@@ -1,0 +1,57 @@
+{
+    "id": "52d15ff6850ffb3b847cb3b4",
+    "name": "World",
+    "slug": "world",
+    "description": "Embark on a journey that takes you all over the world. From the most desolate roads in Australia to the busy, bustling streets of New York City.",
+    "url": "/maps/world",
+    "playUrl": "/world/play",
+    "published": true,
+    "banned": false,
+    "images": {
+        "backgroundLarge": "map/3f950f0318b9086b1b9ec591206dfdd8.jpg",
+        "incomplete": false
+    },
+    "bounds": {
+        "min": {
+            "lat": -54.853378,
+            "lng": -159.778792
+        },
+        "max": {
+            "lat": 78.655743,
+            "lng": 178.4508514404297
+        }
+    },
+    "customCoordinates": null,
+    "coordinateCount": "1M+",
+    "regions": null,
+    "creator": null,
+    "createdAt": "0001-01-01T00:00:00.0000000Z",
+    "updatedAt": "2024-11-20T12:51:59.6650000Z",
+    "numFinishedGames": 184268512,
+    "likedByUser": null,
+    "averageScore": 10282,
+    "avatar": {
+        "background": "sunset",
+        "decoration": "oaktrees",
+        "ground": "yellow",
+        "landscape": "snowmountains"
+    },
+    "difficulty": "MEDIUM",
+    "difficultyLevel": 3,
+    "highscore": null,
+    "isUserMap": false,
+    "highlighted": false,
+    "free": false,
+    "panoramaProvider": "StreetView",
+    "inExplorerMode": true,
+    "maxErrorDistance": 14916862,
+    "likes": 450633,
+    "locationSelectionMode": 0,
+    "tags": [],
+    "collaborators": null,
+    "flair": 1,
+    "mapSize": {
+        "coordinateCount": 23456746,
+        "label": "L"
+    }
+}

@@ -14,12 +14,23 @@ console.log('GEO GAMBAAAAA');
 
 
 // TODO
-// - Detect round start via mutation observer
+// - Detect round start via mutation observer, optionally? block additional bets
 // - Automatically send the ante via chat
-// - Make pot display
-// - Make action display
+// - Pot display and total points on round and end-of-round screens
+// - Action display (call, fold, raise, all-in)
 // - Pop up input for raise
 
+
+// ENDPOINTS
+// user - https://www.geoguessr.com/api/v3/users/68a233b3ed46b5cdaa0eba41
+// live-challenge - https://game-server.geoguessr.com/api/live-challenge/40d4df74-bfe3-4f5b-93a4-0099ee427d3b
+// maps - https://www.geoguessr.com/api/maps/world
+
+
+
+
+
+// DOM utils =========================================================================================================================
 
 const _tryMultiple = (selectors) => { // Different modes, different versions, GeoGuessr changing around stuff, etc.
     let element;
@@ -48,16 +59,37 @@ const getChatLog = () => {
     return document.querySelector('div[class^="chat-log_scrollContainer__"]');
 };
 
-const _ACTIONS = {
+// ------------------------------------------------------------------------------------------------------------------------------------
+
+const USER_ACTIONS = {
     call: ['call'],
     fold: ['fold'],
     raise: ['raise'],
     allin: ['allin', 'all in', 'all-in'],
 };
 
+const MASTER_ACTIONS = {
+    ante: ['ante'],
+    max: ['max', 'maximum'],
+    blink: ['blink'],
+};
+
+const getUserInfo = async (userId) => {
+    try {
+        const response = await fetch(`https://www.geoguessr.com/api/v3/users/${userId}`);
+        const data = await response.json();
+        return data;
+    } catch (err) {
+        console.error(err);
+        return null;
+    }
+};
+
+
 const parseChatMessage = (msg) => {
     const username = msg.querySelector('span[class^="chat-message_nick__"]').innerText.toLowerCase();
     const text = msg.querySelector('span[class^="chat-message_messageText__"]').innerText.toLowerCase();
+    const isMaster = false; // TODO
 };
 
 const getAllChatMessages = () => {
@@ -66,42 +98,60 @@ const getAllChatMessages = () => {
         return [];
     }
     return chatLog.querySelectorAll('div[class^="chat-message_normalMessageRoot__"');
-    const messages = [];
-    for (const message of messages) {
-        const parsed = parseChatMessage(message);
-        messages.push(parsed);
-    }
-    return messages;
 };
 
-async function fetchDuelData() {
+
+const parseLiveChallenge = (data) => {
+    const players = data.players.map(player => ({
+        id: player.id,
+        name: player.name,
+        points: player.points,
+    }));
+    const rounds = data.rounds.map(round => ({
+        id: round.id,
+        ante: round.ante,
+        pot: round.pot,
+        actions: round.actions.map(action => ({
+            playerId: action.playerId,
+            type: action.type,
+            amount: action.amount,
+        })),
+    }));
+    return { players, rounds };
+};
+
+const fetchMatchData = async () => {
     const parts = location.pathname.split('/');
+    const duelType = parts[parts.length - 2];
     const duelId = parts[parts.length - 1];
     const resp = await fetch(
-        `https://game-server.geoguessr.com/api/duels/${duelId}`,
-        { method: 'GET', credentials: 'include' }
+        `https://game-server.geoguessr.com/api/${duelType}/${duelId}`,
+        { method: 'GET', credentials: 'include' },
     );
     const data = await resp.json();
-    console.log(data);
-    debugger
+    return data;
 };
 
 window.addEventListener('load', async () => {
     try {
-        const data = await fetchDuelData();
-        console.log('Raw duel data:', data);
+        const data = await fetchMatchData();
+        console.log(data);
     } catch (e) {
         console.error('Error fetching duel data:', e);
+        return;
     }
 
     const chatLog = getChatLog();
-    if (!chatLog) return;
+    if (!chatLog) {
+        return;
+    }
+
     let lastMessageCount = getAllChatMessages().length;
     const callback = (mutationsList, observer) => {
         const currentCount = getAllChatMessages().length;
         if (currentCount !== lastMessageCount) {
             lastMessageCount = currentCount;
-            console.log('TODO');
+            debugger
         }
     };
     const observer = new MutationObserver(callback);
