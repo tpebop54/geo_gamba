@@ -1,8 +1,8 @@
 // ==UserScript==
 
-// @name         Tpebop's GeoGuessr Mods (DEV 1.2.3)
+// @name         Tpebop's GeoGuessr Mods (1.0.0)
 // @description  Various mods to make the game interesting in various ways
-// @version      1.2.3
+// @version      1.0.0
 // @author       tpebop
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
@@ -16,19 +16,6 @@
 // ==/UserScript==
 
 
-console.log('GEO GAMBAAAAA');
-
-
-// TODO
-// - Detect round start via mutation observer, optionally? block additional bets
-// - Automatically send the ante via chat
-// - Pot display and total points on round and end-of-round screens
-// - Action display (call, fold, raise, all-in)
-// - Pop up input for raise
-// - Chat history erases on page refresh, need to send to localStorage
-
-
-
 // ENDPOINTS
 // user - https://www.geoguessr.com/api/v3/users/68a233b3ed46b5cdaa0eba41
 // live-challenge - https://game-server.geoguessr.com/api/live-challenge/40d4df74-bfe3-4f5b-93a4-0099ee427d3b
@@ -37,37 +24,34 @@ console.log('GEO GAMBAAAAA');
 
 const THE_WINDOW = unsafeWindow || window;
 
-
 const _GAMBA_POT_KEY = 'gamba_pot';
 const _GAMBA_DEFAULT_POT = 0;
 
-function getGambaPot() {
+const getGambaPot = () => {
     const val = THE_WINDOW.localStorage.getItem(_GAMBA_POT_KEY);
     return val !== null ? parseInt(val, 10) : _GAMBA_DEFAULT_POT;
-}
+};
 
-function setGambaPot(val) {
+const setGambaPot = (val) => {
     THE_WINDOW.localStorage.setItem(_GAMBA_POT_KEY, String(val));
     _GAMBA_POT = val;
     if (typeof THE_WINDOW.updateGambaPotDisplay === 'function') {
         THE_WINDOW.updateGambaPotDisplay();
     }
-}
+};
 
 let _GAMBA_POT = getGambaPot();
 const _GAMBA_DEFAULT_MAX_BET = 500;
 const _GAMBA_MAX_BET_KEY = 'gamba_max_bet';
 
-function getGambaMaxBet() {
+const getGambaMaxBet = () => {
     const val = THE_WINDOW.localStorage.getItem(_GAMBA_MAX_BET_KEY);
     return val !== null ? parseInt(val, 10) : _GAMBA_DEFAULT_MAX_BET;
-}
+};
 
-function setGambaMaxBet(val) {
+const setGambaMaxBet = (val) => {
     THE_WINDOW.localStorage.setItem(_GAMBA_MAX_BET_KEY, String(val));
-}
-
-let _GAMBA_MAX_BET = getGambaMaxBet();
+};
 
 const _GAMBA_DEFAULT_POINTS = 1000;
 const _GAMBA_POINTS_KEY = 'gamba_my_points';
@@ -75,26 +59,26 @@ const _GAMBA_POINTS_KEY = 'gamba_my_points';
 const _GAMBA_DEFAULT_ANTE = 50;
 const _GAMBA_ANTE_KEY = 'gamba_ante';
 
-function getGambaAnte() {
+const getGambaAnte = () => {
     const val = THE_WINDOW.localStorage.getItem(_GAMBA_ANTE_KEY);
     return val !== null ? parseInt(val, 10) : _GAMBA_DEFAULT_ANTE;
-}
+};
 
-function setGambaAnte(val) {
+const setGambaAnte = (val) => {
     THE_WINDOW.localStorage.setItem(_GAMBA_ANTE_KEY, String(val));
-}
+};
 
 let _GAMBA_ANTE = getGambaAnte();
 
 
-function getGambaPoints() {
+const getGambaPoints = () => {
     const val = THE_WINDOW.localStorage.getItem(_GAMBA_POINTS_KEY);
     return val !== null ? parseInt(val, 10) : _GAMBA_DEFAULT_POINTS;
-}
+};
 
-function setGambaPoints(val) {
+const setGambaPoints = (val) => {
     THE_WINDOW.localStorage.setItem(_GAMBA_POINTS_KEY, String(val));
-}
+};
 
 let _GAMBA_POINTS = getGambaPoints();
 
@@ -112,9 +96,7 @@ const _tryMultiple = (selectors) => { // Different modes, different versions, Ge
     return null;
 };
 
-const getChatInput = () => {
-    return document.querySelector('input[class^="chat-input_textInput__fb1xt"]');
-};
+const getChatInput = () => document.querySelector('input[class^="chat-input_textInput__fb1xt"]');
 
 const sendChat = (text) => {
     const chatInput = getChatInput();
@@ -124,9 +106,7 @@ const sendChat = (text) => {
     chatInput.dispatchEvent(enterEvent);
 };
 
-const getChatLog = () => {
-    return document.querySelector('div[class^="chat-log_scrollContainer__"]');
-};
+const getChatLog = () => document.querySelector('div[class^="chat-log_scrollContainer__"]');
 
 // ------------------------------------------------------------------------------------------------------------------------------------
 
@@ -203,9 +183,7 @@ const getChats = () => {
 const setupGlobalKeyBindings = () => {
     document.addEventListener('keydown', (evt) => {
         if (evt.ctrlKey && evt.shiftKey && evt.key === '<') {
-            () => {
-                debugger;
-            };
+            (() => { debugger; })();
         }
     });
 };
