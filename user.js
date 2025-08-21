@@ -261,29 +261,29 @@ const STYLING = `
         transform: scale(0.95);
         box-shadow: 0 0 0 2px #fff2 inset;
     }
-    .gamba-menu-btn.call {
+    #gamba-btn-call {
         background: #1976d2;
     }
-    .gamba-menu-btn.call:hover {
+    #gamba-btn-call:hover {
         background: #1565c0;
     }
-    .gamba-menu-btn.raise {
+    #gamba-btn-raise {
         background: #43a047;
     }
-    .gamba-menu-btn.raise:hover {
+    #gamba-btn-raise:hover {
         background: #388e3c;
     }
-    .gamba-menu-btn.fold {
+    #gamba-btn-fold {
         background: #e53935;
     }
-    .gamba-menu-btn.fold:hover {
+    #gamba-btn-fold:hover {
         background: #b71c1c;
     }
-    .gamba-menu-btn.allin {
+    #gamba-btn-allin {
         background: #ffd700;
         color: #222;
     }
-    .gamba-menu-btn.allin:hover {
+    #gamba-btn-allin:hover {
         background: #ffe066;
         color: #222;
     }
@@ -315,20 +315,20 @@ function createGambaMenu() {
     btnRow.id = 'gamba-menu-buttons';
 
     const actions = [
-        { label: 'Call', value: 'call', className: 'call' },
-        { label: 'Raise', value: 'raise', className: 'raise' },
-        { label: 'Fold', value: 'fold', className: 'fold' },
-        { label: 'All-in', value: 'all-in', className: 'allin' }
+        { label: 'Call', value: 'call', id: 'gamba-btn-call' },
+        { label: 'Raise', value: 'raise', id: 'gamba-btn-raise' },
+        { label: 'Fold', value: 'fold', id: 'gamba-btn-fold' },
+        { label: 'All-in', value: 'all-in', id: 'gamba-btn-allin' }
     ];
-    actions.forEach(({ label, value, className }) => {
+    actions.forEach(({ label, value, id }) => {
         const btn = document.createElement('button');
-        btn.className = `gamba-menu-btn ${className}`;
+        btn.className = 'gamba-menu-btn';
+        btn.id = id;
         btn.textContent = label;
         btn.onclick = () => {
-            // You can hook up your action logic here
             btn.classList.add('clicked');
             setTimeout(() => btn.classList.remove('clicked'), 120);
-            sendChat(label);
+            console.log(`Clicked action: ${value}`);
         };
         btnRow.appendChild(btn);
     });
