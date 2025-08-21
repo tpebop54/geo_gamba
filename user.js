@@ -333,7 +333,8 @@ const _onRaise = (evt) => {
 
     const checkBtn = document.createElement('button');
     checkBtn.id = 'gamba-raise-check-btn';
-    checkBtn.innerHTML = '✅';
+    checkBtn.classList.add('gamba-raise-button');
+    checkBtn.innerHTML = '&#x2713';
     checkBtn.style.background = 'green';
     checkBtn.style.color = 'white';
     checkBtn.style.border = 'none';
@@ -347,7 +348,8 @@ const _onRaise = (evt) => {
 
     const xBtn = document.createElement('button');
     xBtn.id = 'gamba-raise-cancel-btn';
-    xBtn.innerHTML = '❌';
+    xBtn.classList.add('gamba-raise-button');
+    xBtn.innerHTML = '&#10006';
     xBtn.style.background = 'red';
     xBtn.style.color = 'white';
     xBtn.style.border = 'none';
@@ -605,6 +607,34 @@ const _STYLING = `
     #gamba-btn-allin:hover {
         background: #ffe066;
         color: #222;
+    }
+    #gamba-raise-input-row {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 16px;
+        color: white;
+        font-size: 12px;
+        margin: 10px 0;
+    }
+    #gamba-raise-input {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 4px;
+        padding: 6px 12px;
+        color: white;
+        font-size: 12px;
+    }
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+    input[type=number] {
+        -moz-appearance: textfield;
+    }
+    .gamba-raise-button {
+        color: #fff;
     }
     #gamba-menu-pot {
         color: #fff;
