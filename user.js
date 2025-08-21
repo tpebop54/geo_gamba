@@ -37,6 +37,7 @@ const _GAMBA_POT_KEY = 'gamba_pot';
 const _GAMBA_DEFAULT_ANTE = 50;
 const _GAMBA_DEFAULT_MAX_BET = 300;
 const _GAMBA_DEFAULT_POINTS = 1000;
+const _GAMBA_DEFAULT_POT = 0; // TODO: fix this logic
 
 // ------------------------------------------------------------------------------------------------------------------------------
 
@@ -84,6 +85,20 @@ const setGambaPoints = (val) => {
 };
 
 // ------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+// Globals, which will be used to store the state for this session (will get reloaded from localStorage on page load). ==========
+
+_GAMBA_ANTE = getGambaAnte();
+_GAMBA_MAX_BET = getGambaMaxBet();
+_GAMBA_POINTS = getGambaPoints();
+_GAMBA_POT = getGambaPot();
+
+// ------------------------------------------------------------------------------------------------------------------------------
+
 
 
 
