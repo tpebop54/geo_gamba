@@ -1,3 +1,16 @@
+const _GAMBA_DEFAULT_MAX_BET = 500;
+const _GAMBA_MAX_BET_KEY = 'gamba_max_bet';
+
+function getGambaMaxBet() {
+    const val = THE_WINDOW.localStorage.getItem(_GAMBA_MAX_BET_KEY);
+    return val !== null ? parseInt(val, 10) : _GAMBA_DEFAULT_MAX_BET;
+}
+
+function setGambaMaxBet(val) {
+    THE_WINDOW.localStorage.setItem(_GAMBA_MAX_BET_KEY, String(val));
+}
+
+let _GAMBA_MAX_BET = getGambaMaxBet();
 // ==UserScript==
 
 // @name         Tpebop's GeoGuessr Mods (DEV 1.2.3)
@@ -35,8 +48,10 @@ console.log('GEO GAMBAAAAA');
 // maps - https://www.geoguessr.com/api/maps/world
 
 
+const THE_WINDOW = unsafeWindow || window;
+
 const _GAMBA_DEFAULT_POINTS = 1000;
-const _GAMBA_POINTS_KEY = 'my_gamba_points';
+const _GAMBA_POINTS_KEY = 'gamba_my_points';
 
 const _GAMBA_DEFAULT_ANTE = 50;
 const _GAMBA_ANTE_KEY = 'gamba_ante';
@@ -52,7 +67,6 @@ function setGambaAnte(val) {
 
 let _GAMBA_ANTE = getGambaAnte();
 
-const THE_WINDOW = unsafeWindow || window;
 
 function getGambaPoints() {
     const val = THE_WINDOW.localStorage.getItem(_GAMBA_POINTS_KEY);
@@ -323,7 +337,7 @@ function createGambaMenu() {
 
     const titleDiv = document.createElement('div');
     titleDiv.id = 'gamba-menu-title';
-    titleDiv.textContent = 'Gamba Actions';
+    titleDiv.textContent = 'Geo Gambaaaaaa';
     _GAMBA_MENU.appendChild(titleDiv);
 
 
@@ -350,22 +364,39 @@ function createGambaMenu() {
     });
     _GAMBA_MENU.appendChild(btnRow);
 
-    // Ante display above points
-    const anteDiv = document.createElement('div');
+
+    // Ante and Max Bet display above points
+    const anteRowDiv = document.createElement('div');
+    anteRowDiv.id = 'gamba-menu-ante-row';
+    anteRowDiv.style.display = 'flex';
+    anteRowDiv.style.justifyContent = 'center';
+    anteRowDiv.style.alignItems = 'center';
+    anteRowDiv.style.gap = '16px';
+    anteRowDiv.style.marginBottom = '2px';
+
+    const anteDiv = document.createElement('span');
     anteDiv.id = 'gamba-menu-ante';
     anteDiv.style.color = '#fff';
     anteDiv.style.fontSize = '13px';
-    anteDiv.style.marginBottom = '2px';
     anteDiv.textContent = `Ante: ${_GAMBA_ANTE}`;
-    _GAMBA_MENU.appendChild(anteDiv);
+
+    const maxBetDiv = document.createElement('span');
+    maxBetDiv.id = 'gamba-menu-maxbet';
+    maxBetDiv.style.color = '#fff';
+    maxBetDiv.style.fontSize = '13px';
+    maxBetDiv.textContent = `Max. Bet: ${_GAMBA_MAX_BET}`;
+
+    anteRowDiv.appendChild(anteDiv);
+    anteRowDiv.appendChild(maxBetDiv);
+    _GAMBA_MENU.appendChild(anteRowDiv);
 
     // Points display below ante
     const pointsDiv = document.createElement('div');
     pointsDiv.id = 'gamba-menu-points';
-    pointsDiv.textContent = `Points: ${_GAMBA_POINTS}`;
+    pointsDiv.textContent = `Your Points: ${_GAMBA_POINTS}`;
     _GAMBA_MENU.appendChild(pointsDiv);
 
-    // Expose a way to update points and ante display
+    // Expose a way to update points, ante, and max bet display
     THE_WINDOW.updateGambaPointsDisplay = function() {
         _GAMBA_POINTS = getGambaPoints();
         pointsDiv.textContent = `Points: ${_GAMBA_POINTS}`;
@@ -373,6 +404,10 @@ function createGambaMenu() {
     THE_WINDOW.updateGambaAnteDisplay = function() {
         _GAMBA_ANTE = getGambaAnte();
         anteDiv.textContent = `Ante: ${_GAMBA_ANTE}`;
+    };
+    THE_WINDOW.updateGambaMaxBetDisplay = function() {
+        _GAMBA_MAX_BET = getGambaMaxBet();
+        maxBetDiv.textContent = `Max. Bet: ${_GAMBA_MAX_BET}`;
     };
 
     document.body.appendChild(_GAMBA_MENU);
