@@ -403,25 +403,56 @@ const createGambaMenu = () => {
     titleDiv.textContent = 'Geo Gamba';
     _GAMBA_MENU.appendChild(titleDiv);
 
+    const pointsDiv = document.createElement('div');
+    pointsDiv.id = 'gamba-menu-points';
+    pointsDiv.textContent = `Your Points: ${_GAMBA_POINTS}`;
+    _GAMBA_MENU.appendChild(pointsDiv);
+
     const btnRow = document.createElement('div');
     btnRow.id = 'gamba-menu-buttons';
 
+    // Unique callbacks for each button
+    const onCallClick = (evt) => {
+        const btn = evt.currentTarget;
+        btn.classList.add('clicked');
+        setTimeout(() => btn.classList.remove('clicked'), 120);
+        console.log('Call button clicked');
+        // Add custom logic here
+    };
+    const onRaiseClick = (evt) => {
+        const btn = evt.currentTarget;
+        btn.classList.add('clicked');
+        setTimeout(() => btn.classList.remove('clicked'), 120);
+        console.log('Raise button clicked');
+        // Add custom logic here
+    };
+    const onFoldClick = (evt) => {
+        const btn = evt.currentTarget;
+        btn.classList.add('clicked');
+        setTimeout(() => btn.classList.remove('clicked'), 120);
+        console.log('Fold button clicked');
+        // Add custom logic here
+    };
+    const onAllInClick = (evt) => {
+        const btn = evt.currentTarget;
+        btn.classList.add('clicked');
+        setTimeout(() => btn.classList.remove('clicked'), 120);
+        console.log('All-in button clicked');
+        // Add custom logic here
+    };
+
     const actions = [
-        { label: 'Call', value: 'call', id: 'gamba-btn-call' },
-        { label: 'Raise', value: 'raise', id: 'gamba-btn-raise' },
-        { label: 'Fold', value: 'fold', id: 'gamba-btn-fold' },
-        { label: 'All-in', value: 'all-in', id: 'gamba-btn-allin' }
+        { label: 'Call', id: 'gamba-btn-call', callback: onCallClick },
+        { label: 'Raise', id: 'gamba-btn-raise', callback: onRaiseClick },
+        { label: 'Fold', id: 'gamba-btn-fold', callback: onFoldClick },
+        { label: 'All-in', id: 'gamba-btn-allin', callback: onAllInClick }
     ];
-    actions.forEach(({ label, value, id }) => {
+    actions.forEach(({ label, id, callback }) => {
         const btn = document.createElement('button');
         btn.className = 'gamba-menu-btn';
         btn.id = id;
         btn.textContent = label;
-        btn.onclick = () => {
-            btn.classList.add('clicked');
-            setTimeout(() => btn.classList.remove('clicked'), 120);
-            console.log(`Clicked action: ${value}`);
-        };
+        btn.onclick = callback;
         btnRow.appendChild(btn);
     });
     _GAMBA_MENU.appendChild(btnRow);
@@ -440,11 +471,6 @@ const createGambaMenu = () => {
     anteRowDiv.appendChild(anteDiv);
     anteRowDiv.appendChild(maxBetDiv);
     _GAMBA_MENU.appendChild(anteRowDiv);
-
-    const pointsDiv = document.createElement('div');
-    pointsDiv.id = 'gamba-menu-points';
-    pointsDiv.textContent = `Your Points: ${_GAMBA_POINTS}`;
-    _GAMBA_MENU.appendChild(pointsDiv);
 
     const potDiv = document.createElement('div');
     potDiv.id = 'gamba-menu-pot';
