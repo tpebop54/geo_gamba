@@ -15,17 +15,36 @@
 
 // ==/UserScript==
 
-
 // ENDPOINTS
 // user - https://www.geoguessr.com/api/v3/users/68a233b3ed46b5cdaa0eba41
 // live-challenge - https://game-server.geoguessr.com/api/live-challenge/40d4df74-bfe3-4f5b-93a4-0099ee427d3b
 // maps - https://www.geoguessr.com/api/maps/world
 
 
+
+
 const THE_WINDOW = unsafeWindow || window;
 
+
+// Global state, which may be pulled from localStorage or will use defaults if not. =============================================
+// localStorage holds the master values, and needs to stay in sync with other players and the game master.
+
+const _GAMBA_ANTE_KEY = 'gamba_ante';
+const _GAMBA_MAX_BET_KEY = 'gamba_max_bet';
+const _GAMBA_POINTS_KEY = 'gamba_my_points';
 const _GAMBA_POT_KEY = 'gamba_pot';
-const _GAMBA_DEFAULT_POT = 0;
+
+const _GAMBA_DEFAULT_ANTE = 50;
+const _GAMBA_DEFAULT_MAX_BET = 300;
+const _GAMBA_DEFAULT_POINTS = 1000;
+
+// ------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+// localStorage getters and setters. ============================================================================================
 
 const getGambaPot = () => {
     const val = THE_WINDOW.localStorage.getItem(_GAMBA_POT_KEY);
@@ -35,14 +54,7 @@ const getGambaPot = () => {
 const setGambaPot = (val) => {
     THE_WINDOW.localStorage.setItem(_GAMBA_POT_KEY, String(val));
     _GAMBA_POT = val;
-    if (typeof THE_WINDOW.updateGambaPotDisplay === 'function') {
-        THE_WINDOW.updateGambaPotDisplay();
-    }
 };
-
-let _GAMBA_POT = getGambaPot();
-const _GAMBA_DEFAULT_MAX_BET = 500;
-const _GAMBA_MAX_BET_KEY = 'gamba_max_bet';
 
 const getGambaMaxBet = () => {
     const val = THE_WINDOW.localStorage.getItem(_GAMBA_MAX_BET_KEY);
@@ -53,12 +65,6 @@ const setGambaMaxBet = (val) => {
     THE_WINDOW.localStorage.setItem(_GAMBA_MAX_BET_KEY, String(val));
 };
 
-const _GAMBA_DEFAULT_POINTS = 1000;
-const _GAMBA_POINTS_KEY = 'gamba_my_points';
-
-const _GAMBA_DEFAULT_ANTE = 50;
-const _GAMBA_ANTE_KEY = 'gamba_ante';
-
 const getGambaAnte = () => {
     const val = THE_WINDOW.localStorage.getItem(_GAMBA_ANTE_KEY);
     return val !== null ? parseInt(val, 10) : _GAMBA_DEFAULT_ANTE;
@@ -67,9 +73,6 @@ const getGambaAnte = () => {
 const setGambaAnte = (val) => {
     THE_WINDOW.localStorage.setItem(_GAMBA_ANTE_KEY, String(val));
 };
-
-let _GAMBA_ANTE = getGambaAnte();
-
 
 const getGambaPoints = () => {
     const val = THE_WINDOW.localStorage.getItem(_GAMBA_POINTS_KEY);
@@ -80,10 +83,12 @@ const setGambaPoints = (val) => {
     THE_WINDOW.localStorage.setItem(_GAMBA_POINTS_KEY, String(val));
 };
 
-let _GAMBA_POINTS = getGambaPoints();
+// ------------------------------------------------------------------------------------------------------------------------------
 
 
-// DOM utils =========================================================================================================================
+
+
+// DOM utils ====================================================================================================================
 
 const _tryMultiple = (selectors) => { // Different modes, different versions, GeoGuessr changing around stuff, etc.
     let element;
@@ -109,6 +114,10 @@ const sendChat = (text) => {
 const getChatLog = () => document.querySelector('div[class^="chat-log_scrollContainer__"]');
 
 // ------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+// Player and game master info ========================================================================================================
 
 const getUserInfo = async (userId) => {
     try {
@@ -188,6 +197,13 @@ const setupGlobalKeyBindings = () => {
     });
 };
 
+// ------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+// Gamba gameplay ===============================================================================================================
+
 let _GAMBA_USERS = null;
 let _GAMBA_MATCH_DATA = null;
 let _GAMBA_CHATS = null;
@@ -236,7 +252,12 @@ if (document.readyState !== 'loading') {
     });
 }
 
+// ------------------------------------------------------------------------------------------------------------------------------
 
+
+
+
+// Styling ======================================================================================================================
 
 const STYLING = `
     #gamba-menu {
@@ -324,6 +345,13 @@ const STYLING = `
 
 GM_addStyle(STYLING);
 
+// ------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+// User action menu =============================================================================================================
+
 // Create draggable Gamba menu
 let _GAMBA_MENU, _GAMBA_MENU_DRAGGING = false, _GAMBA_MENU_DRAGGING_OFFSET_X, _GAMBA_MENU_DRAGGING_OFFSET_Y;
 
@@ -386,7 +414,6 @@ function createGambaMenu() {
     anteRowDiv.appendChild(anteDiv);
     anteRowDiv.appendChild(maxBetDiv);
     _GAMBA_MENU.appendChild(anteRowDiv);
-
 
     // Points display below ante
     const pointsDiv = document.createElement('div');
@@ -464,3 +491,5 @@ if (document.readyState !== 'loading') {
 } else {
         document.addEventListener('DOMContentLoaded', createGambaMenu);
 }
+
+// ------------------------------------------------------------------------------------------------------------------------------
