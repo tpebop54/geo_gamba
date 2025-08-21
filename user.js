@@ -193,3 +193,115 @@ if (document.readyState !== 'loading') {
         initGamba();
     });
 }
+
+
+
+const STYLING = `
+    #gamba-menu {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        z-index: 9999;
+        background: rgba(30, 30, 30, 0.95);
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        padding: 12px 16px 12px 16px;
+        min-width: 220px;
+        user-select: none;
+        cursor: grab;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    #gamba-menu-title {
+        font-weight: bold;
+        font-size: 16px;
+        margin-bottom: 10px;
+        color: #fff;
+        cursor: grab;
+    }
+    #gamba-menu-buttons {
+        display: flex;
+        gap: 8px;
+    }
+    .gamba-menu-btn {
+        background: #222;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        padding: 6px 14px;
+        font-size: 15px;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+    .gamba-menu-btn:hover {
+        background: #444;
+    }
+`;
+
+GM_addStyle(STYLING);
+
+// Create draggable Gamba menu
+let _GAMBA_MENU, _GAMBA_MENU_DRAGGING = false, _GAMBA_MENU_DRAGGING_OFFSET_X, _GAMBA_MENU_DRAGGING_OFFSET_Y;
+
+function createGambaMenu() {
+        if (document.getElementById('gamba-menu')) return;
+        _GAMBA_MENU = document.createElement('div');
+        _GAMBA_MENU.id = 'gamba-menu';
+
+        const titleDiv = document.createElement('div');
+        titleDiv.id = 'gamba-menu-title';
+        titleDiv.textContent = 'Gamba Actions';
+        _GAMBA_MENU.appendChild(titleDiv);
+
+        const btnRow = document.createElement('div');
+        btnRow.id = 'gamba-menu-buttons';
+
+        const actions = [
+                { label: 'Call', value: 'call' },
+                { label: 'Raise', value: 'raise' },
+                { label: 'Fold', value: 'fold' },
+                { label: 'All-in', value: 'all-in' }
+        ];
+        actions.forEach(({ label, value }) => {
+                const btn = document.createElement('button');
+                btn.className = 'gamba-menu-btn';
+                btn.textContent = label;
+                btn.onclick = () => {
+                        // You can hook up your action logic here
+                        sendChat(label);
+                };
+                btnRow.appendChild(btn);
+        });
+        _GAMBA_MENU.appendChild(btnRow);
+
+        document.body.appendChild(_GAMBA_MENU);
+
+        // Drag logic
+        titleDiv.addEventListener('mousedown', (evt) => {
+                _GAMBA_MENU_DRAGGING = true;
+                _GAMBA_MENU_DRAGGING_OFFSET_X = evt.clientX - _GAMBA_MENU.offsetLeft;
+                _GAMBA_MENU_DRAGGING_OFFSET_Y = evt.clientY - _GAMBA_MENU.offsetTop;
+                document.body.style.userSelect = 'none';
+        });
+        document.addEventListener('mousemove', (evt) => {
+                if (_GAMBA_MENU_DRAGGING) {
+                        _GAMBA_MENU.style.left = (evt.clientX - _GAMBA_MENU_DRAGGING_OFFSET_X) + 'px';
+                        _GAMBA_MENU.style.top = (evt.clientY - _GAMBA_MENU_DRAGGING_OFFSET_Y) + 'px';
+                }
+        });
+        document.addEventListener('mouseup', () => {
+                if (_GAMBA_MENU_DRAGGING) {
+                        _GAMBA_MENU_DRAGGING = false;
+                        _GAMBA_MENU_DRAGGING_OFFSET_X = undefined;
+                        _GAMBA_MENU_DRAGGING_OFFSET_Y = undefined;
+                        document.body.style.userSelect = '';
+                }
+        });
+}
+
+if (document.readyState !== 'loading') {
+        createGambaMenu();
+} else {
+        document.addEventListener('DOMContentLoaded', createGambaMenu);
+}
