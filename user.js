@@ -1,11 +1,16 @@
 // ==UserScript==
-// @name         GeoGamba
-// @version      0.0.1
-// @description  A mod for the wonderful overlap of GeoGuessr and gambling that you didn't know you needed.
+// @name         Tpebop's GeoGuessr Mods (DEV 1.2.3)
+// @description  Various mods to make the game interesting in various ways
+// @version      1.2.3
 // @author       tpebop
-// @match        *://*.geoguessr.com/live-challenge*
+// @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
-// @grant        none
+// @grant        unsafeWindow
+// @grant        GM_addStyle
+// @grant        GM_openInTab
+// @grant        GM.xmlHttpRequest
+// @updateURL    https://raw.githubusercontent.com/tpebop54/geo_gamba/refs/heads/dev/user.js
+// @downloadURL  https://raw.githubusercontent.com/tpebop54/geo_gamba/refs/heads/dev/user.js
 
 // ==/UserScript==
 
@@ -19,6 +24,8 @@ console.log('GEO GAMBAAAAA');
 // - Pot display and total points on round and end-of-round screens
 // - Action display (call, fold, raise, all-in)
 // - Pop up input for raise
+// - Chat history erases on page refresh, need to send to localStorage
+
 
 
 // ENDPOINTS
