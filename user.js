@@ -1,18 +1,5 @@
-// Points system
-const _GAMBA_DEFAULT_POINTS = 1000;
-const _GAMBA_POINTS_KEY = 'my_gamba_points';
-
-function getGambaPoints() {
-    const val = THE_WINDOW.localStorage.getItem(_GAMBA_POINTS_KEY);
-    return val !== null ? parseInt(val, 10) : _GAMBA_DEFAULT_POINTS;
-}
-
-function setGambaPoints(val) {
-    THE_WINDOW.localStorage.setItem(_GAMBA_POINTS_KEY, String(val));
-}
-
-let _GAMBA_POINTS = getGambaPoints();
 // ==UserScript==
+
 // @name         Tpebop's GeoGuessr Mods (DEV 1.2.3)
 // @description  Various mods to make the game interesting in various ways
 // @version      1.2.3
@@ -47,8 +34,22 @@ console.log('GEO GAMBAAAAA');
 // live-challenge - https://game-server.geoguessr.com/api/live-challenge/40d4df74-bfe3-4f5b-93a4-0099ee427d3b
 // maps - https://www.geoguessr.com/api/maps/world
 
+const _GAMBA_DEFAULT_POINTS = 1000;
+const _GAMBA_POINTS_KEY = 'my_gamba_points';
 
 const THE_WINDOW = unsafeWindow || window;
+
+function getGambaPoints() {
+    const val = THE_WINDOW.localStorage.getItem(_GAMBA_POINTS_KEY);
+    return val !== null ? parseInt(val, 10) : _GAMBA_DEFAULT_POINTS;
+}
+
+function setGambaPoints(val) {
+    THE_WINDOW.localStorage.setItem(_GAMBA_POINTS_KEY, String(val));
+}
+
+let _GAMBA_POINTS = getGambaPoints();
+
 
 // DOM utils =========================================================================================================================
 
@@ -226,7 +227,7 @@ const STYLING = `
         cursor: grab;
         display: flex;
         flex-direction: column;
-        align-items: flex-start;
+        align-items: center;
     }
     #gamba-menu.grabbing {
         cursor: grabbing !important;
@@ -237,23 +238,61 @@ const STYLING = `
         margin-bottom: 10px;
         color: #fff;
         cursor: inherit;
+        text-align: center;
+        width: 100%;
     }
     #gamba-menu-buttons {
         display: flex;
         gap: 8px;
+        justify-content: center;
+        margin-bottom: 10px;
     }
     .gamba-menu-btn {
-        background: #222;
-        color: #fff;
         border: none;
         border-radius: 4px;
         padding: 6px 14px;
         font-size: 15px;
         cursor: pointer;
-        transition: background 0.2s;
+        transition: background 0.2s, transform 0.1s;
+        color: #fff;
+        outline: none;
     }
-    .gamba-menu-btn:hover {
-        background: #444;
+    .gamba-menu-btn:active {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 2px #fff2 inset;
+    }
+    .gamba-menu-btn.call {
+        background: #1976d2;
+    }
+    .gamba-menu-btn.call:hover {
+        background: #1565c0;
+    }
+    .gamba-menu-btn.raise {
+        background: #43a047;
+    }
+    .gamba-menu-btn.raise:hover {
+        background: #388e3c;
+    }
+    .gamba-menu-btn.fold {
+        background: #e53935;
+    }
+    .gamba-menu-btn.fold:hover {
+        background: #b71c1c;
+    }
+    .gamba-menu-btn.allin {
+        background: #ffd700;
+        color: #222;
+    }
+    .gamba-menu-btn.allin:hover {
+        background: #ffe066;
+        color: #222;
+    }
+    #gamba-menu-points {
+        color: #ffd700;
+        font-weight: bold;
+        margin-bottom: 0;
+        text-align: center;
+        width: 100%;
     }
 `;
 
@@ -272,12 +311,32 @@ function createGambaMenu() {
     titleDiv.textContent = 'Gamba Actions';
     _GAMBA_MENU.appendChild(titleDiv);
 
-    // Points display
+    const btnRow = document.createElement('div');
+    btnRow.id = 'gamba-menu-buttons';
+
+    const actions = [
+        { label: 'Call', value: 'call', className: 'call' },
+        { label: 'Raise', value: 'raise', className: 'raise' },
+        { label: 'Fold', value: 'fold', className: 'fold' },
+        { label: 'All-in', value: 'all-in', className: 'allin' }
+    ];
+    actions.forEach(({ label, value, className }) => {
+        const btn = document.createElement('button');
+        btn.className = `gamba-menu-btn ${className}`;
+        btn.textContent = label;
+        btn.onclick = () => {
+            // You can hook up your action logic here
+            btn.classList.add('clicked');
+            setTimeout(() => btn.classList.remove('clicked'), 120);
+            sendChat(label);
+        };
+        btnRow.appendChild(btn);
+    });
+    _GAMBA_MENU.appendChild(btnRow);
+
+    // Points display below buttons
     const pointsDiv = document.createElement('div');
     pointsDiv.id = 'gamba-menu-points';
-    pointsDiv.style.color = '#ffd700';
-    pointsDiv.style.fontWeight = 'bold';
-    pointsDiv.style.marginBottom = '10px';
     pointsDiv.textContent = `Points: ${_GAMBA_POINTS}`;
     _GAMBA_MENU.appendChild(pointsDiv);
 
@@ -286,27 +345,6 @@ function createGambaMenu() {
         _GAMBA_POINTS = getGambaPoints();
         pointsDiv.textContent = `Points: ${_GAMBA_POINTS}`;
     };
-
-    const btnRow = document.createElement('div');
-    btnRow.id = 'gamba-menu-buttons';
-
-    const actions = [
-        { label: 'Call', value: 'call' },
-        { label: 'Raise', value: 'raise' },
-        { label: 'Fold', value: 'fold' },
-        { label: 'All-in', value: 'all-in' }
-    ];
-    actions.forEach(({ label, value }) => {
-        const btn = document.createElement('button');
-        btn.className = 'gamba-menu-btn';
-        btn.textContent = label;
-        btn.onclick = () => {
-            // You can hook up your action logic here
-            sendChat(label);
-        };
-        btnRow.appendChild(btn);
-    });
-    _GAMBA_MENU.appendChild(btnRow);
 
     document.body.appendChild(_GAMBA_MENU);
 
