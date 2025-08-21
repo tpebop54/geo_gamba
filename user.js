@@ -393,6 +393,31 @@ GM_addStyle(STYLING);
 // Create draggable Gamba menu
 let _GAMBA_MENU, _GAMBA_MENU_DRAGGING = false, _GAMBA_MENU_DRAGGING_OFFSET_X, _GAMBA_MENU_DRAGGING_OFFSET_Y;
 
+const _onCall = (evt) => {
+    const btn = evt.currentTarget;
+    btn.classList.add('clicked');
+    setTimeout(() => btn.classList.remove('clicked'), 120);
+    console.log('Call button clicked');
+};
+const _onRaise = (evt) => {
+    const btn = evt.currentTarget;
+    btn.classList.add('clicked');
+    setTimeout(() => btn.classList.remove('clicked'), 120);
+    console.log('Raise button clicked');
+};
+const _onFold = (evt) => {
+    const btn = evt.currentTarget;
+    btn.classList.add('clicked');
+    setTimeout(() => btn.classList.remove('clicked'), 120);
+    console.log('Fold button clicked');
+};
+const _onAllIn = (evt) => {
+    const btn = evt.currentTarget;
+    btn.classList.add('clicked');
+    setTimeout(() => btn.classList.remove('clicked'), 120);
+    console.log('All-in button clicked');
+};
+
 const createGambaMenu = () => {
     if (document.getElementById('gamba-menu')) return;
     _GAMBA_MENU = document.createElement('div');
@@ -411,41 +436,11 @@ const createGambaMenu = () => {
     const btnRow = document.createElement('div');
     btnRow.id = 'gamba-menu-buttons';
 
-    // Unique callbacks for each button
-    const onCallClick = (evt) => {
-        const btn = evt.currentTarget;
-        btn.classList.add('clicked');
-        setTimeout(() => btn.classList.remove('clicked'), 120);
-        console.log('Call button clicked');
-        // Add custom logic here
-    };
-    const onRaiseClick = (evt) => {
-        const btn = evt.currentTarget;
-        btn.classList.add('clicked');
-        setTimeout(() => btn.classList.remove('clicked'), 120);
-        console.log('Raise button clicked');
-        // Add custom logic here
-    };
-    const onFoldClick = (evt) => {
-        const btn = evt.currentTarget;
-        btn.classList.add('clicked');
-        setTimeout(() => btn.classList.remove('clicked'), 120);
-        console.log('Fold button clicked');
-        // Add custom logic here
-    };
-    const onAllInClick = (evt) => {
-        const btn = evt.currentTarget;
-        btn.classList.add('clicked');
-        setTimeout(() => btn.classList.remove('clicked'), 120);
-        console.log('All-in button clicked');
-        // Add custom logic here
-    };
-
     const actions = [
-        { label: 'Call', id: 'gamba-btn-call', callback: onCallClick },
-        { label: 'Raise', id: 'gamba-btn-raise', callback: onRaiseClick },
-        { label: 'Fold', id: 'gamba-btn-fold', callback: onFoldClick },
-        { label: 'All-in', id: 'gamba-btn-allin', callback: onAllInClick }
+        { label: 'Call', id: 'gamba-btn-call', callback: _onCall },
+        { label: 'Raise', id: 'gamba-btn-raise', callback: _onRaise },
+        { label: 'Fold', id: 'gamba-btn-fold', callback: _onFold },
+        { label: 'All-in', id: 'gamba-btn-allin', callback: _onAllIn }
     ];
     actions.forEach(({ label, id, callback }) => {
         const btn = document.createElement('button');
