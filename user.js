@@ -31,8 +31,9 @@ const THE_WINDOW = unsafeWindow || window;
 
 const _GAMBA_ANTE_KEY = 'gamba_ante';
 const _GAMBA_MAX_BET_KEY = 'gamba_max_bet';
+const _GAMBA_CURRENT_BET_KEY = 'gamba_current_bet';
 const _GAMBA_MY_POINTS_KEY = 'gamba_my_points';
-const _GAMBA_THEIR_POINTS_KEY = 'gamba_my_points';
+const _GAMBA_THEIR_POINTS_KEY = 'gamba_their_points';
 const _GAMBA_POT_KEY = 'gamba_pot';
 
 const _GAMBA_DEFAULT_ANTE = 50;
@@ -65,6 +66,15 @@ const getGambaMaxBet = () => {
 
 const setGambaMaxBet = (val) => {
     THE_WINDOW.localStorage.setItem(_GAMBA_MAX_BET_KEY, String(val));
+};
+
+const getGambaCurrentBet = () => {
+    const val = THE_WINDOW.localStorage.getItem(_GAMBA_CURRENT_BET_KEY);
+    return val !== null ? parseInt(val, 10) : _GAMBA_DEFAULT_MAX_BET;
+};
+
+const setGambaCurrentBet = (val) => {
+    THE_WINDOW.localStorage.setItem(_GAMBA_CURRENT_BET_KEY, String(val));
 };
 
 const getGambaAnte = () => {
@@ -104,7 +114,9 @@ const setGambaTheirPoints = (val) => { // Note: this will only change it for you
 
 _GAMBA_ANTE = getGambaAnte();
 _GAMBA_MAX_BET = getGambaMaxBet();
+_GAMBA_CURRENT_BET = getGambaCurrentBet();
 _GAMBA_MY_POINTS = getGambaMyPoints();
+_GAMBA_THEIR_POINTS  = getGambaTheirPoints();
 _GAMBA_POT = getGambaPot();
 
 // ------------------------------------------------------------------------------------------------------------------------------
@@ -299,31 +311,28 @@ const _onRaise = (evt) => {
     setTimeout(() => btn.classList.remove('clicked'), 120);
     console.log('Raise button clicked');
 
-    // Remove any existing raise input div
     const oldDiv = document.getElementById('gamba-raise-input-row');
     if (oldDiv) oldDiv.remove();
 
-    // Find btnRow
     const btnRow = document.getElementById('gamba-menu-buttons');
     if (!btnRow) return;
 
-    // Create new div
     const raiseDiv = document.createElement('div');
     raiseDiv.id = 'gamba-raise-input-row';
     raiseDiv.style.display = 'flex';
     raiseDiv.style.gap = '8px';
     raiseDiv.style.marginTop = '8px';
 
-    // Number input
     const input = document.createElement('input');
+    input.id = 'gamba-raise-input';
     input.type = 'number';
     input.min = '1';
     input.placeholder = 'Enter amount';
     input.style.width = '80px';
     raiseDiv.appendChild(input);
 
-    // Green check button
     const checkBtn = document.createElement('button');
+    checkBtn.id = 'gamba-raise-check-btn';
     checkBtn.innerHTML = '✅';
     checkBtn.style.background = 'green';
     checkBtn.style.color = 'white';
@@ -336,8 +345,8 @@ const _onRaise = (evt) => {
     };
     raiseDiv.appendChild(checkBtn);
 
-    // Red X button
     const xBtn = document.createElement('button');
+    xBtn.id = 'gamba-raise-cancel-btn';
     xBtn.innerHTML = '❌';
     xBtn.style.background = 'red';
     xBtn.style.color = 'white';
@@ -349,12 +358,10 @@ const _onRaise = (evt) => {
     };
     raiseDiv.appendChild(xBtn);
 
-    // Enable/disable checkBtn based on input
     input.addEventListener('input', () => {
         checkBtn.disabled = input.value === '';
     });
 
-    // Insert below btnRow
     btnRow.parentNode.insertBefore(raiseDiv, btnRow.nextSibling);
 };
 
@@ -384,18 +391,20 @@ const createGambaMenu = () => {
     const myPointsDiv = document.createElement('div');
     myPointsDiv.id = 'gamba-menu-my-points';
     myPointsDiv.classList.add('gamba-menu-points');
-    myPointsDiv.textContent = `My Points: ${_GAMBA_MY_POINTS}`;
+    myPointsDiv.textContent = `Me: ${_GAMBA_MY_POINTS}`;
     _GAMBA_MENU.appendChild(myPointsDiv);
 
     const theirPointsDiv = document.createElement('div');
     theirPointsDiv.id = 'gamba-menu-their-points';
     theirPointsDiv.classList.add('gamba-menu-points');
-    theirPointsDiv.textContent = `Their Points: ${_GAMBA_THEIR_POINTS}`;
+    theirPointsDiv.textContent = `Them: ${_GAMBA_THEIR_POINTS}`;
 
     const pointsRow = document.createElement('div');
     pointsRow.id = 'gamba-points-row';
     pointsRow.appendChild(myPointsDiv);
     pointsRow.appendChild(theirPointsDiv);
+
+    _GAMBA_MENU.appendChild(pointsRow);
 
     const btnRow = document.createElement('div');
     btnRow.id = 'gamba-menu-buttons';
@@ -416,8 +425,8 @@ const createGambaMenu = () => {
     });
     _GAMBA_MENU.appendChild(btnRow);
 
-    const anteRowDiv = document.createElement('div');
-    anteRowDiv.id = 'gamba-menu-ante-row';
+    const roundRow = document.createElement('div');
+    roundRow.id = 'gamba-menu-round-row';
 
     const anteDiv = document.createElement('span');
     anteDiv.id = 'gamba-menu-ante';
@@ -427,9 +436,14 @@ const createGambaMenu = () => {
     maxBetDiv.id = 'gamba-menu-maxbet';
     maxBetDiv.textContent = `Max. Bet: ${_GAMBA_MAX_BET}`;
 
-    anteRowDiv.appendChild(anteDiv);
-    anteRowDiv.appendChild(maxBetDiv);
-    _GAMBA_MENU.appendChild(anteRowDiv);
+    const currentBetDiv = document.createElement('span');
+    currentBetDiv.id = 'gamba-menu-currentbet';
+    currentBetDiv.textContent = `Current Bet: ${_GAMBA_CURRENT_BET}`;
+
+    roundRow.appendChild(anteDiv);
+    roundRow.appendChild(maxBetDiv);
+    roundRow.appendChild(currentBetDiv);
+    _GAMBA_MENU.appendChild(roundRow);
 
     const potDiv = document.createElement('div');
     potDiv.id = 'gamba-menu-pot';
@@ -494,7 +508,7 @@ if (document.readyState !== 'loading') {
 
 // Styling ======================================================================================================================
 
-const STYLING = `
+const _STYLING = `
     #gamba-menu {
         position: fixed;
         top: 20px;
@@ -515,6 +529,7 @@ const STYLING = `
         cursor: grabbing !important;
     }
     #gamba-menu-title {
+        font-size: 24px !important;
         font-weight: bold;
         font-size: 16px;
         margin-bottom: 10px;
@@ -528,6 +543,12 @@ const STYLING = `
         gap: 8px;
         justify-content: center;
         margin-bottom: 10px;
+    }
+    #gamba-points-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%; 
     }
     .gamba-menu-points {
         color: #ffd700;
@@ -597,19 +618,18 @@ const STYLING = `
         background: rgba(30,30,30,0.85);
         text-align: center;
     }
-    #gamba-menu-ante-row {
+    #gamba-menu-round-row {
         display: flex;
         justify-content: center;
         align-items: center;
         gap: 16px;
         margin-bottom: 2px;
-    }
-    #gamba-menu-ante, #gamba-menu-maxbet {
-        color: #fff;
-        font-size: 13px;
+        color: white;
+        font-size: 12px;
+        margin: 10px 0;
     }
 `;
 
-GM_addStyle(STYLING);
+GM_addStyle(_STYLING);
 
 // ------------------------------------------------------------------------------------------------------------------------------
