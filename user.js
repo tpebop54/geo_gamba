@@ -1,3 +1,20 @@
+const _GAMBA_POT_KEY = 'gamba_pot';
+const _GAMBA_DEFAULT_POT = 0;
+
+function getGambaPot() {
+    const val = THE_WINDOW.localStorage.getItem(_GAMBA_POT_KEY);
+    return val !== null ? parseInt(val, 10) : _GAMBA_DEFAULT_POT;
+}
+
+function setGambaPot(val) {
+    THE_WINDOW.localStorage.setItem(_GAMBA_POT_KEY, String(val));
+    _GAMBA_POT = val;
+    if (typeof THE_WINDOW.updateGambaPotDisplay === 'function') {
+        THE_WINDOW.updateGambaPotDisplay();
+    }
+}
+
+let _GAMBA_POT = getGambaPot();
 const _GAMBA_DEFAULT_MAX_BET = 500;
 const _GAMBA_MAX_BET_KEY = 'gamba_max_bet';
 
@@ -390,16 +407,32 @@ function createGambaMenu() {
     anteRowDiv.appendChild(maxBetDiv);
     _GAMBA_MENU.appendChild(anteRowDiv);
 
+
     // Points display below ante
     const pointsDiv = document.createElement('div');
     pointsDiv.id = 'gamba-menu-points';
     pointsDiv.textContent = `Your Points: ${_GAMBA_POINTS}`;
     _GAMBA_MENU.appendChild(pointsDiv);
 
-    // Expose a way to update points, ante, and max bet display
+    // Pot display below points
+    const potDiv = document.createElement('div');
+    potDiv.id = 'gamba-menu-pot';
+    potDiv.style.color = '#fff';
+    potDiv.style.fontWeight = 'bold';
+    potDiv.style.fontSize = '18px';
+    potDiv.style.marginTop = '10px';
+    potDiv.style.marginBottom = '4px';
+    potDiv.style.border = '2px solid #ffd700';
+    potDiv.style.borderRadius = '6px';
+    potDiv.style.padding = '6px 18px';
+    potDiv.style.background = 'rgba(30,30,30,0.85)';
+    potDiv.textContent = `Pot: ${_GAMBA_POT}`;
+    _GAMBA_MENU.appendChild(potDiv);
+
+    // Expose a way to update points, ante, max bet, and pot display
     THE_WINDOW.updateGambaPointsDisplay = function() {
         _GAMBA_POINTS = getGambaPoints();
-        pointsDiv.textContent = `Points: ${_GAMBA_POINTS}`;
+        pointsDiv.textContent = `Your Points: ${_GAMBA_POINTS}`;
     };
     THE_WINDOW.updateGambaAnteDisplay = function() {
         _GAMBA_ANTE = getGambaAnte();
@@ -409,6 +442,13 @@ function createGambaMenu() {
         _GAMBA_MAX_BET = getGambaMaxBet();
         maxBetDiv.textContent = `Max. Bet: ${_GAMBA_MAX_BET}`;
     };
+    THE_WINDOW.updateGambaPotDisplay = function() {
+        _GAMBA_POT = getGambaPot();
+        potDiv.textContent = `Pot: ${_GAMBA_POT}`;
+    };
+
+    // Expose setPot function
+    THE_WINDOW.setPot = setGambaPot;
 
     document.body.appendChild(_GAMBA_MENU);
 
