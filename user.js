@@ -1,3 +1,17 @@
+// Points system
+const _GAMBA_DEFAULT_POINTS = 1000;
+const _GAMBA_POINTS_KEY = 'my_gamba_points';
+
+function getGambaPoints() {
+    const val = THE_WINDOW.localStorage.getItem(_GAMBA_POINTS_KEY);
+    return val !== null ? parseInt(val, 10) : _GAMBA_DEFAULT_POINTS;
+}
+
+function setGambaPoints(val) {
+    THE_WINDOW.localStorage.setItem(_GAMBA_POINTS_KEY, String(val));
+}
+
+let _GAMBA_POINTS = getGambaPoints();
 // ==UserScript==
 // @name         Tpebop's GeoGuessr Mods (DEV 1.2.3)
 // @description  Various mods to make the game interesting in various ways
@@ -34,6 +48,7 @@ console.log('GEO GAMBAAAAA');
 // maps - https://www.geoguessr.com/api/maps/world
 
 
+const THE_WINDOW = unsafeWindow || window;
 
 // DOM utils =========================================================================================================================
 
@@ -213,12 +228,15 @@ const STYLING = `
         flex-direction: column;
         align-items: flex-start;
     }
+    #gamba-menu.grabbing {
+        cursor: grabbing !important;
+    }
     #gamba-menu-title {
         font-weight: bold;
         font-size: 16px;
         margin-bottom: 10px;
         color: #fff;
-        cursor: grab;
+        cursor: inherit;
     }
     #gamba-menu-buttons {
         display: flex;
@@ -245,59 +263,78 @@ GM_addStyle(STYLING);
 let _GAMBA_MENU, _GAMBA_MENU_DRAGGING = false, _GAMBA_MENU_DRAGGING_OFFSET_X, _GAMBA_MENU_DRAGGING_OFFSET_Y;
 
 function createGambaMenu() {
-        if (document.getElementById('gamba-menu')) return;
-        _GAMBA_MENU = document.createElement('div');
-        _GAMBA_MENU.id = 'gamba-menu';
+    if (document.getElementById('gamba-menu')) return;
+    _GAMBA_MENU = document.createElement('div');
+    _GAMBA_MENU.id = 'gamba-menu';
 
-        const titleDiv = document.createElement('div');
-        titleDiv.id = 'gamba-menu-title';
-        titleDiv.textContent = 'Gamba Actions';
-        _GAMBA_MENU.appendChild(titleDiv);
+    const titleDiv = document.createElement('div');
+    titleDiv.id = 'gamba-menu-title';
+    titleDiv.textContent = 'Gamba Actions';
+    _GAMBA_MENU.appendChild(titleDiv);
 
-        const btnRow = document.createElement('div');
-        btnRow.id = 'gamba-menu-buttons';
+    // Points display
+    const pointsDiv = document.createElement('div');
+    pointsDiv.id = 'gamba-menu-points';
+    pointsDiv.style.color = '#ffd700';
+    pointsDiv.style.fontWeight = 'bold';
+    pointsDiv.style.marginBottom = '10px';
+    pointsDiv.textContent = `Points: ${_GAMBA_POINTS}`;
+    _GAMBA_MENU.appendChild(pointsDiv);
 
-        const actions = [
-                { label: 'Call', value: 'call' },
-                { label: 'Raise', value: 'raise' },
-                { label: 'Fold', value: 'fold' },
-                { label: 'All-in', value: 'all-in' }
-        ];
-        actions.forEach(({ label, value }) => {
-                const btn = document.createElement('button');
-                btn.className = 'gamba-menu-btn';
-                btn.textContent = label;
-                btn.onclick = () => {
-                        // You can hook up your action logic here
-                        sendChat(label);
-                };
-                btnRow.appendChild(btn);
-        });
-        _GAMBA_MENU.appendChild(btnRow);
+    // Expose a way to update points display
+    THE_WINDOW.updateGambaPointsDisplay = function() {
+        _GAMBA_POINTS = getGambaPoints();
+        pointsDiv.textContent = `Points: ${_GAMBA_POINTS}`;
+    };
 
-        document.body.appendChild(_GAMBA_MENU);
+    const btnRow = document.createElement('div');
+    btnRow.id = 'gamba-menu-buttons';
 
-        // Drag logic
-        titleDiv.addEventListener('mousedown', (evt) => {
-                _GAMBA_MENU_DRAGGING = true;
-                _GAMBA_MENU_DRAGGING_OFFSET_X = evt.clientX - _GAMBA_MENU.offsetLeft;
-                _GAMBA_MENU_DRAGGING_OFFSET_Y = evt.clientY - _GAMBA_MENU.offsetTop;
-                document.body.style.userSelect = 'none';
-        });
-        document.addEventListener('mousemove', (evt) => {
-                if (_GAMBA_MENU_DRAGGING) {
-                        _GAMBA_MENU.style.left = (evt.clientX - _GAMBA_MENU_DRAGGING_OFFSET_X) + 'px';
-                        _GAMBA_MENU.style.top = (evt.clientY - _GAMBA_MENU_DRAGGING_OFFSET_Y) + 'px';
-                }
-        });
-        document.addEventListener('mouseup', () => {
-                if (_GAMBA_MENU_DRAGGING) {
-                        _GAMBA_MENU_DRAGGING = false;
-                        _GAMBA_MENU_DRAGGING_OFFSET_X = undefined;
-                        _GAMBA_MENU_DRAGGING_OFFSET_Y = undefined;
-                        document.body.style.userSelect = '';
-                }
-        });
+    const actions = [
+        { label: 'Call', value: 'call' },
+        { label: 'Raise', value: 'raise' },
+        { label: 'Fold', value: 'fold' },
+        { label: 'All-in', value: 'all-in' }
+    ];
+    actions.forEach(({ label, value }) => {
+        const btn = document.createElement('button');
+        btn.className = 'gamba-menu-btn';
+        btn.textContent = label;
+        btn.onclick = () => {
+            // You can hook up your action logic here
+            sendChat(label);
+        };
+        btnRow.appendChild(btn);
+    });
+    _GAMBA_MENU.appendChild(btnRow);
+
+    document.body.appendChild(_GAMBA_MENU);
+
+    // Drag logic
+    _GAMBA_MENU.addEventListener('mousedown', (evt) => {
+        // Only start drag if left mouse button and not clicking a button
+        if (evt.button !== 0 || evt.target.classList.contains('gamba-menu-btn')) return;
+        _GAMBA_MENU_DRAGGING = true;
+        _GAMBA_MENU.classList.add('grabbing');
+        _GAMBA_MENU_DRAGGING_OFFSET_X = evt.clientX - _GAMBA_MENU.offsetLeft;
+        _GAMBA_MENU_DRAGGING_OFFSET_Y = evt.clientY - _GAMBA_MENU.offsetTop;
+        document.body.style.userSelect = 'none';
+    });
+    document.addEventListener('mousemove', (evt) => {
+        if (_GAMBA_MENU_DRAGGING) {
+            _GAMBA_MENU.style.left = (evt.clientX - _GAMBA_MENU_DRAGGING_OFFSET_X) + 'px';
+            _GAMBA_MENU.style.top = (evt.clientY - _GAMBA_MENU_DRAGGING_OFFSET_Y) + 'px';
+        }
+    });
+    document.addEventListener('mouseup', () => {
+        if (_GAMBA_MENU_DRAGGING) {
+            _GAMBA_MENU_DRAGGING = false;
+            _GAMBA_MENU.classList.remove('grabbing');
+            _GAMBA_MENU_DRAGGING_OFFSET_X = undefined;
+            _GAMBA_MENU_DRAGGING_OFFSET_Y = undefined;
+            document.body.style.userSelect = '';
+        }
+    });
 }
 
 if (document.readyState !== 'loading') {
