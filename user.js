@@ -327,7 +327,7 @@ const _onRaise = (evt) => {
     input.id = 'gamba-raise-input';
     input.type = 'number';
     input.min = '1';
-    input.placeholder = 'Enter amount';
+    input.placeholder = 'Raise by';
     input.style.width = '80px';
     raiseDiv.appendChild(input);
 
@@ -624,6 +624,7 @@ const _STYLING = `
         padding: 6px 12px;
         color: white;
         font-size: 12px;
+        width: 120px;
     }
     input::-webkit-outer-spin-button,
     input::-webkit-inner-spin-button {
@@ -635,6 +636,7 @@ const _STYLING = `
     }
     .gamba-raise-button {
         color: #fff;
+        cursor: pointer;
     }
     #gamba-menu-pot {
         color: #fff;
