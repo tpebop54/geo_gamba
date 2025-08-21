@@ -31,7 +31,8 @@ const THE_WINDOW = unsafeWindow || window;
 
 const _GAMBA_ANTE_KEY = 'gamba_ante';
 const _GAMBA_MAX_BET_KEY = 'gamba_max_bet';
-const _GAMBA_POINTS_KEY = 'gamba_my_points';
+const _GAMBA_MY_POINTS_KEY = 'gamba_my_points';
+const _GAMBA_THEIR_POINTS_KEY = 'gamba_my_points';
 const _GAMBA_POT_KEY = 'gamba_pot';
 
 const _GAMBA_DEFAULT_ANTE = 50;
@@ -75,13 +76,22 @@ const setGambaAnte = (val) => {
     THE_WINDOW.localStorage.setItem(_GAMBA_ANTE_KEY, String(val));
 };
 
-const getGambaPoints = () => {
-    const val = THE_WINDOW.localStorage.getItem(_GAMBA_POINTS_KEY);
+const getGambaMyPoints = () => {
+    const val = THE_WINDOW.localStorage.getItem(_GAMBA_MY_POINTS_KEY);
     return val !== null ? parseInt(val, 10) : _GAMBA_DEFAULT_POINTS;
 };
 
 const setGambaPoints = (val) => {
-    THE_WINDOW.localStorage.setItem(_GAMBA_POINTS_KEY, String(val));
+    THE_WINDOW.localStorage.setItem(_GAMBA_MY_POINTS_KEY, String(val));
+};
+
+const getGambaTheirPoints = () => {
+    const val = THE_WINDOW.localStorage.getItem(_GAMBA_THEIR_POINTS_KEY);
+    return val !== null ? parseInt(val, 10) : _GAMBA_DEFAULT_POINTS;
+};
+
+const setGambaTheirPoints = (val) => { // Note: this will only change it for you. The same code is running on other clients.
+    THE_WINDOW.localStorage.setItem(_GAMBA_THEIR_POINTS_KEY, String(val));
 };
 
 // ------------------------------------------------------------------------------------------------------------------------------
@@ -94,7 +104,7 @@ const setGambaPoints = (val) => {
 
 _GAMBA_ANTE = getGambaAnte();
 _GAMBA_MAX_BET = getGambaMaxBet();
-_GAMBA_POINTS = getGambaPoints();
+_GAMBA_MY_POINTS = getGambaMyPoints();
 _GAMBA_POT = getGambaPot();
 
 // ------------------------------------------------------------------------------------------------------------------------------
@@ -272,122 +282,6 @@ if (document.readyState !== 'loading') {
 
 
 
-// Styling ======================================================================================================================
-
-const STYLING = `
-    #gamba-menu {
-        position: fixed;
-        top: 20px;
-        left: 20px;
-        z-index: 9999;
-        background: rgba(30, 30, 30, 0.95);
-        border-radius: 8px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-        padding: 12px 16px 12px 16px;
-        min-width: 220px;
-        user-select: none;
-        cursor: grab;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-    #gamba-menu.grabbing {
-        cursor: grabbing !important;
-    }
-    #gamba-menu-title {
-        font-weight: bold;
-        font-size: 16px;
-        margin-bottom: 10px;
-        color: #fff;
-        cursor: inherit;
-        text-align: center;
-        width: 100%;
-    }
-    #gamba-menu-buttons {
-        display: flex;
-        gap: 8px;
-        justify-content: center;
-        margin-bottom: 10px;
-    }
-    .gamba-menu-btn {
-        border: none;
-        border-radius: 4px;
-        padding: 6px 14px;
-        font-size: 15px;
-        cursor: pointer;
-        transition: background 0.2s, transform 0.1s;
-        color: #fff;
-        outline: none;
-    }
-    .gamba-menu-btn:active {
-        transform: scale(0.95);
-        box-shadow: 0 0 0 2px #fff2 inset;
-    }
-    #gamba-btn-call {
-        background: #1976d2;
-    }
-    #gamba-btn-call:hover {
-        background: #1565c0;
-    }
-    #gamba-btn-raise {
-        background: #43a047;
-    }
-    #gamba-btn-raise:hover {
-        background: #388e3c;
-    }
-    #gamba-btn-fold {
-        background: #e53935;
-    }
-    #gamba-btn-fold:hover {
-        background: #b71c1c;
-    }
-    #gamba-btn-allin {
-        background: #ffd700;
-        color: #222;
-    }
-    #gamba-btn-allin:hover {
-        background: #ffe066;
-        color: #222;
-    }
-    #gamba-menu-points {
-        color: #ffd700;
-        font-weight: bold;
-        margin-bottom: 0;
-        text-align: center;
-        width: 100%;
-    }
-    #gamba-menu-pot {
-        color: #fff;
-        font-weight: bold;
-        font-size: 18px;
-        margin-top: 10px;
-        margin-bottom: 4px;
-        border: 2px solid #ffd700;
-        border-radius: 6px;
-        padding: 6px 18px;
-        background: rgba(30,30,30,0.85);
-        text-align: center;
-    }
-    #gamba-menu-ante-row {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 16px;
-        margin-bottom: 2px;
-    }
-    #gamba-menu-ante, #gamba-menu-maxbet {
-        color: #fff;
-        font-size: 13px;
-    }
-`;
-
-GM_addStyle(STYLING);
-
-// ------------------------------------------------------------------------------------------------------------------------------
-
-
-
-
 // User action menu =============================================================================================================
 
 // Create draggable Gamba menu
@@ -404,7 +298,66 @@ const _onRaise = (evt) => {
     btn.classList.add('clicked');
     setTimeout(() => btn.classList.remove('clicked'), 120);
     console.log('Raise button clicked');
+
+    // Remove any existing raise input div
+    const oldDiv = document.getElementById('gamba-raise-input-row');
+    if (oldDiv) oldDiv.remove();
+
+    // Find btnRow
+    const btnRow = document.getElementById('gamba-menu-buttons');
+    if (!btnRow) return;
+
+    // Create new div
+    const raiseDiv = document.createElement('div');
+    raiseDiv.id = 'gamba-raise-input-row';
+    raiseDiv.style.display = 'flex';
+    raiseDiv.style.gap = '8px';
+    raiseDiv.style.marginTop = '8px';
+
+    // Number input
+    const input = document.createElement('input');
+    input.type = 'number';
+    input.min = '1';
+    input.placeholder = 'Enter amount';
+    input.style.width = '80px';
+    raiseDiv.appendChild(input);
+
+    // Green check button
+    const checkBtn = document.createElement('button');
+    checkBtn.innerHTML = '✅';
+    checkBtn.style.background = 'green';
+    checkBtn.style.color = 'white';
+    checkBtn.style.border = 'none';
+    checkBtn.style.padding = '4px 10px';
+    checkBtn.style.borderRadius = '4px';
+    checkBtn.disabled = true;
+    checkBtn.onclick = () => {
+        console.log('Raise value:', input.value);
+    };
+    raiseDiv.appendChild(checkBtn);
+
+    // Red X button
+    const xBtn = document.createElement('button');
+    xBtn.innerHTML = '❌';
+    xBtn.style.background = 'red';
+    xBtn.style.color = 'white';
+    xBtn.style.border = 'none';
+    xBtn.style.padding = '4px 10px';
+    xBtn.style.borderRadius = '4px';
+    xBtn.onclick = () => {
+        raiseDiv.remove();
+    };
+    raiseDiv.appendChild(xBtn);
+
+    // Enable/disable checkBtn based on input
+    input.addEventListener('input', () => {
+        checkBtn.disabled = input.value === '';
+    });
+
+    // Insert below btnRow
+    btnRow.parentNode.insertBefore(raiseDiv, btnRow.nextSibling);
 };
+
 const _onFold = (evt) => {
     const btn = evt.currentTarget;
     btn.classList.add('clicked');
@@ -428,10 +381,21 @@ const createGambaMenu = () => {
     titleDiv.textContent = 'Geo Gamba';
     _GAMBA_MENU.appendChild(titleDiv);
 
-    const pointsDiv = document.createElement('div');
-    pointsDiv.id = 'gamba-menu-points';
-    pointsDiv.textContent = `Your Points: ${_GAMBA_POINTS}`;
-    _GAMBA_MENU.appendChild(pointsDiv);
+    const myPointsDiv = document.createElement('div');
+    myPointsDiv.id = 'gamba-menu-my-points';
+    myPointsDiv.classList.add('gamba-menu-points');
+    myPointsDiv.textContent = `My Points: ${_GAMBA_MY_POINTS}`;
+    _GAMBA_MENU.appendChild(myPointsDiv);
+
+    const theirPointsDiv = document.createElement('div');
+    theirPointsDiv.id = 'gamba-menu-their-points';
+    theirPointsDiv.classList.add('gamba-menu-points');
+    theirPointsDiv.textContent = `Their Points: ${_GAMBA_THEIR_POINTS}`;
+
+    const pointsRow = document.createElement('div');
+    pointsRow.id = 'gamba-points-row';
+    pointsRow.appendChild(myPointsDiv);
+    pointsRow.appendChild(theirPointsDiv);
 
     const btnRow = document.createElement('div');
     btnRow.id = 'gamba-menu-buttons';
@@ -473,8 +437,8 @@ const createGambaMenu = () => {
     _GAMBA_MENU.appendChild(potDiv);
 
     THE_WINDOW.updateGambaPointsDisplay = () => {
-        _GAMBA_POINTS = getGambaPoints();
-        pointsDiv.textContent = `Your Points: ${_GAMBA_POINTS}`;
+        _GAMBA_MY_POINTS = getGambaMyPoints();
+        myPointsDiv.textContent = `Your Points: ${_GAMBA_MY_POINTS}`;
     };
     THE_WINDOW.updateGambaAnteDisplay = () => {
         _GAMBA_ANTE = getGambaAnte();
@@ -522,5 +486,130 @@ if (document.readyState !== 'loading') {
 } else {
         document.addEventListener('DOMContentLoaded', createGambaMenu);
 }
+
+// ------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+// Styling ======================================================================================================================
+
+const STYLING = `
+    #gamba-menu {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        z-index: 9999;
+        background: rgba(30, 30, 30, 0.95);
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        padding: 12px 16px 12px 16px;
+        min-width: 220px;
+        user-select: none;
+        cursor: grab;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    #gamba-menu.grabbing {
+        cursor: grabbing !important;
+    }
+    #gamba-menu-title {
+        font-weight: bold;
+        font-size: 16px;
+        margin-bottom: 10px;
+        color: #fff;
+        cursor: inherit;
+        text-align: center;
+        width: 100%;
+    }
+    #gamba-menu-buttons {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+        margin-bottom: 10px;
+    }
+    .gamba-menu-points {
+        color: #ffd700;
+        font-weight: bold;
+        margin-bottom: 0;
+        text-align: center;
+        width: 100%;
+        font-size: 18px;
+        margin-bottom: 18px;
+        color: #80e77d;
+    }
+    #gamba-menu-buttons {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+        margin-bottom: 10px;
+    }
+    .gamba-menu-btn {
+        border: none;
+        border-radius: 4px;
+        padding: 6px 14px;
+        font-size: 15px;
+        cursor: pointer;
+        transition: background 0.2s, transform 0.1s;
+        color: #fff;
+        outline: none;
+    }
+    .gamba-menu-btn:active {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 2px #fff2 inset;
+    }
+    #gamba-btn-call {
+        background: #1976d2;
+    }
+    #gamba-btn-call:hover {
+        background: #1565c0;
+    }
+    #gamba-btn-raise {
+        background: #43a047;
+    }
+    #gamba-btn-raise:hover {
+        background: #388e3c;
+    }
+    #gamba-btn-fold {
+        background: #e53935;
+    }
+    #gamba-btn-fold:hover {
+        background: #b71c1c;
+    }
+    #gamba-btn-allin {
+        background: #ffd700;
+        color: #222;
+    }
+    #gamba-btn-allin:hover {
+        background: #ffe066;
+        color: #222;
+    }
+    #gamba-menu-pot {
+        color: #fff;
+        font-weight: bold;
+        font-size: 18px;
+        margin-top: 10px;
+        margin-bottom: 4px;
+        border: 2px solid #ffd700;
+        border-radius: 6px;
+        padding: 6px 18px;
+        background: rgba(30,30,30,0.85);
+        text-align: center;
+    }
+    #gamba-menu-ante-row {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 2px;
+    }
+    #gamba-menu-ante, #gamba-menu-maxbet {
+        color: #fff;
+        font-size: 13px;
+    }
+`;
+
+GM_addStyle(STYLING);
 
 // ------------------------------------------------------------------------------------------------------------------------------
