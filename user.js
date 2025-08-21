@@ -34,8 +34,23 @@ console.log('GEO GAMBAAAAA');
 // live-challenge - https://game-server.geoguessr.com/api/live-challenge/40d4df74-bfe3-4f5b-93a4-0099ee427d3b
 // maps - https://www.geoguessr.com/api/maps/world
 
+
 const _GAMBA_DEFAULT_POINTS = 1000;
 const _GAMBA_POINTS_KEY = 'my_gamba_points';
+
+const _GAMBA_DEFAULT_ANTE = 50;
+const _GAMBA_ANTE_KEY = 'gamba_ante';
+
+function getGambaAnte() {
+    const val = THE_WINDOW.localStorage.getItem(_GAMBA_ANTE_KEY);
+    return val !== null ? parseInt(val, 10) : _GAMBA_DEFAULT_ANTE;
+}
+
+function setGambaAnte(val) {
+    THE_WINDOW.localStorage.setItem(_GAMBA_ANTE_KEY, String(val));
+}
+
+let _GAMBA_ANTE = getGambaAnte();
 
 const THE_WINDOW = unsafeWindow || window;
 
@@ -311,6 +326,7 @@ function createGambaMenu() {
     titleDiv.textContent = 'Gamba Actions';
     _GAMBA_MENU.appendChild(titleDiv);
 
+
     const btnRow = document.createElement('div');
     btnRow.id = 'gamba-menu-buttons';
 
@@ -334,16 +350,29 @@ function createGambaMenu() {
     });
     _GAMBA_MENU.appendChild(btnRow);
 
-    // Points display below buttons
+    // Ante display above points
+    const anteDiv = document.createElement('div');
+    anteDiv.id = 'gamba-menu-ante';
+    anteDiv.style.color = '#fff';
+    anteDiv.style.fontSize = '13px';
+    anteDiv.style.marginBottom = '2px';
+    anteDiv.textContent = `Ante: ${_GAMBA_ANTE}`;
+    _GAMBA_MENU.appendChild(anteDiv);
+
+    // Points display below ante
     const pointsDiv = document.createElement('div');
     pointsDiv.id = 'gamba-menu-points';
     pointsDiv.textContent = `Points: ${_GAMBA_POINTS}`;
     _GAMBA_MENU.appendChild(pointsDiv);
 
-    // Expose a way to update points display
+    // Expose a way to update points and ante display
     THE_WINDOW.updateGambaPointsDisplay = function() {
         _GAMBA_POINTS = getGambaPoints();
         pointsDiv.textContent = `Points: ${_GAMBA_POINTS}`;
+    };
+    THE_WINDOW.updateGambaAnteDisplay = function() {
+        _GAMBA_ANTE = getGambaAnte();
+        anteDiv.textContent = `Ante: ${_GAMBA_ANTE}`;
     };
 
     document.body.appendChild(_GAMBA_MENU);
