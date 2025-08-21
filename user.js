@@ -1,33 +1,3 @@
-const _GAMBA_POT_KEY = 'gamba_pot';
-const _GAMBA_DEFAULT_POT = 0;
-
-function getGambaPot() {
-    const val = THE_WINDOW.localStorage.getItem(_GAMBA_POT_KEY);
-    return val !== null ? parseInt(val, 10) : _GAMBA_DEFAULT_POT;
-}
-
-function setGambaPot(val) {
-    THE_WINDOW.localStorage.setItem(_GAMBA_POT_KEY, String(val));
-    _GAMBA_POT = val;
-    if (typeof THE_WINDOW.updateGambaPotDisplay === 'function') {
-        THE_WINDOW.updateGambaPotDisplay();
-    }
-}
-
-let _GAMBA_POT = getGambaPot();
-const _GAMBA_DEFAULT_MAX_BET = 500;
-const _GAMBA_MAX_BET_KEY = 'gamba_max_bet';
-
-function getGambaMaxBet() {
-    const val = THE_WINDOW.localStorage.getItem(_GAMBA_MAX_BET_KEY);
-    return val !== null ? parseInt(val, 10) : _GAMBA_DEFAULT_MAX_BET;
-}
-
-function setGambaMaxBet(val) {
-    THE_WINDOW.localStorage.setItem(_GAMBA_MAX_BET_KEY, String(val));
-}
-
-let _GAMBA_MAX_BET = getGambaMaxBet();
 // ==UserScript==
 
 // @name         Tpebop's GeoGuessr Mods (DEV 1.2.3)
@@ -66,6 +36,38 @@ console.log('GEO GAMBAAAAA');
 
 
 const THE_WINDOW = unsafeWindow || window;
+
+
+const _GAMBA_POT_KEY = 'gamba_pot';
+const _GAMBA_DEFAULT_POT = 0;
+
+function getGambaPot() {
+    const val = THE_WINDOW.localStorage.getItem(_GAMBA_POT_KEY);
+    return val !== null ? parseInt(val, 10) : _GAMBA_DEFAULT_POT;
+}
+
+function setGambaPot(val) {
+    THE_WINDOW.localStorage.setItem(_GAMBA_POT_KEY, String(val));
+    _GAMBA_POT = val;
+    if (typeof THE_WINDOW.updateGambaPotDisplay === 'function') {
+        THE_WINDOW.updateGambaPotDisplay();
+    }
+}
+
+let _GAMBA_POT = getGambaPot();
+const _GAMBA_DEFAULT_MAX_BET = 500;
+const _GAMBA_MAX_BET_KEY = 'gamba_max_bet';
+
+function getGambaMaxBet() {
+    const val = THE_WINDOW.localStorage.getItem(_GAMBA_MAX_BET_KEY);
+    return val !== null ? parseInt(val, 10) : _GAMBA_DEFAULT_MAX_BET;
+}
+
+function setGambaMaxBet(val) {
+    THE_WINDOW.localStorage.setItem(_GAMBA_MAX_BET_KEY, String(val));
+}
+
+let _GAMBA_MAX_BET = getGambaMaxBet();
 
 const _GAMBA_DEFAULT_POINTS = 1000;
 const _GAMBA_POINTS_KEY = 'gamba_my_points';
@@ -354,7 +356,7 @@ function createGambaMenu() {
 
     const titleDiv = document.createElement('div');
     titleDiv.id = 'gamba-menu-title';
-    titleDiv.textContent = 'Geo Gambaaaaaa';
+    titleDiv.textContent = 'Geo Gamba';
     _GAMBA_MENU.appendChild(titleDiv);
 
 
