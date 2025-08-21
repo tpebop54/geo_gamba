@@ -341,6 +341,29 @@ const STYLING = `
         text-align: center;
         width: 100%;
     }
+    #gamba-menu-pot {
+        color: #fff;
+        font-weight: bold;
+        font-size: 18px;
+        margin-top: 10px;
+        margin-bottom: 4px;
+        border: 2px solid #ffd700;
+        border-radius: 6px;
+        padding: 6px 18px;
+        background: rgba(30,30,30,0.85);
+        text-align: center;
+    }
+    #gamba-menu-ante-row {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 2px;
+    }
+    #gamba-menu-ante, #gamba-menu-maxbet {
+        color: #fff;
+        font-size: 13px;
+    }
 `;
 
 GM_addStyle(STYLING);
@@ -355,7 +378,7 @@ GM_addStyle(STYLING);
 // Create draggable Gamba menu
 let _GAMBA_MENU, _GAMBA_MENU_DRAGGING = false, _GAMBA_MENU_DRAGGING_OFFSET_X, _GAMBA_MENU_DRAGGING_OFFSET_Y;
 
-function createGambaMenu() {
+const createGambaMenu = () => {
     if (document.getElementById('gamba-menu')) return;
     _GAMBA_MENU = document.createElement('div');
     _GAMBA_MENU.id = 'gamba-menu';
@@ -364,7 +387,6 @@ function createGambaMenu() {
     titleDiv.id = 'gamba-menu-title';
     titleDiv.textContent = 'Geo Gamba';
     _GAMBA_MENU.appendChild(titleDiv);
-
 
     const btnRow = document.createElement('div');
     btnRow.id = 'gamba-menu-buttons';
@@ -389,79 +411,52 @@ function createGambaMenu() {
     });
     _GAMBA_MENU.appendChild(btnRow);
 
-
-    // Ante and Max Bet display above points
     const anteRowDiv = document.createElement('div');
     anteRowDiv.id = 'gamba-menu-ante-row';
-    anteRowDiv.style.display = 'flex';
-    anteRowDiv.style.justifyContent = 'center';
-    anteRowDiv.style.alignItems = 'center';
-    anteRowDiv.style.gap = '16px';
-    anteRowDiv.style.marginBottom = '2px';
 
     const anteDiv = document.createElement('span');
     anteDiv.id = 'gamba-menu-ante';
-    anteDiv.style.color = '#fff';
-    anteDiv.style.fontSize = '13px';
     anteDiv.textContent = `Ante: ${_GAMBA_ANTE}`;
 
     const maxBetDiv = document.createElement('span');
     maxBetDiv.id = 'gamba-menu-maxbet';
-    maxBetDiv.style.color = '#fff';
-    maxBetDiv.style.fontSize = '13px';
     maxBetDiv.textContent = `Max. Bet: ${_GAMBA_MAX_BET}`;
 
     anteRowDiv.appendChild(anteDiv);
     anteRowDiv.appendChild(maxBetDiv);
     _GAMBA_MENU.appendChild(anteRowDiv);
 
-    // Points display below ante
     const pointsDiv = document.createElement('div');
     pointsDiv.id = 'gamba-menu-points';
     pointsDiv.textContent = `Your Points: ${_GAMBA_POINTS}`;
     _GAMBA_MENU.appendChild(pointsDiv);
 
-    // Pot display below points
     const potDiv = document.createElement('div');
     potDiv.id = 'gamba-menu-pot';
-    potDiv.style.color = '#fff';
-    potDiv.style.fontWeight = 'bold';
-    potDiv.style.fontSize = '18px';
-    potDiv.style.marginTop = '10px';
-    potDiv.style.marginBottom = '4px';
-    potDiv.style.border = '2px solid #ffd700';
-    potDiv.style.borderRadius = '6px';
-    potDiv.style.padding = '6px 18px';
-    potDiv.style.background = 'rgba(30,30,30,0.85)';
     potDiv.textContent = `Pot: ${_GAMBA_POT}`;
     _GAMBA_MENU.appendChild(potDiv);
 
-    // Expose a way to update points, ante, max bet, and pot display
-    THE_WINDOW.updateGambaPointsDisplay = function() {
+    THE_WINDOW.updateGambaPointsDisplay = () => {
         _GAMBA_POINTS = getGambaPoints();
         pointsDiv.textContent = `Your Points: ${_GAMBA_POINTS}`;
     };
-    THE_WINDOW.updateGambaAnteDisplay = function() {
+    THE_WINDOW.updateGambaAnteDisplay = () => {
         _GAMBA_ANTE = getGambaAnte();
         anteDiv.textContent = `Ante: ${_GAMBA_ANTE}`;
     };
-    THE_WINDOW.updateGambaMaxBetDisplay = function() {
+    THE_WINDOW.updateGambaMaxBetDisplay = () => {
         _GAMBA_MAX_BET = getGambaMaxBet();
         maxBetDiv.textContent = `Max. Bet: ${_GAMBA_MAX_BET}`;
     };
-    THE_WINDOW.updateGambaPotDisplay = function() {
+    THE_WINDOW.updateGambaPotDisplay = () => {
         _GAMBA_POT = getGambaPot();
         potDiv.textContent = `Pot: ${_GAMBA_POT}`;
     };
-
-    // Expose setPot function
     THE_WINDOW.setPot = setGambaPot;
 
     document.body.appendChild(_GAMBA_MENU);
 
-    // Drag logic
     _GAMBA_MENU.addEventListener('mousedown', (evt) => {
-        // Only start drag if left mouse button and not clicking a button
         if (evt.button !== 0 || evt.target.classList.contains('gamba-menu-btn')) return;
         _GAMBA_MENU_DRAGGING = true;
         _GAMBA_MENU.classList.add('grabbing');
@@ -484,7 +479,7 @@ function createGambaMenu() {
             document.body.style.userSelect = '';
         }
     });
-}
+};
 
 if (document.readyState !== 'loading') {
         createGambaMenu();
