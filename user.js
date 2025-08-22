@@ -654,6 +654,12 @@ const _STYLING = `
         transform: scale(0.95);
         box-shadow: 0 0 0 2px #fff2 inset;
     }
+    #gamba-btn-ante {
+        background: #444444;
+    }
+    #gamba-btn-ante:hover {
+        background: #555555;
+    }
     #gamba-btn-call {
         background: #1976d2;
     }
