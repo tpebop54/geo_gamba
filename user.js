@@ -448,26 +448,50 @@ const createGambaMenu = () => {
 
     _GAMBA_MENU.appendChild(pointsRow);
 
-    const btnRow = document.createElement('div');
-    btnRow.id = 'gamba-menu-buttons';
+    const btnRow1 = document.createElement('div');
+    btnRow1.id = 'gamba-menu-buttons-row1';
+    btnRow1.style.display = 'flex';
+    btnRow1.style.gap = '8px';
+    btnRow1.style.justifyContent = 'center';
+    btnRow1.style.marginBottom = '6px';
 
-    const actions = [
+    const btnRow2 = document.createElement('div');
+    btnRow2.id = 'gamba-menu-buttons-row2';
+    btnRow2.style.display = 'flex';
+    btnRow2.style.gap = '8px';
+    btnRow2.style.justifyContent = 'center';
+    btnRow2.style.marginBottom = '10px';
+
+    // First row: Ante, Knock, Call
+    [
         { label: 'Ante', id: 'gamba-btn-ante', callback: _onAnte },
         { label: 'Knock', id: 'gamba-btn-knock', callback: _onKnock },
-        { label: 'Call', id: 'gamba-btn-call', callback: _onCall },
-        { label: 'Raise', id: 'gamba-btn-raise', callback: _onRaise },
-        { label: 'Fold', id: 'gamba-btn-fold', callback: _onFold },
-        { label: 'All-in', id: 'gamba-btn-allin', callback: _onAllIn }
-    ];
-    actions.forEach(({ label, id, callback }) => {
+        { label: 'Call', id: 'gamba-btn-call', callback: _onCall }
+    ].forEach(({ label, id, callback }) => {
         const btn = document.createElement('button');
         btn.className = 'gamba-menu-btn';
         btn.id = id;
         btn.textContent = label;
         btn.onclick = callback;
-        btnRow.appendChild(btn);
+        btnRow1.appendChild(btn);
     });
-    _GAMBA_MENU.appendChild(btnRow);
+
+    // Second row: Raise, Fold, All-in
+    [
+        { label: 'Raise', id: 'gamba-btn-raise', callback: _onRaise },
+        { label: 'Fold', id: 'gamba-btn-fold', callback: _onFold },
+        { label: 'All-in', id: 'gamba-btn-allin', callback: _onAllIn }
+    ].forEach(({ label, id, callback }) => {
+        const btn = document.createElement('button');
+        btn.className = 'gamba-menu-btn';
+        btn.id = id;
+        btn.textContent = label;
+        btn.onclick = callback;
+        btnRow2.appendChild(btn);
+    });
+
+    _GAMBA_MENU.appendChild(btnRow1);
+    _GAMBA_MENU.appendChild(btnRow2);
 
     const roundRow = document.createElement('div');
     roundRow.id = 'gamba-menu-round-row';
@@ -657,6 +681,7 @@ const _STYLING = `
         transition: background 0.2s, transform 0.1s;
         color: #fff;
         outline: none;
+        width: 72px;
     }
     .gamba-menu-btn:active {
         transform: scale(0.95);
