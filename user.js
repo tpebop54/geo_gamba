@@ -521,21 +521,9 @@ const createGambaMenu = () => {
     // Split round info into two rows
     const roundRow1 = document.createElement('div');
     roundRow1.id = 'gamba-menu-round-row1';
-    roundRow1.style.display = 'flex';
-    roundRow1.style.justifyContent = 'center';
-    roundRow1.style.gap = '16px';
-    roundRow1.style.marginBottom = '2px';
-    roundRow1.style.color = 'white';
-    roundRow1.style.fontSize = '12px';
 
     const roundRow2 = document.createElement('div');
     roundRow2.id = 'gamba-menu-round-row2';
-    roundRow2.style.display = 'flex';
-    roundRow2.style.justifyContent = 'center';
-    roundRow2.style.gap = '16px';
-    roundRow2.style.marginBottom = '2px';
-    roundRow2.style.color = 'white';
-    roundRow2.style.fontSize = '12px';
 
     const anteDiv = document.createElement('span');
     anteDiv.id = 'gamba-menu-ante';
@@ -822,7 +810,7 @@ const _STYLING = `
         background: rgba(30,30,30,0.85);
         text-align: center;
     }
-    #gamba-menu-round-row {
+    #gamba-menu-round-row1, #gamba-menu-round-row2 {
         display: flex;
         justify-content: center;
         align-items: center;
@@ -830,7 +818,6 @@ const _STYLING = `
         margin-bottom: 2px;
         color: white;
         font-size: 12px;
-        margin: 10px 0;
     }
 `;
 
