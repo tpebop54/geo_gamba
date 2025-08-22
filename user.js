@@ -500,13 +500,13 @@ const createGambaMenu = () => {
     anteDiv.id = 'gamba-menu-ante';
     anteDiv.textContent = `Ante: ${_GAMBA_ANTE}`;
 
-    const maxBetDiv = document.createElement('span');
-    maxBetDiv.id = 'gamba-menu-maxbet';
-    maxBetDiv.textContent = `Max. Bet: ${_GAMBA_MAX_BET}`;
-
     const currentBetDiv = document.createElement('span');
     currentBetDiv.id = 'gamba-menu-currentbet';
     currentBetDiv.textContent = `Current Bet: ${_GAMBA_CURRENT_BET}`;
+
+    const maxBetDiv = document.createElement('span');
+    maxBetDiv.id = 'gamba-menu-maxbet';
+    maxBetDiv.textContent = `Max. Bet: ${_GAMBA_MAX_BET}`;
 
     roundRow.appendChild(anteDiv);
     roundRow.appendChild(maxBetDiv);
