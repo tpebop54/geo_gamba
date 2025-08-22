@@ -23,9 +23,6 @@
 
 const THE_WINDOW = unsafeWindow || window;
 
-const lget = THE_WINDOW.localStorage.getItem;
-const lset = THE_WINDOW.localStorage.setItem;
-
 
 // Global state, which may be pulled from localStorage or will use defaults if not. =============================================
 // localStorage holds the master values, and needs to stay in sync with other players and the game master.
@@ -57,81 +54,81 @@ const _GAMBA_DEFAULT_MY_BET = 0;
 const _GAMBA_DEFAULT_THEIR_BET = 0;
 
 const getGambaMyBet = () => {
-    const val = lget(_GAMBA_MY_BET_KEY);
+    const val = THE_WINDOW.localStorage.getItem(_GAMBA_MY_BET_KEY);
     return val !== null ? parseInt(val, 10) : _GAMBA_DEFAULT_MY_BET;
 };
 
 const setGambaMyBet = (val) => {
-    lset(_GAMBA_MY_BET_KEY, String(val));
+    THE_WINDOW.localStorage.setItem(_GAMBA_MY_BET_KEY, String(val));
 };
 
 const getGambTheirBet = () => {
-    const val = lget(_GAMBA_THEIR_BET_KEY);
+    const val = THE_WINDOW.localStorage.getItem(_GAMBA_THEIR_BET_KEY);
     return val !== null ? parseInt(val, 10) : _GAMBA_DEFAULT_THEIR_BET;
 };
 
 const setGambaTheirBet = (val) => {
-    lset(_GAMBA_THEIR_BET_KEY, String(val));
+    THE_WINDOW.localStorage.setItem(_GAMBA_THEIR_BET_KEY, String(val));
 };
 
 const getGambaPot = () => {
-    const val = lget(_GAMBA_POT_KEY);
+    const val = THE_WINDOW.localStorage.getItem(_GAMBA_POT_KEY);
     return val !== null ? parseInt(val, 10) : _GAMBA_DEFAULT_POT;
 };
 
 const setGambaPot = (val) => {
-    lset(_GAMBA_POT_KEY, String(val));
+    THE_WINDOW.localStorage.setItem(_GAMBA_POT_KEY, String(val));
     _GAMBA_POT = val;
 };
 
 const getGambaMaxBet = () => {
-    const val = lget(_GAMBA_MAX_BET_KEY);
+    const val = THE_WINDOW.localStorage.getItem(_GAMBA_MAX_BET_KEY);
     return val !== null ? parseInt(val, 10) : _GAMBA_DEFAULT_MAX_BET;
 };
 
 const setGambaMaxBet = (val) => {
-    lset(_GAMBA_MAX_BET_KEY, String(val));
+    THE_WINDOW.localStorage.setItem(_GAMBA_MAX_BET_KEY, String(val));
 };
 
 const getGambaAnte = () => {
-    const val = lget(_GAMBA_ANTE_KEY);
+    const val = THE_WINDOW.localStorage.getItem(_GAMBA_ANTE_KEY);
     return val !== null ? parseInt(val, 10) : _GAMBA_DEFAULT_ANTE;
 };
 
 const setGambaAnte = (val) => {
-    lset(_GAMBA_ANTE_KEY, String(val));
+    THE_WINDOW.localStorage.setItem(_GAMBA_ANTE_KEY, String(val));
 };
 
 const getGambaMyStack = () => {
-    const val = lget(_GAMBA_MY_STACK_KEY);
+    const val = THE_WINDOW.localStorage.getItem(_GAMBA_MY_STACK_KEY);
     return val !== null ? parseInt(val, 10) : _GAMBA_DEFAULT_STACK;
 };
 
 const setGambaMyStack = (val) => {
-    lset(_GAMBA_MY_STACK_KEY, String(val));
+    THE_WINDOW.localStorage.setItem(_GAMBA_MY_STACK_KEY, String(val));
 };
 
 const getGambaTheirStack = () => {
-    const val = lget(_GAMBA_THEIR_STACK_KEY);
+    const val = THE_WINDOW.localStorage.getItem(_GAMBA_THEIR_STACK_KEY);
     return val !== null ? parseInt(val, 10) : _GAMBA_DEFAULT_STACK;
 };
 
 const setGambaTheirStack = (val) => { // Note: this will only change it for you. The same code is running on other clients.
-    lset(_GAMBA_THEIR_STACK_KEY, String(val));
+    THE_WINDOW.localStorage.setItem(_GAMBA_THEIR_STACK_KEY, String(val));
 };
 
 const getGambaWhoseTurn = () => {
-    const val = lget(_GAMBA_WHOSE_TURN_KEY);
+    const val = THE_WINDOW.localStorage.getItem(_GAMBA_WHOSE_TURN_KEY);
     return val !== null ? val : _GAMBA_DEFAULT_WHOSE_TURN;
 };
 
 const setGambaWhoseTurn = (val) => {
-    lset(_GAMBA_WHOSE_TURN_KEY, val);
+    THE_WINDOW.localStorage.setItem(_GAMBA_WHOSE_TURN_KEY, val);
     _GAMBA_WHOSE_TURN = val;
 };
 
 const isMyTurn = () => {
-    const turn = lget(_GAMBA_WHOSE_TURN_KEY);
+    const turn = THE_WINDOW.localStorage.getItem(_GAMBA_WHOSE_TURN_KEY);
     return (turn !== null ? turn : _GAMBA_DEFAULT_WHOSE_TURN) === 'mine';
 };
 
