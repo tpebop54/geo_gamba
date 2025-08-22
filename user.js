@@ -48,6 +48,29 @@ const _GAMBA_DEFAULT_POT = 0; // TODO: fix this logic
 
 
 // localStorage getters and setters. ============================================================================================
+const _GAMBA_YOUR_BET_KEY = 'gamba_your_bet';
+const _GAMBA_THEIR_BET_KEY = 'gamba_their_bet';
+
+const _GAMBA_DEFAULT_YOUR_BET = 0;
+const _GAMBA_DEFAULT_THEIR_BET = 0;
+
+const getGambaYourBet = () => {
+    const val = THE_WINDOW.localStorage.getItem(_GAMBA_YOUR_BET_KEY);
+    return val !== null ? parseInt(val, 10) : _GAMBA_DEFAULT_YOUR_BET;
+};
+
+const setGambaYourBet = (val) => {
+    THE_WINDOW.localStorage.setItem(_GAMBA_YOUR_BET_KEY, String(val));
+};
+
+const getGambaTheirBet = () => {
+    const val = THE_WINDOW.localStorage.getItem(_GAMBA_THEIR_BET_KEY);
+    return val !== null ? parseInt(val, 10) : _GAMBA_DEFAULT_THEIR_BET;
+};
+
+const setGambaTheirBet = (val) => {
+    THE_WINDOW.localStorage.setItem(_GAMBA_THEIR_BET_KEY, String(val));
+};
 
 const getGambaPot = () => {
     const val = THE_WINDOW.localStorage.getItem(_GAMBA_POT_KEY);
@@ -118,6 +141,8 @@ _GAMBA_CURRENT_BET = getGambaCurrentBet();
 _GAMBA_MY_POINTS = getGambaMyPoints();
 _GAMBA_THEIR_POINTS  = getGambaTheirPoints();
 _GAMBA_POT = getGambaPot();
+_GAMBA_YOUR_BET = getGambaYourBet();
+_GAMBA_THEIR_BET = getGambaTheirBet();
 
 // ------------------------------------------------------------------------------------------------------------------------------
 
@@ -493,8 +518,24 @@ const createGambaMenu = () => {
     _GAMBA_MENU.appendChild(btnRow1);
     _GAMBA_MENU.appendChild(btnRow2);
 
-    const roundRow = document.createElement('div');
-    roundRow.id = 'gamba-menu-round-row';
+    // Split round info into two rows
+    const roundRow1 = document.createElement('div');
+    roundRow1.id = 'gamba-menu-round-row1';
+    roundRow1.style.display = 'flex';
+    roundRow1.style.justifyContent = 'center';
+    roundRow1.style.gap = '16px';
+    roundRow1.style.marginBottom = '2px';
+    roundRow1.style.color = 'white';
+    roundRow1.style.fontSize = '12px';
+
+    const roundRow2 = document.createElement('div');
+    roundRow2.id = 'gamba-menu-round-row2';
+    roundRow2.style.display = 'flex';
+    roundRow2.style.justifyContent = 'center';
+    roundRow2.style.gap = '16px';
+    roundRow2.style.marginBottom = '2px';
+    roundRow2.style.color = 'white';
+    roundRow2.style.fontSize = '12px';
 
     const anteDiv = document.createElement('span');
     anteDiv.id = 'gamba-menu-ante';
@@ -504,14 +545,20 @@ const createGambaMenu = () => {
     currentBetDiv.id = 'gamba-menu-currentbet';
     currentBetDiv.textContent = `Current Bet: ${_GAMBA_CURRENT_BET}`;
 
-    const maxBetDiv = document.createElement('span');
-    maxBetDiv.id = 'gamba-menu-maxbet';
-    maxBetDiv.textContent = `Max. Bet: ${_GAMBA_MAX_BET}`;
+    const yourBetDiv = document.createElement('span');
+    yourBetDiv.id = 'gamba-menu-yourbet';
+    yourBetDiv.textContent = `Your Bet: ${_GAMBA_YOUR_BET}`;
 
-    roundRow.appendChild(anteDiv);
-    roundRow.appendChild(maxBetDiv);
-    roundRow.appendChild(currentBetDiv);
-    _GAMBA_MENU.appendChild(roundRow);
+    const theirBetDiv = document.createElement('span');
+    theirBetDiv.id = 'gamba-menu-theirbet';
+    theirBetDiv.textContent = `Their Bet: ${_GAMBA_THEIR_BET}`;
+
+    roundRow1.appendChild(anteDiv);
+    roundRow1.appendChild(currentBetDiv);
+    roundRow2.appendChild(yourBetDiv);
+    roundRow2.appendChild(theirBetDiv);
+    _GAMBA_MENU.appendChild(roundRow1);
+    _GAMBA_MENU.appendChild(roundRow2);
 
     const potDiv = document.createElement('div');
     potDiv.id = 'gamba-menu-pot';
@@ -526,9 +573,17 @@ const createGambaMenu = () => {
         _GAMBA_ANTE = getGambaAnte();
         anteDiv.textContent = `Ante: ${_GAMBA_ANTE}`;
     };
-    THE_WINDOW.updateGambaMaxBetDisplay = () => {
-        _GAMBA_MAX_BET = getGambaMaxBet();
-        maxBetDiv.textContent = `Max. Bet: ${_GAMBA_MAX_BET}`;
+    THE_WINDOW.updateGambaCurrentBetDisplay = () => {
+        _GAMBA_CURRENT_BET = getGambaCurrentBet();
+        currentBetDiv.textContent = `Current Bet: ${_GAMBA_CURRENT_BET}`;
+    };
+    THE_WINDOW.updateGambaYourBetDisplay = () => {
+        _GAMBA_YOUR_BET = getGambaYourBet();
+        yourBetDiv.textContent = `Your Bet: ${_GAMBA_YOUR_BET}`;
+    };
+    THE_WINDOW.updateGambaTheirBetDisplay = () => {
+        _GAMBA_THEIR_BET = getGambaTheirBet();
+        theirBetDiv.textContent = `Their Bet: ${_GAMBA_THEIR_BET}`;
     };
     THE_WINDOW.updateGambaPotDisplay = () => {
         _GAMBA_POT = getGambaPot();
