@@ -31,7 +31,6 @@ const THE_WINDOW = unsafeWindow || window;
 
 const _GAMBA_ANTE_KEY = 'gamba_ante';
 const _GAMBA_MAX_BET_KEY = 'gamba_max_bet';
-const _GAMBA_CURRENT_BET_KEY = 'gamba_current_bet';
 const _GAMBA_MY_POINTS_KEY = 'gamba_my_points';
 const _GAMBA_THEIR_POINTS_KEY = 'gamba_their_points';
 const _GAMBA_POT_KEY = 'gamba_pot';
@@ -115,14 +114,6 @@ const setGambaMaxBet = (val) => {
     THE_WINDOW.localStorage.setItem(_GAMBA_MAX_BET_KEY, String(val));
 };
 
-const getGambaCurrentBet = () => {
-    const val = THE_WINDOW.localStorage.getItem(_GAMBA_CURRENT_BET_KEY);
-    return val !== null ? parseInt(val, 10) : _GAMBA_DEFAULT_MAX_BET;
-};
-
-const setGambaCurrentBet = (val) => {
-    THE_WINDOW.localStorage.setItem(_GAMBA_CURRENT_BET_KEY, String(val));
-};
 
 const getGambaAnte = () => {
     const val = THE_WINDOW.localStorage.getItem(_GAMBA_ANTE_KEY);
@@ -161,7 +152,6 @@ const setGambaTheirPoints = (val) => { // Note: this will only change it for you
 
 _GAMBA_ANTE = getGambaAnte();
 _GAMBA_MAX_BET = getGambaMaxBet();
-_GAMBA_CURRENT_BET = getGambaCurrentBet();
 _GAMBA_MY_POINTS = getGambaMyPoints();
 _GAMBA_THEIR_POINTS  = getGambaTheirPoints();
 _GAMBA_POT = getGambaPot();
