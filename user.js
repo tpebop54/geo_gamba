@@ -403,13 +403,14 @@ const _onRaise = (evt) => {
     const btn = evt.currentTarget;
     btn.classList.add('clicked');
     setTimeout(() => btn.classList.remove('clicked'), 120);
-    console.log('Raise button clicked');
 
+    // Remove any existing raise input row
     const oldDiv = document.getElementById('gamba-raise-input-row');
     if (oldDiv) oldDiv.remove();
 
-    const btnRow = document.getElementById('gamba-menu-buttons');
-    if (!btnRow) return;
+    // Find the correct parent to insert after btnRow1
+    const btnRow1 = document.getElementById('gamba-menu-buttons-row1');
+    if (!btnRow1) return;
 
     const raiseDiv = document.createElement('div');
     raiseDiv.id = 'gamba-raise-input-row';
@@ -429,15 +430,12 @@ const _onRaise = (evt) => {
     checkBtn.id = 'gamba-raise-check-btn';
     checkBtn.classList.add('gamba-raise-button');
     checkBtn.innerHTML = '&#x2713';
-    checkBtn.style.background = 'green';
+    checkBtn.style.background = 'gray';
     checkBtn.style.color = 'white';
     checkBtn.style.border = 'none';
     checkBtn.style.padding = '4px 10px';
     checkBtn.style.borderRadius = '4px';
     checkBtn.disabled = true;
-    checkBtn.onclick = () => {
-        console.log('Raise value:', input.value);
-    };
     raiseDiv.appendChild(checkBtn);
 
     const xBtn = document.createElement('button');
@@ -455,10 +453,35 @@ const _onRaise = (evt) => {
     raiseDiv.appendChild(xBtn);
 
     input.addEventListener('input', () => {
-        checkBtn.disabled = input.value === '';
+        const val = parseInt(input.value, 10);
+        const myPoints = getGambaMyPoints();
+        const yourBet = getGambaYourBet();
+        const maxBet = getGambaMaxBet();
+        // Only enable if valid number, >0, <= myPoints, and <= maxBet - yourBet
+        const maxRaise = Math.min(myPoints, maxBet - yourBet);
+        checkBtn.disabled = isNaN(val) || val < 1 || val > maxRaise;
+        checkBtn.style.background = checkBtn.disabled ? 'gray' : 'green';
     });
 
-    btnRow.parentNode.insertBefore(raiseDiv, btnRow.nextSibling);
+    checkBtn.onclick = () => {
+        const val = parseInt(input.value, 10);
+        if (isNaN(val) || val < 1) return;
+        let myPoints = getGambaMyPoints();
+        let yourBet = getGambaYourBet();
+        let maxBet = getGambaMaxBet();
+        let raiseAmount = Math.min(val, myPoints, maxBet - yourBet);
+        setGambaMyPoints(myPoints - raiseAmount);
+        setGambaYourBet(yourBet + raiseAmount);
+        const newPot = getGambaPot() + raiseAmount;
+        setGambaPot(newPot);
+        THE_WINDOW.updateGambaPointsDisplay();
+        THE_WINDOW.updateGambaYourBetDisplay();
+        THE_WINDOW.updateGambaPotDisplay();
+        sendChat(`raise ${raiseAmount}`);
+        raiseDiv.remove();
+    };
+
+    btnRow1.parentNode.insertBefore(raiseDiv, btnRow1.nextSibling);
 };
 
 const _onFold = (evt) => {
