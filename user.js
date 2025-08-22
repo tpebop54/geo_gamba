@@ -138,14 +138,24 @@ const _tryMultiple = (selectors) => { // Different modes, different versions, Ge
     return null;
 };
 
-const getChatInput = () => document.querySelector('input[class^="chat-input_textInput__fb1xt"]');
+const getChatInput = () => {
+    return document.querySelector('input[class^="chat-input_textInput__fb1xt"]');
+};
 
 const getRoundStartingWrapper = () => {
     return document.querySelector(`div[class^="round-starting_wrapper__"]`);
 };
 
+const getNextRoundButton = () => { // Used to detect when the inter-round screen is active, for each screen that the players will see in different roles. TODO: add game master
+    const selectors = [
+        `button[data-qa="play-again-button"]`, // Player, in control of game.
+        `div[class^="waiting-message_roundStatusMessage__"]`, // Player, not in control of game.
+    ];
+    return _tryMultiple(selectors);
+};
+
 const getPlayAgainButton = () => {
-    return document.querySelector(`button[data-qa="play-again-button"]`);
+    return document.querySelector(``);
 };
 
 const sendChat = (text) => {
@@ -156,7 +166,9 @@ const sendChat = (text) => {
     chatInput.dispatchEvent(enterEvent);
 };
 
-const getChatLog = () => document.querySelector('div[class^="chat-log_scrollContainer__"]');
+const getChatLog = () => {
+    return document.querySelector('div[class^="chat-log_scrollContainer__"]');
+};
 
 // ------------------------------------------------------------------------------------------------------------------------------------
 
@@ -537,12 +549,12 @@ const watchRoundEnd = () => {
     };
 
     const onEndGame = () => {
-        debugger
+        console.log('onEndGame');
     };
 
     const observer = new MutationObserver(() => {
-        prepNewRound();
         onEndGame();
+        prepNewRound();
     });
     observer.observe(document.body, { childList: true, subtree: true });
 }
