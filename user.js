@@ -21,61 +21,37 @@
 // maps - https://www.geoguessr.com/api/maps/world
 
 
-
-
 const THE_WINDOW = unsafeWindow || window;
 
 
 // Global state, which may be pulled from localStorage or will use defaults if not. =============================================
 // localStorage holds the master values, and needs to stay in sync with other players and the game master.
 
+const _GAMBA_WHOSE_TURN_KEY = 'gamba_whose_turn';
+const _GAMBA_MY_STACK_KEY = 'gamba_my_stack';
+const _GAMBA_THEIR_STACK_KEY = 'gamba_their_stack';
 const _GAMBA_ANTE_KEY = 'gamba_ante';
 const _GAMBA_MAX_BET_KEY = 'gamba_max_bet';
-const _GAMBA_MY_STACK = 'gamba_my_stack';
-const _GAMBA_THEIR_STACK_KEY = 'gamba_their_stack';
+const _GAMBA_MY_BET_KEY = 'gamba_my_bet';
+const _GAMBA_THEIR_BET_KEY = 'gamba_their_bet';
 const _GAMBA_POT_KEY = 'gamba_pot';
 
-const _GAMBA_DEFAULT_ANTE = 50;
-const _GAMBA_DEFAULT_MAX_BET = 300;
-const _GAMBA_DEFAULT_STACK = 1000;
-const _GAMBA_DEFAULT_POT = 0; // TODO: fix this logic
-
-// Whose turn logic
-const _GAMBA_WHOSE_TURN_KEY = '_gamba_whose_turn';
 const _GAMBA_DEFAULT_WHOSE_TURN = 'mine';
-
-let _GAMBA_WHOSE_TURN = (function() {
-    const val = THE_WINDOW.localStorage.getItem(_GAMBA_WHOSE_TURN_KEY);
-    return val !== null ? val : _GAMBA_DEFAULT_WHOSE_TURN;
-})();
-
-const getGambaWhoseTurn = () => {
-    const val = THE_WINDOW.localStorage.getItem(_GAMBA_WHOSE_TURN_KEY);
-    return val !== null ? val : _GAMBA_DEFAULT_WHOSE_TURN;
-};
-
-const setGambaWhoseTurn = (val) => {
-    THE_WINDOW.localStorage.setItem(_GAMBA_WHOSE_TURN_KEY, val);
-    _GAMBA_WHOSE_TURN = val;
-};
-
-const isMyTurn = () => {
-    const turn = THE_WINDOW.localStorage.getItem(_GAMBA_WHOSE_TURN_KEY);
-    return (turn !== null ? turn : _GAMBA_DEFAULT_WHOSE_TURN) === 'mine';
-};
+const _GAMBA_DEFAULT_STACK = 1000;
+const _GAMBA_DEFAULT_ANTE = 50;
+const _GAMBA_DEFAULT_BET = _GAMBA_DEFAULT_ANTE * 2; // TODO: revisit (team gamba)
+const _GAMBA_DEFAULT_MAX_BET = 300;
+const _GAMBA_DEFAULT_POT = 0;
 
 // ------------------------------------------------------------------------------------------------------------------------------
 
 
 
 
-
 // localStorage getters and setters. ============================================================================================
-const _GAMBA_MY_BET_KEY = 'gamba_my_bet';
-const _GAMBA_THEIR_BET_KEY = 'gamba_their_bet';
 
 const _GAMBA_DEFAULT_MY_BET = 0;
-const _GAMBA_DEFAULT_their_BET = 0;
+const _GAMBA_DEFAULT_THEIR_BET = 0;
 
 const getGambaMyBet = () => {
     const val = THE_WINDOW.localStorage.getItem(_GAMBA_MY_BET_KEY);
@@ -88,7 +64,7 @@ const setGambaMyBet = (val) => {
 
 const getGambTheirBet = () => {
     const val = THE_WINDOW.localStorage.getItem(_GAMBA_THEIR_BET_KEY);
-    return val !== null ? parseInt(val, 10) : _GAMBA_DEFAULT_their_BET;
+    return val !== null ? parseInt(val, 10) : _GAMBA_DEFAULT_THEIR_BET;
 };
 
 const setGambTheirBet = (val) => {
@@ -124,21 +100,36 @@ const setGambaAnte = (val) => {
 };
 
 const getGambaMyStack = () => {
-    const val = THE_WINDOW.localStorage.getItem(_GAMBA_MY_STACK);
+    const val = THE_WINDOW.localStorage.getItem(_GAMBA_MY_STACK_KEY);
     return val !== null ? parseInt(val, 10) : _GAMBA_DEFAULT_STACK;
 };
 
 const setGambaMyStack = (val) => {
-    THE_WINDOW.localStorage.setItem(_GAMBA_MY_STACK, String(val));
+    THE_WINDOW.localStorage.setItem(_GAMBA_MY_STACK_KEY, String(val));
 };
 
-const getGambTheirStack = () => {
+const getGambaTheirStack = () => {
     const val = THE_WINDOW.localStorage.getItem(_GAMBA_THEIR_STACK_KEY);
     return val !== null ? parseInt(val, 10) : _GAMBA_DEFAULT_STACK;
 };
 
-const setGambTheirStack = (val) => { // Note: this will only change it for you. The same code is running on other clients.
+const setGambaTheirStack = (val) => { // Note: this will only change it for you. The same code is running on other clients.
     THE_WINDOW.localStorage.setItem(_GAMBA_THEIR_STACK_KEY, String(val));
+};
+
+const getGambaWhoseTurn = () => {
+    const val = THE_WINDOW.localStorage.getItem(_GAMBA_WHOSE_TURN_KEY);
+    return val !== null ? val : _GAMBA_DEFAULT_WHOSE_TURN;
+};
+
+const setGambaWhoseTurn = (val) => {
+    THE_WINDOW.localStorage.setItem(_GAMBA_WHOSE_TURN_KEY, val);
+    _GAMBA_WHOSE_TURN = val;
+};
+
+const isMyTurn = () => {
+    const turn = THE_WINDOW.localStorage.getItem(_GAMBA_WHOSE_TURN_KEY);
+    return (turn !== null ? turn : _GAMBA_DEFAULT_WHOSE_TURN) === 'mine';
 };
 
 // ------------------------------------------------------------------------------------------------------------------------------
@@ -149,14 +140,14 @@ const setGambTheirStack = (val) => { // Note: this will only change it for you. 
 
 // Globals, which will be used to store the state for this session (will get reloaded from localStorage on page load). ==========
 
-_GAMBA_ANTE = getGambaAnte();
-_GAMBA_MAX_BET = getGambaMaxBet();
-_GAMBA_MY_STACK = getGambaMyStack();
-_GAMBA_THEIR_STACK  = getGambTheirStack();
-_GAMBA_POT = getGambaPot();
-_GAMBA_MY_BET = getGambaMyBet();
-_GAMBA_THEIR_BET = getGambTheirBet();
-_GAMBA_WHOSE_TURN = getGambaWhoseTurn();
+let _GAMBA_ANTE = getGambaAnte();
+let _GAMBA_MAX_BET = getGambaMaxBet();
+let _GAMBA_MY_STACK = getGambaMyStack();
+let _GAMBA_THEIR_STACK  = getGambaTheirStack();
+let _GAMBA_POT = getGambaPot();
+let _GAMBA_MY_BET = getGambaMyBet();
+let _GAMBA_THEIR_BET = getGambTheirBet();
+let _GAMBA_WHOSE_TURN = getGambaWhoseTurn();
 
 // ------------------------------------------------------------------------------------------------------------------------------
 
@@ -900,10 +891,10 @@ const clearState = () => {
     setGambaAnte(_GAMBA_DEFAULT_ANTE);
     setGambaWhoseTurn(_GAMBA_DEFAULT_WHOSE_TURN);
     setGambaMyStack(_GAMBA_DEFAULT_STACK);
-    setGambTheirStack(_GAMBA_DEFAULT_STACK);
+    setGambaTheirStack(_GAMBA_DEFAULT_STACK);
     setGambaMaxBet(_GAMBA_DEFAULT_MAX_BET);
     setGambaMyBet(_GAMBA_DEFAULT_MY_BET);
-    setGambTheirBet(_GAMBA_DEFAULT_their_BET);
+    setGambTheirBet(_GAMBA_DEFAULT_THEIR_BET);
     setGambaPot(_GAMBA_DEFAULT_POT);
 };
 
