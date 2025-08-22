@@ -31,8 +31,8 @@ const THE_WINDOW = unsafeWindow || window;
 
 const _GAMBA_ANTE_KEY = 'gamba_ante';
 const _GAMBA_MAX_BET_KEY = 'gamba_max_bet';
-const _GAMBA_MY_POINTS_KEY = 'gamba_my_points';
-const _GAMBA_THEIR_POINTS_KEY = 'gamba_their_points';
+const _GAMBA_MY_STACK = 'gamba_my_stack';
+const _GAMBA_THEIR_STACK_KEY = 'gamba_their_stack';
 const _GAMBA_POT_KEY = 'gamba_pot';
 
 const _GAMBA_DEFAULT_ANTE = 50;
@@ -72,7 +72,7 @@ const isMyTurn = () => {
 
 // localStorage getters and setters. ============================================================================================
 const _GAMBA_MY_BET_KEY = 'gamba_my_bet';
-const _GAMBA_their_BET_KEY = 'gamba_their_bet';
+const _GAMBA_THEIR_BET_KEY = 'gamba_their_bet';
 
 const _GAMBA_DEFAULT_MY_BET = 0;
 const _GAMBA_DEFAULT_their_BET = 0;
@@ -87,12 +87,12 @@ const setGambaMyBet = (val) => {
 };
 
 const getGambTheirBet = () => {
-    const val = THE_WINDOW.localStorage.getItem(_GAMBA_their_BET_KEY);
+    const val = THE_WINDOW.localStorage.getItem(_GAMBA_THEIR_BET_KEY);
     return val !== null ? parseInt(val, 10) : _GAMBA_DEFAULT_their_BET;
 };
 
 const setGambTheirBet = (val) => {
-    THE_WINDOW.localStorage.setItem(_GAMBA_their_BET_KEY, String(val));
+    THE_WINDOW.localStorage.setItem(_GAMBA_THEIR_BET_KEY, String(val));
 };
 
 const getGambaPot = () => {
@@ -124,21 +124,21 @@ const setGambaAnte = (val) => {
 };
 
 const getGambaMyPoints = () => {
-    const val = THE_WINDOW.localStorage.getItem(_GAMBA_MY_POINTS_KEY);
+    const val = THE_WINDOW.localStorage.getItem(_GAMBA_MY_STACK);
     return val !== null ? parseInt(val, 10) : _GAMBA_DEFAULT_POINTS;
 };
 
 const setGambaMyPoints = (val) => {
-    THE_WINDOW.localStorage.setItem(_GAMBA_MY_POINTS_KEY, String(val));
+    THE_WINDOW.localStorage.setItem(_GAMBA_MY_STACK, String(val));
 };
 
 const getGambTheirPoints = () => {
-    const val = THE_WINDOW.localStorage.getItem(_GAMBA_THEIR_POINTS_KEY);
+    const val = THE_WINDOW.localStorage.getItem(_GAMBA_THEIR_STACK_KEY);
     return val !== null ? parseInt(val, 10) : _GAMBA_DEFAULT_POINTS;
 };
 
 const setGambTheirPoints = (val) => { // Note: this will only change it for you. The same code is running on other clients.
-    THE_WINDOW.localStorage.setItem(_GAMBA_THEIR_POINTS_KEY, String(val));
+    THE_WINDOW.localStorage.setItem(_GAMBA_THEIR_STACK_KEY, String(val));
 };
 
 // ------------------------------------------------------------------------------------------------------------------------------
@@ -151,11 +151,11 @@ const setGambTheirPoints = (val) => { // Note: this will only change it for you.
 
 _GAMBA_ANTE = getGambaAnte();
 _GAMBA_MAX_BET = getGambaMaxBet();
-_GAMBA_MY_POINTS = getGambaMyPoints();
-_GAMBA_their_POINTS  = getGambTheirPoints();
+_GAMBA_MY_STACK = getGambaMyPoints();
+_GAMBA_THEIR_STACK  = getGambTheirPoints();
 _GAMBA_POT = getGambaPot();
 _GAMBA_MY_BET = getGambaMyBet();
-_GAMBA_their_BET = getGambTheirBet();
+_GAMBA_THEIR_BET = getGambTheirBet();
 _GAMBA_WHOSE_TURN = getGambaWhoseTurn();
 
 // ------------------------------------------------------------------------------------------------------------------------------
@@ -499,22 +499,22 @@ const createGambaMenu = () => {
     _GAMBA_MENU.appendChild(titleDiv);
 
     const myPointsDiv = document.createElement('div');
-    myPointsDiv.id = 'gamba-menu-my-points';
-    myPointsDiv.classList.add('gamba-menu-points');
-    myPointsDiv.textContent = `Me: ${_GAMBA_MY_POINTS}`;
+    myPointsDiv.id = 'gamba-menu-my-stack';
+    myPointsDiv.classList.add('gamba-menu-stack');
+    myPointsDiv.textContent = `My Stack: ${_GAMBA_MY_STACK}`;
     _GAMBA_MENU.appendChild(myPointsDiv);
 
     const theirPointsDiv = document.createElement('div');
-    theirPointsDiv.id = 'gamba-menu-their-points';
-    theirPointsDiv.classList.add('gamba-menu-points');
-    theirPointsDiv.textContent = `Their Points: ${_GAMBA_their_POINTS}`;
+    theirPointsDiv.id = 'gamba-menu-their-stack';
+    theirPointsDiv.classList.add('gamba-menu-stack');
+    theirPointsDiv.textContent = `Their Stack:\n${_GAMBA_THEIR_STACK}`;
 
-    const pointsRow = document.createElement('div');
-    pointsRow.id = 'gamba-points-row';
-    pointsRow.appendChild(myPointsDiv);
-    pointsRow.appendChild(theirPointsDiv);
+    const stackRow = document.createElement('div');
+    stackRow.id = 'gamba-stack-row';
+    stackRow.appendChild(myPointsDiv);
+    stackRow.appendChild(theirPointsDiv);
 
-    _GAMBA_MENU.appendChild(pointsRow);
+    _GAMBA_MENU.appendChild(stackRow);
 
     const btnRow1 = document.createElement('div');
     btnRow1.id = 'gamba-menu-buttons-row1';
@@ -609,7 +609,7 @@ const createGambaMenu = () => {
     const theirBetDiv = document.createElement('span');
     theirBetDiv.id = 'gamba-menu-their-bet';
     theirBetDiv.classList.add('gamba-round-info-div');
-    theirBetDiv.textContent = `Their Bet: ${_GAMBA_their_BET}`;
+    theirBetDiv.textContent = `Their Bet: ${_GAMBA_THEIR_BET}`;
 
     roundRow1.appendChild(anteDiv);
     roundRow1.appendChild(maxBetDiv);
@@ -624,8 +624,8 @@ const createGambaMenu = () => {
     _GAMBA_MENU.appendChild(potDiv);
 
     THE_WINDOW.updateGambaPointsDisplay = () => {
-        _GAMBA_MY_POINTS = getGambaMyPoints();
-        myPointsDiv.textContent = `My Points: ${_GAMBA_MY_POINTS}`;
+        _GAMBA_MY_STACK = getGambaMyPoints();
+        myPointsDiv.textContent = `My Stack:\n${_GAMBA_MY_STACK}`;
     };
     THE_WINDOW.updateGambaAnteDisplay = () => {
         _GAMBA_ANTE = getGambaAnte();
@@ -640,8 +640,8 @@ const createGambaMenu = () => {
         myBetDiv.textContent = `My Bet: ${_GAMBA_MY_BET}`;
     };
     THE_WINDOW.updateGambTheirBetDisplay = () => {
-        _GAMBA_their_BET = getGambTheirBet();
-        theirBetDiv.textContent = `Their Bet: ${_GAMBA_their_BET}`;
+        _GAMBA_THEIR_BET = getGambTheirBet();
+        theirBetDiv.textContent = `Their Bet: ${_GAMBA_THEIR_BET}`;
     };
     THE_WINDOW.updateGambaPotDisplay = () => {
         _GAMBA_POT = getGambaPot();
@@ -763,13 +763,13 @@ const _STYLING = `
         justify-content: center;
         margin-bottom: 10px;
     }
-    #gamba-points-row {
+    #gamba-stack-row {
         display: flex;
         align-items: center;
         justify-content: center;
         width: 100%; 
     }
-    .gamba-menu-points {
+    .gamba-menu-stack {
         color: #ffd700;
         font-weight: bold;
         margin-bottom: 0;
