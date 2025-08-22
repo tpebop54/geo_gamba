@@ -198,11 +198,13 @@ const getPlayAgainButton = () => {
 };
 
 const sendChat = (text) => {
-    const chatInput = getChatInput();
-    chatInput.value = text;
-    chatInput.focus();
-    const enterEvent = new KeyboardEvent('keydown', { key: 'Enter', code: 'Enter', bubbles: true });
-    chatInput.dispatchEvent(enterEvent);
+    setTimeout(() => {
+        const chatInput = getChatInput();
+        chatInput.value = text;
+        chatInput.focus();
+        const enterEvent = new KeyboardEvent('keydown', { key: 'Enter', code: 'Enter', bubbles: true });
+        chatInput.dispatchEvent(enterEvent);
+    }, 100);
 };
 
 const getChatLog = () => {
@@ -403,13 +405,10 @@ const _onRaise = (evt) => {
     btn.classList.add('clicked');
     setTimeout(() => btn.classList.remove('clicked'), 120);
 
-    // Remove any existing raise input row
     const oldDiv = document.getElementById('gamba-raise-input-row');
     if (oldDiv) oldDiv.remove();
 
-    // Find the correct parent to insert after btnRow1
-    const btnRow1 = document.getElementById('gamba-menu-buttons-row1');
-    if (!btnRow1) return;
+    const btnRow2 = document.getElementById('gamba-menu-buttons-row2');
 
     const raiseDiv = document.createElement('div');
     raiseDiv.id = 'gamba-raise-input-row';
@@ -456,7 +455,6 @@ const _onRaise = (evt) => {
         const myPoints = getGambaMyPoints();
         const yourBet = getGambaYourBet();
         const maxBet = getGambaMaxBet();
-        // Only enable if valid number, >0, <= myPoints, and <= maxBet - yourBet
         const maxRaise = Math.min(myPoints, maxBet - yourBet);
         checkBtn.disabled = isNaN(val) || val < 1 || val > maxRaise;
         checkBtn.style.background = checkBtn.disabled ? 'gray' : 'green';
@@ -480,7 +478,7 @@ const _onRaise = (evt) => {
         raiseDiv.remove();
     };
 
-    btnRow1.parentNode.insertBefore(raiseDiv, btnRow1.nextSibling);
+    btnRow2.parentNode.insertBefore(raiseDiv, btnRow2.nextSibling);
 };
 
 const _onFold = (evt) => {
@@ -509,7 +507,7 @@ const createGambaMenu = () => {
     const theirPointsDiv = document.createElement('div');
     theirPointsDiv.id = 'gamba-menu-their-points';
     theirPointsDiv.classList.add('gamba-menu-points');
-    theirPointsDiv.textContent = `Them: ${_GAMBA_THEIR_POINTS}`;
+    theirPointsDiv.textContent = `Their Points: ${_GAMBA_THEIR_POINTS}`;
 
     const pointsRow = document.createElement('div');
     pointsRow.id = 'gamba-points-row';
@@ -803,10 +801,10 @@ const _STYLING = `
         box-shadow: 0 0 0 2px #fff2 inset;
     }
     #gamba-btn-ante {
-        background: #444444;
+        background: #beb80c;
     }
     #gamba-btn-ante:hover {
-        background: #555555;
+        background: #a49f09;
     }
     #gamba-btn-knock {
         background: #963edfff;
