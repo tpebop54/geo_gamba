@@ -140,6 +140,14 @@ const _tryMultiple = (selectors) => { // Different modes, different versions, Ge
 
 const getChatInput = () => document.querySelector('input[class^="chat-input_textInput__fb1xt"]');
 
+const getRoundStartingWrapper = () => {
+    return document.querySelector(`div[class^="round-starting_wrapper__"]`);
+};
+
+const getPlayAgainButton = () => {
+    return document.querySelector(`button[data-qa="play-again-button"]`);
+};
+
 const sendChat = (text) => {
     const chatInput = getChatInput();
     chatInput.value = text;
@@ -500,10 +508,48 @@ const createGambaMenu = () => {
 if (document.readyState !== 'loading') {
         createGambaMenu();
 } else {
-        document.addEventListener('DOMContentLoaded', createGambaMenu);
+    document.addEventListener('DOMContentLoaded', createGambaMenu);
 }
 
 // ------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+// Round events and watchers, done by watching DOM elements appear and disappear. ===============================================
+
+let _ROUND_STARTING_WRAPPER = null;
+
+const onRoundStart = () => {
+    debugger;
+};
+
+const watchRoundEnd = () => {
+    const prepNewRound = () => {
+        const roundStartingWrapper = getRoundStartingWrapper();
+        if (roundStartingWrapper) {
+            _ROUND_STARTING_WRAPPER = roundStartingWrapper;
+        } else if (_ROUND_STARTING_WRAPPER) {
+            _ROUND_STARTING_WRAPPER = null; // Wrapper disappeared, new round starting.
+            onRoundStart();
+        }
+    };
+
+    const onEndGame = () => {
+        debugger
+    };
+
+    const observer = new MutationObserver(() => {
+        prepNewRound();
+        onEndGame();
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+}
+watchRoundEnd();
+
+// ------------------------------------------------------------------------------------------------------------------------------
+
 
 
 
