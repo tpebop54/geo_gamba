@@ -543,9 +543,33 @@ const createGambaMenu = () => {
     _GAMBA_MENU.appendChild(btnRow1);
     _GAMBA_MENU.appendChild(btnRow2);
 
-    // Split round info into two rows
+    // Turn indicator row
+    const turnRow = document.createElement('div');
+    turnRow.id = 'gamba-menu-turn-row';
+    turnRow.classList.add('gamba-menu-round-row');
+    turnRow.style.marginBottom = '8px';
+    turnRow.style.fontWeight = 'bold';
+    turnRow.style.fontSize = '16px';
+    _GAMBA_MENU.appendChild(turnRow);
+
+    const updateTurnRow = () => {
+        turnRow.textContent = isYourTurn() ? 'Your Turn' : 'Their Turn';
+    };
+    setInterval(updateTurnRow, 250);
+    updateTurnRow();
+
     const roundRow1 = document.createElement('div');
     roundRow1.id = 'gamba-menu-round-row1';
+        const updateBtnRowEnabled = () => {
+            const enabled = isYourTurn();
+            [btnRow1, btnRow2].forEach(row => {
+                Array.from(row.children).forEach(btn => {
+                    btn.disabled = !enabled;
+                });
+            });
+        };
+        setInterval(updateBtnRowEnabled, 250);
+        updateBtnRowEnabled();
     roundRow1.classList.add('gamba-menu-round-row');
 
     const roundRow2 = document.createElement('div');
