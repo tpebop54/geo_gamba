@@ -146,7 +146,7 @@ const isMyTurn = () => {
 let _GAMBA_ANTE = getGambaAnte();
 let _GAMBA_MAX_BET = getGambaMaxBet();
 let _GAMBA_MY_STACK = getGambaMyStack();
-let _GAMBA_THEIR_STACK  = getGambaTheirStack();
+let _GAMBA_THEIR_STACK = getGambaTheirStack();
 let _GAMBA_POT = getGambaPot();
 let _GAMBA_MY_BET = getGambaMyBet();
 let _GAMBA_THEIR_BET = getGambTheirBet();
@@ -446,30 +446,30 @@ const _onRaise = (evt) => {
 
     input.addEventListener('input', () => {
         const val = parseInt(input.value, 10);
-    const myStack = getGambaMyStack();
-    const myBet = getGambaMyBet();
-    const maxBet = getGambaMaxBet();
-    const maxRaise = Math.min(myStack, maxBet - myBet);
-    checkBtn.disabled = isNaN(val) || val < 1 || val > maxRaise;
-    checkBtn.style.background = checkBtn.disabled ? 'gray' : 'green';
+        const myStack = getGambaMyStack();
+        const myBet = getGambaMyBet();
+        const maxBet = getGambaMaxBet();
+        const maxRaise = Math.min(myStack, maxBet - myBet);
+        checkBtn.disabled = isNaN(val) || val < 1 || val > maxRaise;
+        checkBtn.style.background = checkBtn.disabled ? 'gray' : 'green';
     });
 
     checkBtn.onclick = () => {
         const val = parseInt(input.value, 10);
         if (isNaN(val) || val < 1) return;
-    let myStack = getGambaMyStack();
-    let myBet = getGambaMyBet();
-    let maxBet = getGambaMaxBet();
-    let raiseAmount = Math.min(val, myStack, maxBet - myBet);
-    setGambaMyStack(myStack - raiseAmount);
-    setGambaMyBet(myBet + raiseAmount);
-    const newPot = getGambaPot() + raiseAmount;
-    setGambaPot(newPot);
-    THE_WINDOW.updateGambaMyStackDisplay();
-    THE_WINDOW.updateGambaMyBetDisplay();
-    THE_WINDOW.updateGambaPotDisplay();
-    sendChat(`raise ${raiseAmount}`);
-    raiseDiv.remove();
+        let myStack = getGambaMyStack();
+        let myBet = getGambaMyBet();
+        let maxBet = getGambaMaxBet();
+        let raiseAmount = Math.min(val, myStack, maxBet - myBet);
+        setGambaMyStack(myStack - raiseAmount);
+        setGambaMyBet(myBet + raiseAmount);
+        const newPot = getGambaPot() + raiseAmount;
+        setGambaPot(newPot);
+        THE_WINDOW.updateGambaMyStackDisplay();
+        THE_WINDOW.updateGambaMyBetDisplay();
+        THE_WINDOW.updateGambaPotDisplay();
+        sendChat(`raise ${raiseAmount}`);
+        raiseDiv.remove();
     };
 
     btnRow2.parentNode.insertBefore(raiseDiv, btnRow2.nextSibling);
@@ -569,16 +569,16 @@ const createGambaMenu = () => {
 
     const roundRow1 = document.createElement('div');
     roundRow1.id = 'gamba-menu-round-row1';
-        const updateBtnRowEnabled = () => {
-            const enabled = isMyTurn();
-            [btnRow1, btnRow2].forEach(row => {
-                Array.from(row.children).forEach(btn => {
-                    btn.disabled = !enabled;
-                });
+    const updateBtnRowEnabled = () => {
+        const enabled = isMyTurn();
+        [btnRow1, btnRow2].forEach(row => {
+            Array.from(row.children).forEach(btn => {
+                btn.disabled = !enabled;
             });
-        };
-        setInterval(updateBtnRowEnabled, 250);
-        updateBtnRowEnabled();
+        });
+    };
+    setInterval(updateBtnRowEnabled, 250);
+    updateBtnRowEnabled();
     roundRow1.classList.add('gamba-menu-round-row');
 
     const roundRow2 = document.createElement('div');
@@ -671,7 +671,7 @@ const createGambaMenu = () => {
 };
 
 if (document.readyState !== 'loading') {
-        createGambaMenu();
+    createGambaMenu();
 } else {
     document.addEventListener('DOMContentLoaded', createGambaMenu);
 }
