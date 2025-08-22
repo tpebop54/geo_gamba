@@ -521,28 +521,35 @@ const createGambaMenu = () => {
     // Split round info into two rows
     const roundRow1 = document.createElement('div');
     roundRow1.id = 'gamba-menu-round-row1';
+    roundRow1.classList.add('gamba-menu-round-row');
 
     const roundRow2 = document.createElement('div');
     roundRow2.id = 'gamba-menu-round-row2';
+    roundRow2.classList.add('gamba-menu-round-row');
 
     const anteDiv = document.createElement('span');
     anteDiv.id = 'gamba-menu-ante';
+    anteDiv.classList.add('gamba-round-info-div');
     anteDiv.textContent = `Ante: ${_GAMBA_ANTE}`;
 
     const maxBetDiv = document.createElement('span');
     maxBetDiv.id = 'gamba-menu-maxbet';
+    maxBetDiv.classList.add('gamba-round-info-div');
     maxBetDiv.textContent = `Max. Bet: ${_GAMBA_MAX_BET}`;
 
     const currentBetDiv = document.createElement('span');
     currentBetDiv.id = 'gamba-menu-currentbet';
+    currentBetDiv.classList.add('gamba-round-info-div');
     currentBetDiv.textContent = `Current Bet: ${_GAMBA_CURRENT_BET}`;
 
     const yourBetDiv = document.createElement('span');
     yourBetDiv.id = 'gamba-menu-yourbet';
+    yourBetDiv.classList.add('gamba-round-info-div');
     yourBetDiv.textContent = `Your Bet: ${_GAMBA_YOUR_BET}`;
 
     const theirBetDiv = document.createElement('span');
     theirBetDiv.id = 'gamba-menu-theirbet';
+    theirBetDiv.classList.add('gamba-round-info-div');
     theirBetDiv.textContent = `Their Bet: ${_GAMBA_THEIR_BET}`;
 
     roundRow1.appendChild(anteDiv);
