@@ -114,7 +114,6 @@ const setGambaMaxBet = (val) => {
     THE_WINDOW.localStorage.setItem(_GAMBA_MAX_BET_KEY, String(val));
 };
 
-
 const getGambaAnte = () => {
     const val = THE_WINDOW.localStorage.getItem(_GAMBA_ANTE_KEY);
     return val !== null ? parseInt(val, 10) : _GAMBA_DEFAULT_ANTE;
@@ -370,27 +369,21 @@ const _onCall = (evt) => {
     const btn = evt.currentTarget;
     btn.classList.add('clicked');
     setTimeout(() => btn.classList.remove('clicked'), 120);
-    // Get bets and points
     const theirBet = getGambaTheirBet();
     const yourBet = getGambaYourBet();
     const myPoints = getGambaMyPoints();
     let diff = theirBet - yourBet;
-    if (diff <= 0) return; // Shouldn't happen, but guard
+    if (diff <= 0) return;
     let toAdd = Math.min(diff, myPoints);
-    // Update my bet and points
     setGambaYourBet(yourBet + toAdd);
     setGambaPoints(myPoints - toAdd);
-    // Update pot
     const newPot = getGambaPot() + toAdd;
     setGambaPot(newPot);
-    // Update displays
-    if (typeof THE_WINDOW.updateGambaPotDisplay === 'function') THE_WINDOW.updateGambaPotDisplay();
-    if (typeof THE_WINDOW.updateGambaYourBetDisplay === 'function') THE_WINDOW.updateGambaYourBetDisplay();
-    if (typeof THE_WINDOW.updateGambaTheirBetDisplay === 'function') THE_WINDOW.updateGambaTheirBetDisplay();
-    if (typeof THE_WINDOW.updateGambaPointsDisplay === 'function') THE_WINDOW.updateGambaPointsDisplay();
-    // Send chat
+    THE_WINDOW.updateGambaPotDisplay();
+    THE_WINDOW.updateGambaYourBetDisplay();
+    THE_WINDOW.updateGambaTheirBetDisplay();
+    THE_WINDOW.updateGambaPointsDisplay();
     sendChat('call');
-    console.log('Call button clicked');
 };
 const _onAnte = (evt) => {
     const btn = evt.currentTarget;
@@ -399,11 +392,8 @@ const _onAnte = (evt) => {
     const anteAmount = _GAMBA_DEFAULT_ANTE;
     const newPot = getGambaPot() + anteAmount;
     setGambaPot(newPot);
-    if (typeof THE_WINDOW.updateGambaPotDisplay === 'function') {
-        THE_WINDOW.updateGambaPotDisplay();
-    }
-    sendChat(`[ANTE] ${anteAmount} points added to pot. New pot: ${newPot}`);
-    console.log('Ante button clicked, pot updated:', newPot);
+    THE_WINDOW.updateGambaPotDisplay();
+    sendChat(`ante ${anteAmount}`);
 };
 const _onRaise = (evt) => {
     const btn = evt.currentTarget;
@@ -596,11 +586,6 @@ const createGambaMenu = () => {
     maxBetDiv.classList.add('gamba-round-info-div');
     maxBetDiv.textContent = `Max. Bet: ${_GAMBA_MAX_BET}`;
 
-    const currentBetDiv = document.createElement('span');
-    currentBetDiv.id = 'gamba-menu-currentbet';
-    currentBetDiv.classList.add('gamba-round-info-div');
-    currentBetDiv.textContent = `Current Bet: ${_GAMBA_CURRENT_BET}`;
-
     const yourBetDiv = document.createElement('span');
     yourBetDiv.id = 'gamba-menu-yourbet';
     yourBetDiv.classList.add('gamba-round-info-div');
@@ -613,7 +598,6 @@ const createGambaMenu = () => {
 
     roundRow1.appendChild(anteDiv);
     roundRow1.appendChild(maxBetDiv);
-    roundRow2.appendChild(currentBetDiv);
     roundRow2.appendChild(yourBetDiv);
     roundRow2.appendChild(theirBetDiv);
     _GAMBA_MENU.appendChild(roundRow1);
@@ -635,10 +619,6 @@ const createGambaMenu = () => {
     THE_WINDOW.updateGambaMaxBetDisplay = () => {
         _GAMBA_MAX_BET = getGambaMaxBet();
         maxBetDiv.textContent = `Max. Bet: ${_GAMBA_MAX_BET}`;
-    };
-    THE_WINDOW.updateGambaCurrentBetDisplay = () => {
-        _GAMBA_CURRENT_BET = getGambaCurrentBet();
-        currentBetDiv.textContent = `Current Bet: ${_GAMBA_CURRENT_BET}`;
     };
     THE_WINDOW.updateGambaYourBetDisplay = () => {
         _GAMBA_YOUR_BET = getGambaYourBet();
@@ -908,3 +888,28 @@ const _STYLING = `
 GM_addStyle(_STYLING);
 
 // ------------------------------------------------------------------------------------------------------------------------------
+
+const clearState = () => {
+    setGambaAnte(_GAMBA_DEFAULT_ANTE);
+    setGambaWhoseTurn(_GAMBA_DEFAULT_WHOSE_TURN);
+    setGambaMyPoints(_GAMBA_DEFAULT_POINTS);
+    setGambaTheirPoints(_GAMBA_DEFAULT_POINTS);
+    setGambaMaxBet(_GAMBA_DEFAULT_MAX_BET);
+    setGambaYourBet(_GAMBA_DEFAULT_YOUR_BET);
+    setGambaTheirBet(_GAMBA_DEFAULT_THEIR_BET);
+    setGambaPot(_GAMBA_DEFAULT_POT);
+};
+
+document.addEventListener('keydown', (evt) => {
+    // Nuclear option to reset if things get messed up.
+    if (evt.ctrlKey && evt.shiftKey && evt.key === '>') {
+        console.log('Full reset');
+        clearState();
+        THE_WINDOW.location.reload();
+    }
+
+    // Open debugger.
+    if (evt.ctrlKey && evt.shiftKey && evt.key === '<') {
+        debugger
+    }
+});
