@@ -138,7 +138,7 @@ const getGambaMyPoints = () => {
     return val !== null ? parseInt(val, 10) : _GAMBA_DEFAULT_POINTS;
 };
 
-const setGambaPoints = (val) => {
+const setGambaMyPoints = (val) => {
     THE_WINDOW.localStorage.setItem(_GAMBA_MY_POINTS_KEY, String(val));
 };
 
@@ -380,6 +380,26 @@ const _onCall = (evt) => {
     const btn = evt.currentTarget;
     btn.classList.add('clicked');
     setTimeout(() => btn.classList.remove('clicked'), 120);
+    // Get bets and points
+    const theirBet = getGambaTheirBet();
+    const yourBet = getGambaYourBet();
+    const myPoints = getGambaMyPoints();
+    let diff = theirBet - yourBet;
+    if (diff <= 0) return; // Shouldn't happen, but guard
+    let toAdd = Math.min(diff, myPoints);
+    // Update my bet and points
+    setGambaYourBet(yourBet + toAdd);
+    setGambaPoints(myPoints - toAdd);
+    // Update pot
+    const newPot = getGambaPot() + toAdd;
+    setGambaPot(newPot);
+    // Update displays
+    if (typeof THE_WINDOW.updateGambaPotDisplay === 'function') THE_WINDOW.updateGambaPotDisplay();
+    if (typeof THE_WINDOW.updateGambaYourBetDisplay === 'function') THE_WINDOW.updateGambaYourBetDisplay();
+    if (typeof THE_WINDOW.updateGambaTheirBetDisplay === 'function') THE_WINDOW.updateGambaTheirBetDisplay();
+    if (typeof THE_WINDOW.updateGambaPointsDisplay === 'function') THE_WINDOW.updateGambaPointsDisplay();
+    // Send chat
+    sendChat('call');
     console.log('Call button clicked');
 };
 const _onAnte = (evt) => {
