@@ -315,6 +315,13 @@ if (document.readyState !== 'loading') {
 
 
 // User action menu =============================================================================================================
+const _onKnock = (evt) => {
+    const btn = evt.currentTarget;
+    btn.classList.add('clicked');
+    setTimeout(() => btn.classList.remove('clicked'), 120);
+    sendChat('[KNOCK] Player knocked.');
+    console.log('Knock button clicked');
+};
 
 // Create draggable Gamba menu
 let _GAMBA_MENU, _GAMBA_MENU_DRAGGING = false, _GAMBA_MENU_DRAGGING_OFFSET_X, _GAMBA_MENU_DRAGGING_OFFSET_Y;
@@ -446,6 +453,7 @@ const createGambaMenu = () => {
 
     const actions = [
         { label: 'Ante', id: 'gamba-btn-ante', callback: _onAnte },
+        { label: 'Knock', id: 'gamba-btn-knock', callback: _onKnock },
         { label: 'Call', id: 'gamba-btn-call', callback: _onCall },
         { label: 'Raise', id: 'gamba-btn-raise', callback: _onRaise },
         { label: 'Fold', id: 'gamba-btn-fold', callback: _onFold },
@@ -659,6 +667,12 @@ const _STYLING = `
     }
     #gamba-btn-ante:hover {
         background: #555555;
+    }
+    #gamba-btn-knock {
+        background: #963edfff;
+    }
+    #gamba-btn-knock:hover {
+        background: #702ea7ff;
     }
     #gamba-btn-call {
         background: #1976d2;
