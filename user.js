@@ -325,6 +325,19 @@ const _onCall = (evt) => {
     setTimeout(() => btn.classList.remove('clicked'), 120);
     console.log('Call button clicked');
 };
+const _onAnte = (evt) => {
+    const btn = evt.currentTarget;
+    btn.classList.add('clicked');
+    setTimeout(() => btn.classList.remove('clicked'), 120);
+    const anteAmount = _GAMBA_DEFAULT_ANTE;
+    const newPot = getGambaPot() + anteAmount;
+    setGambaPot(newPot);
+    if (typeof THE_WINDOW.updateGambaPotDisplay === 'function') {
+        THE_WINDOW.updateGambaPotDisplay();
+    }
+    sendChat(`[ANTE] ${anteAmount} points added to pot. New pot: ${newPot}`);
+    console.log('Ante button clicked, pot updated:', newPot);
+};
 const _onRaise = (evt) => {
     const btn = evt.currentTarget;
     btn.classList.add('clicked');
@@ -432,6 +445,7 @@ const createGambaMenu = () => {
     btnRow.id = 'gamba-menu-buttons';
 
     const actions = [
+        { label: 'Ante', id: 'gamba-btn-ante', callback: _onAnte },
         { label: 'Call', id: 'gamba-btn-call', callback: _onCall },
         { label: 'Raise', id: 'gamba-btn-raise', callback: _onRaise },
         { label: 'Fold', id: 'gamba-btn-fold', callback: _onFold },
