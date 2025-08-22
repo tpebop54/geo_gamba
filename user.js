@@ -369,7 +369,7 @@ const _onKnock = (evt) => {
     const btn = evt.currentTarget;
     btn.classList.add('clicked');
     setTimeout(() => btn.classList.remove('clicked'), 120);
-    sendChat('[KNOCK] Player knocked.');
+    sendChat('knock');
     console.log('Knock button clicked');
 };
 
