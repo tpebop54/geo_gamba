@@ -37,7 +37,7 @@ const _GAMBA_POT_KEY = 'gamba_pot';
 
 const _GAMBA_DEFAULT_ANTE = 50;
 const _GAMBA_DEFAULT_MAX_BET = 300;
-const _GAMBA_DEFAULT_POINTS = 1000;
+const _GAMBA_DEFAULT_STACK = 1000;
 const _GAMBA_DEFAULT_POT = 0; // TODO: fix this logic
 
 // Whose turn logic
@@ -123,21 +123,21 @@ const setGambaAnte = (val) => {
     THE_WINDOW.localStorage.setItem(_GAMBA_ANTE_KEY, String(val));
 };
 
-const getGambaMyPoints = () => {
+const getGambaMyStack = () => {
     const val = THE_WINDOW.localStorage.getItem(_GAMBA_MY_STACK);
-    return val !== null ? parseInt(val, 10) : _GAMBA_DEFAULT_POINTS;
+    return val !== null ? parseInt(val, 10) : _GAMBA_DEFAULT_STACK;
 };
 
-const setGambaMyPoints = (val) => {
+const setGambaMyStack = (val) => {
     THE_WINDOW.localStorage.setItem(_GAMBA_MY_STACK, String(val));
 };
 
-const getGambTheirPoints = () => {
+const getGambTheirStack = () => {
     const val = THE_WINDOW.localStorage.getItem(_GAMBA_THEIR_STACK_KEY);
-    return val !== null ? parseInt(val, 10) : _GAMBA_DEFAULT_POINTS;
+    return val !== null ? parseInt(val, 10) : _GAMBA_DEFAULT_STACK;
 };
 
-const setGambTheirPoints = (val) => { // Note: this will only change it for you. The same code is running on other clients.
+const setGambTheirStack = (val) => { // Note: this will only change it for you. The same code is running on other clients.
     THE_WINDOW.localStorage.setItem(_GAMBA_THEIR_STACK_KEY, String(val));
 };
 
@@ -151,8 +151,8 @@ const setGambTheirPoints = (val) => { // Note: this will only change it for you.
 
 _GAMBA_ANTE = getGambaAnte();
 _GAMBA_MAX_BET = getGambaMaxBet();
-_GAMBA_MY_STACK = getGambaMyPoints();
-_GAMBA_THEIR_STACK  = getGambTheirPoints();
+_GAMBA_MY_STACK = getGambaMyStack();
+_GAMBA_THEIR_STACK  = getGambTheirStack();
 _GAMBA_POT = getGambaPot();
 _GAMBA_MY_BET = getGambaMyBet();
 _GAMBA_THEIR_BET = getGambTheirBet();
@@ -372,18 +372,18 @@ const _onCall = (evt) => {
     setTimeout(() => btn.classList.remove('clicked'), 120);
     const theirBet = getGambTheirBet();
     const myBet = getGambaMyBet();
-    const myPoints = getGambaMyPoints();
+    const myStack = getGambaMyStack();
     let diff = theirBet - myBet;
     if (diff <= 0) return;
-    let toAdd = Math.min(diff, myPoints);
+    let toAdd = Math.min(diff, myStack);
     setGambaMyBet(myBet + toAdd);
-    setGambaPoints(myPoints - toAdd);
+    setGambaMyStack(myStack - toAdd);
     const newPot = getGambaPot() + toAdd;
     setGambaPot(newPot);
     THE_WINDOW.updateGambaPotDisplay();
     THE_WINDOW.updateGambaMyBetDisplay();
     THE_WINDOW.updateGambTheirBetDisplay();
-    THE_WINDOW.updateGambaPointsDisplay();
+    THE_WINDOW.updateGambaStackDisplay();
     sendChat('call');
 };
 const _onAnte = (evt) => {
@@ -391,12 +391,12 @@ const _onAnte = (evt) => {
     btn.classList.add('clicked');
     setTimeout(() => btn.classList.remove('clicked'), 120);
     const anteAmount = _GAMBA_DEFAULT_ANTE;
-    let myPoints = getGambaMyPoints();
-    let actualAnte = Math.min(anteAmount, myPoints);
-    setGambaMyPoints(myPoints - actualAnte);
+    let myStack = getGambaMyStack();
+    let actualAnte = Math.min(anteAmount, myStack);
+    setGambaMyStack(myStack - actualAnte);
     const newPot = getGambaPot() + actualAnte;
     setGambaPot(newPot);
-    THE_WINDOW.updateGambaPointsDisplay();
+    THE_WINDOW.updateGambaStackDisplay();
     THE_WINDOW.updateGambaPotDisplay();
     sendChat(`ante ${actualAnte}`);
 };
@@ -452,10 +452,10 @@ const _onRaise = (evt) => {
 
     input.addEventListener('input', () => {
         const val = parseInt(input.value, 10);
-    const myPoints = getGambaMyPoints();
+    const myStack = getGambaMyStack();
     const myBet = getGambaMyBet();
     const maxBet = getGambaMaxBet();
-    const maxRaise = Math.min(myPoints, maxBet - myBet);
+    const maxRaise = Math.min(myStack, maxBet - myBet);
     checkBtn.disabled = isNaN(val) || val < 1 || val > maxRaise;
     checkBtn.style.background = checkBtn.disabled ? 'gray' : 'green';
     });
@@ -463,15 +463,15 @@ const _onRaise = (evt) => {
     checkBtn.onclick = () => {
         const val = parseInt(input.value, 10);
         if (isNaN(val) || val < 1) return;
-    let myPoints = getGambaMyPoints();
+    let myStack = getGambaMyStack();
     let myBet = getGambaMyBet();
     let maxBet = getGambaMaxBet();
-    let raiseAmount = Math.min(val, myPoints, maxBet - myBet);
-    setGambaMyPoints(myPoints - raiseAmount);
+    let raiseAmount = Math.min(val, myStack, maxBet - myBet);
+    setGambaMyStack(myStack - raiseAmount);
     setGambaMyBet(myBet + raiseAmount);
     const newPot = getGambaPot() + raiseAmount;
     setGambaPot(newPot);
-    THE_WINDOW.updateGambaPointsDisplay();
+    THE_WINDOW.updateGambaMyStackDisplay();
     THE_WINDOW.updateGambaMyBetDisplay();
     THE_WINDOW.updateGambaPotDisplay();
     sendChat(`raise ${raiseAmount}`);
@@ -498,21 +498,21 @@ const createGambaMenu = () => {
     titleDiv.textContent = 'Geo Gamba';
     _GAMBA_MENU.appendChild(titleDiv);
 
-    const myPointsDiv = document.createElement('div');
-    myPointsDiv.id = 'gamba-menu-my-stack';
-    myPointsDiv.classList.add('gamba-menu-stack');
-    myPointsDiv.textContent = `My Stack: ${_GAMBA_MY_STACK}`;
-    _GAMBA_MENU.appendChild(myPointsDiv);
+    const myStackDiv = document.createElement('div');
+    myStackDiv.id = 'gamba-menu-my-stack';
+    myStackDiv.classList.add('gamba-menu-stack');
+    myStackDiv.textContent = `My Stack: ${_GAMBA_MY_STACK}`;
+    _GAMBA_MENU.appendChild(myStackDiv);
 
-    const theirPointsDiv = document.createElement('div');
-    theirPointsDiv.id = 'gamba-menu-their-stack';
-    theirPointsDiv.classList.add('gamba-menu-stack');
-    theirPointsDiv.textContent = `Their Stack:\n${_GAMBA_THEIR_STACK}`;
+    const theirStackDiv = document.createElement('div');
+    theirStackDiv.id = 'gamba-menu-their-stack';
+    theirStackDiv.classList.add('gamba-menu-stack');
+    theirStackDiv.textContent = `Their Stack:\n${_GAMBA_THEIR_STACK}`;
 
     const stackRow = document.createElement('div');
     stackRow.id = 'gamba-stack-row';
-    stackRow.appendChild(myPointsDiv);
-    stackRow.appendChild(theirPointsDiv);
+    stackRow.appendChild(myStackDiv);
+    stackRow.appendChild(theirStackDiv);
 
     _GAMBA_MENU.appendChild(stackRow);
 
@@ -623,9 +623,9 @@ const createGambaMenu = () => {
     potDiv.textContent = `Pot: ${_GAMBA_POT}`;
     _GAMBA_MENU.appendChild(potDiv);
 
-    THE_WINDOW.updateGambaPointsDisplay = () => {
-        _GAMBA_MY_STACK = getGambaMyPoints();
-        myPointsDiv.textContent = `My Stack:\n${_GAMBA_MY_STACK}`;
+    THE_WINDOW.updateGambaMyStackDisplay = () => {
+        _GAMBA_MY_STACK = getGambaMyStack();
+        myStackDiv.textContent = `My Stack:\n${_GAMBA_MY_STACK}`;
     };
     THE_WINDOW.updateGambaAnteDisplay = () => {
         _GAMBA_ANTE = getGambaAnte();
@@ -899,8 +899,8 @@ GM_addStyle(_STYLING);
 const clearState = () => {
     setGambaAnte(_GAMBA_DEFAULT_ANTE);
     setGambaWhoseTurn(_GAMBA_DEFAULT_WHOSE_TURN);
-    setGambaMyPoints(_GAMBA_DEFAULT_POINTS);
-    setGambTheirPoints(_GAMBA_DEFAULT_POINTS);
+    setGambaMyStack(_GAMBA_DEFAULT_STACK);
+    setGambTheirStack(_GAMBA_DEFAULT_STACK);
     setGambaMaxBet(_GAMBA_DEFAULT_MAX_BET);
     setGambaMyBet(_GAMBA_DEFAULT_MY_BET);
     setGambTheirBet(_GAMBA_DEFAULT_their_BET);
