@@ -406,27 +406,21 @@ const _onRaise = (evt) => {
 
     const raiseDiv = document.createElement('div');
     raiseDiv.id = 'gamba-raise-input-row';
-    raiseDiv.style.display = 'flex';
-    raiseDiv.style.gap = '8px';
-    raiseDiv.style.marginTop = '8px';
+    // ...existing code...
 
     const input = document.createElement('input');
     input.id = 'gamba-raise-input';
     input.type = 'number';
     input.min = '1';
     input.placeholder = 'Raise by';
-    input.style.width = '80px';
+    // ...existing code...
     raiseDiv.appendChild(input);
 
     const checkBtn = document.createElement('button');
     checkBtn.id = 'gamba-raise-check-btn';
     checkBtn.classList.add('gamba-raise-button');
     checkBtn.innerHTML = '&#x2713';
-    checkBtn.style.background = 'gray';
-    checkBtn.style.color = 'white';
-    checkBtn.style.border = 'none';
-    checkBtn.style.padding = '4px 10px';
-    checkBtn.style.borderRadius = '4px';
+    // ...existing code...
     checkBtn.disabled = true;
     raiseDiv.appendChild(checkBtn);
 
@@ -434,11 +428,7 @@ const _onRaise = (evt) => {
     xBtn.id = 'gamba-raise-cancel-btn';
     xBtn.classList.add('gamba-raise-button');
     xBtn.innerHTML = '&#10006';
-    xBtn.style.background = 'red';
-    xBtn.style.color = 'white';
-    xBtn.style.border = 'none';
-    xBtn.style.padding = '4px 10px';
-    xBtn.style.borderRadius = '4px';
+    // ...existing code...
     xBtn.onclick = () => {
         raiseDiv.remove();
     };
@@ -512,17 +502,11 @@ const createGambaMenu = () => {
 
     const btnRow1 = document.createElement('div');
     btnRow1.id = 'gamba-menu-buttons-row1';
-    btnRow1.style.display = 'flex';
-    btnRow1.style.gap = '8px';
-    btnRow1.style.justifyContent = 'center';
-    btnRow1.style.marginBottom = '6px';
+    // ...existing code...
 
     const btnRow2 = document.createElement('div');
     btnRow2.id = 'gamba-menu-buttons-row2';
-    btnRow2.style.display = 'flex';
-    btnRow2.style.gap = '8px';
-    btnRow2.style.justifyContent = 'center';
-    btnRow2.style.marginBottom = '10px';
+    // ...existing code...
 
     [
         { label: 'Ante', id: 'gamba-btn-ante', callback: _onAnte },
@@ -556,9 +540,7 @@ const createGambaMenu = () => {
     const turnRow = document.createElement('div');
     turnRow.id = 'gamba-menu-turn-row';
     turnRow.classList.add('gamba-menu-round-row');
-    turnRow.style.marginBottom = '8px';
-    turnRow.style.fontWeight = 'bold';
-    turnRow.style.fontSize = '16px';
+    // ...existing code...
     _GAMBA_MENU.appendChild(turnRow);
 
     const updateTurnRow = () => {
