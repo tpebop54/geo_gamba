@@ -32,7 +32,7 @@ const THE_WINDOW = unsafeWindow || window;
 const _GAMBA_ANTE_KEY = 'gamba_ante';
 const _GAMBA_MAX_BET_KEY = 'gamba_max_bet';
 const _GAMBA_MY_POINTS_KEY = 'gamba_my_points';
-const _GAMBA_MY_OPPONENT_POINTS_KEY = 'gamba_my_opponent_points';
+const _GAMBA_THEIR_POINTS_KEY = 'gamba_their_points';
 const _GAMBA_POT_KEY = 'gamba_pot';
 
 const _GAMBA_DEFAULT_ANTE = 50;
@@ -72,10 +72,10 @@ const isMyTurn = () => {
 
 // localStorage getters and setters. ============================================================================================
 const _GAMBA_MY_BET_KEY = 'gamba_my_bet';
-const _GAMBA_MY_OPPONENT_BET_KEY = 'gamba_my_opponent_bet';
+const _GAMBA_their_BET_KEY = 'gamba_their_bet';
 
 const _GAMBA_DEFAULT_MY_BET = 0;
-const _GAMBA_DEFAULT_MY_OPPONENT_BET = 0;
+const _GAMBA_DEFAULT_their_BET = 0;
 
 const getGambaMyBet = () => {
     const val = THE_WINDOW.localStorage.getItem(_GAMBA_MY_BET_KEY);
@@ -86,13 +86,13 @@ const setGambaMyBet = (val) => {
     THE_WINDOW.localStorage.setItem(_GAMBA_MY_BET_KEY, String(val));
 };
 
-const getGambaMyOpponentBet = () => {
-    const val = THE_WINDOW.localStorage.getItem(_GAMBA_MY_OPPONENT_BET_KEY);
-    return val !== null ? parseInt(val, 10) : _GAMBA_DEFAULT_MY_OPPONENT_BET;
+const getGambTheirBet = () => {
+    const val = THE_WINDOW.localStorage.getItem(_GAMBA_their_BET_KEY);
+    return val !== null ? parseInt(val, 10) : _GAMBA_DEFAULT_their_BET;
 };
 
-const setGambaMyOpponentBet = (val) => {
-    THE_WINDOW.localStorage.setItem(_GAMBA_MY_OPPONENT_BET_KEY, String(val));
+const setGambTheirBet = (val) => {
+    THE_WINDOW.localStorage.setItem(_GAMBA_their_BET_KEY, String(val));
 };
 
 const getGambaPot = () => {
@@ -132,13 +132,13 @@ const setGambaMyPoints = (val) => {
     THE_WINDOW.localStorage.setItem(_GAMBA_MY_POINTS_KEY, String(val));
 };
 
-const getGambaMyOpponentPoints = () => {
-    const val = THE_WINDOW.localStorage.getItem(_GAMBA_MY_OPPONENT_POINTS_KEY);
+const getGambTheirPoints = () => {
+    const val = THE_WINDOW.localStorage.getItem(_GAMBA_THEIR_POINTS_KEY);
     return val !== null ? parseInt(val, 10) : _GAMBA_DEFAULT_POINTS;
 };
 
-const setGambaMyOpponentPoints = (val) => { // Note: this will only change it for you. The same code is running on other clients.
-    THE_WINDOW.localStorage.setItem(_GAMBA_MY_OPPONENT_POINTS_KEY, String(val));
+const setGambTheirPoints = (val) => { // Note: this will only change it for you. The same code is running on other clients.
+    THE_WINDOW.localStorage.setItem(_GAMBA_THEIR_POINTS_KEY, String(val));
 };
 
 // ------------------------------------------------------------------------------------------------------------------------------
@@ -152,10 +152,10 @@ const setGambaMyOpponentPoints = (val) => { // Note: this will only change it fo
 _GAMBA_ANTE = getGambaAnte();
 _GAMBA_MAX_BET = getGambaMaxBet();
 _GAMBA_MY_POINTS = getGambaMyPoints();
-_GAMBA_MY_OPPONENT_POINTS  = getGambaMyOpponentPoints();
+_GAMBA_their_POINTS  = getGambTheirPoints();
 _GAMBA_POT = getGambaPot();
 _GAMBA_MY_BET = getGambaMyBet();
-_GAMBA_MY_OPPONENT_BET = getGambaMyOpponentBet();
+_GAMBA_their_BET = getGambTheirBet();
 _GAMBA_WHOSE_TURN = getGambaWhoseTurn();
 
 // ------------------------------------------------------------------------------------------------------------------------------
@@ -370,10 +370,10 @@ const _onCall = (evt) => {
     const btn = evt.currentTarget;
     btn.classList.add('clicked');
     setTimeout(() => btn.classList.remove('clicked'), 120);
-    const myOpponentBet = getGambaMyOpponentBet();
+    const theirBet = getGambTheirBet();
     const myBet = getGambaMyBet();
     const myPoints = getGambaMyPoints();
-    let diff = myOpponentBet - myBet;
+    let diff = theirBet - myBet;
     if (diff <= 0) return;
     let toAdd = Math.min(diff, myPoints);
     setGambaMyBet(myBet + toAdd);
@@ -382,7 +382,7 @@ const _onCall = (evt) => {
     setGambaPot(newPot);
     THE_WINDOW.updateGambaPotDisplay();
     THE_WINDOW.updateGambaMyBetDisplay();
-    THE_WINDOW.updateGambaMyOpponentBetDisplay();
+    THE_WINDOW.updateGambTheirBetDisplay();
     THE_WINDOW.updateGambaPointsDisplay();
     sendChat('call');
 };
@@ -504,15 +504,15 @@ const createGambaMenu = () => {
     myPointsDiv.textContent = `Me: ${_GAMBA_MY_POINTS}`;
     _GAMBA_MENU.appendChild(myPointsDiv);
 
-    const myOpponentPointsDiv = document.createElement('div');
-    myOpponentPointsDiv.id = 'gamba-menu-my-opponent-points';
-    myOpponentPointsDiv.classList.add('gamba-menu-points');
-    myOpponentPointsDiv.textContent = `Opponent Points: ${_GAMBA_MY_OPPONENT_POINTS}`;
+    const theirPointsDiv = document.createElement('div');
+    theirPointsDiv.id = 'gamba-menu-their-points';
+    theirPointsDiv.classList.add('gamba-menu-points');
+    theirPointsDiv.textContent = `Their Points: ${_GAMBA_their_POINTS}`;
 
     const pointsRow = document.createElement('div');
     pointsRow.id = 'gamba-points-row';
     pointsRow.appendChild(myPointsDiv);
-    pointsRow.appendChild(myOpponentPointsDiv);
+    pointsRow.appendChild(theirPointsDiv);
 
     _GAMBA_MENU.appendChild(pointsRow);
 
@@ -568,7 +568,7 @@ const createGambaMenu = () => {
     _GAMBA_MENU.appendChild(turnRow);
 
     const updateTurnRow = () => {
-        turnRow.textContent = isMyTurn() ? 'My Turn' : 'Opponent Turn';
+        turnRow.textContent = isMyTurn() ? 'My Turn' : 'Their Turn';
     };
     setInterval(updateTurnRow, 250);
     updateTurnRow();
@@ -606,15 +606,15 @@ const createGambaMenu = () => {
     myBetDiv.classList.add('gamba-round-info-div');
     myBetDiv.textContent = `My Bet: ${_GAMBA_MY_BET}`;
 
-    const myOpponentBetDiv = document.createElement('span');
-    myOpponentBetDiv.id = 'gamba-menu-my-opponent-bet';
-    myOpponentBetDiv.classList.add('gamba-round-info-div');
-    myOpponentBetDiv.textContent = `Opponent Bet: ${_GAMBA_MY_OPPONENT_BET}`;
+    const theirBetDiv = document.createElement('span');
+    theirBetDiv.id = 'gamba-menu-their-bet';
+    theirBetDiv.classList.add('gamba-round-info-div');
+    theirBetDiv.textContent = `Their Bet: ${_GAMBA_their_BET}`;
 
     roundRow1.appendChild(anteDiv);
     roundRow1.appendChild(maxBetDiv);
     roundRow2.appendChild(myBetDiv);
-    roundRow2.appendChild(myOpponentBetDiv);
+    roundRow2.appendChild(theirBetDiv);
     _GAMBA_MENU.appendChild(roundRow1);
     _GAMBA_MENU.appendChild(roundRow2);
 
@@ -639,9 +639,9 @@ const createGambaMenu = () => {
         _GAMBA_MY_BET = getGambaMyBet();
         myBetDiv.textContent = `My Bet: ${_GAMBA_MY_BET}`;
     };
-    THE_WINDOW.updateGambaMyOpponentBetDisplay = () => {
-        _GAMBA_MY_OPPONENT_BET = getGambaMyOpponentBet();
-        myOpponentBetDiv.textContent = `Opponent Bet: ${_GAMBA_MY_OPPONENT_BET}`;
+    THE_WINDOW.updateGambTheirBetDisplay = () => {
+        _GAMBA_their_BET = getGambTheirBet();
+        theirBetDiv.textContent = `Their Bet: ${_GAMBA_their_BET}`;
     };
     THE_WINDOW.updateGambaPotDisplay = () => {
         _GAMBA_POT = getGambaPot();
@@ -900,10 +900,10 @@ const clearState = () => {
     setGambaAnte(_GAMBA_DEFAULT_ANTE);
     setGambaWhoseTurn(_GAMBA_DEFAULT_WHOSE_TURN);
     setGambaMyPoints(_GAMBA_DEFAULT_POINTS);
-    setGambaMyOpponentPoints(_GAMBA_DEFAULT_POINTS);
+    setGambTheirPoints(_GAMBA_DEFAULT_POINTS);
     setGambaMaxBet(_GAMBA_DEFAULT_MAX_BET);
     setGambaMyBet(_GAMBA_DEFAULT_MY_BET);
-    setGambaMyOpponentBet(_GAMBA_DEFAULT_MY_OPPONENT_BET);
+    setGambTheirBet(_GAMBA_DEFAULT_their_BET);
     setGambaPot(_GAMBA_DEFAULT_POT);
 };
 
