@@ -488,7 +488,7 @@ const _onFold = (evt) => {
     const btn = evt.currentTarget;
     btn.classList.add('clicked');
     setTimeout(() => btn.classList.remove('clicked'), 120);
-    console.log('Fold button clicked');
+    sendChat('fold');
 };
 const _onAllIn = (evt) => {
     const btn = evt.currentTarget;
@@ -539,11 +539,10 @@ const createGambaMenu = () => {
     btnRow2.style.justifyContent = 'center';
     btnRow2.style.marginBottom = '10px';
 
-    // First row: Ante, Knock, Call
     [
         { label: 'Ante', id: 'gamba-btn-ante', callback: _onAnte },
         { label: 'Knock', id: 'gamba-btn-knock', callback: _onKnock },
-        { label: 'Call', id: 'gamba-btn-call', callback: _onCall }
+        { label: 'Call', id: 'gamba-btn-call', callback: _onCall },
     ].forEach(({ label, id, callback }) => {
         const btn = document.createElement('button');
         btn.className = 'gamba-menu-btn';
@@ -553,11 +552,10 @@ const createGambaMenu = () => {
         btnRow1.appendChild(btn);
     });
 
-    // Second row: Raise, Fold, All-in
     [
         { label: 'Raise', id: 'gamba-btn-raise', callback: _onRaise },
+        { label: 'All-in', id: 'gamba-btn-allin', callback: _onAllIn },
         { label: 'Fold', id: 'gamba-btn-fold', callback: _onFold },
-        { label: 'All-in', id: 'gamba-btn-allin', callback: _onAllIn }
     ].forEach(({ label, id, callback }) => {
         const btn = document.createElement('button');
         btn.className = 'gamba-menu-btn';
