@@ -41,6 +41,30 @@ const _GAMBA_DEFAULT_MAX_BET = 300;
 const _GAMBA_DEFAULT_POINTS = 1000;
 const _GAMBA_DEFAULT_POT = 0; // TODO: fix this logic
 
+// Whose turn logic
+const _GAMBA_WHOSE_TURN_KEY = '_gamba_whose_turn';
+const _GAMBA_DEFAULT_WHOSE_TURN = 'yours';
+
+let _GAMBA_WHOSE_TURN = (function() {
+    const val = THE_WINDOW.localStorage.getItem(_GAMBA_WHOSE_TURN_KEY);
+    return val !== null ? val : _GAMBA_DEFAULT_WHOSE_TURN;
+})();
+
+const getGambaWhoseTurn = () => {
+    const val = THE_WINDOW.localStorage.getItem(_GAMBA_WHOSE_TURN_KEY);
+    return val !== null ? val : _GAMBA_DEFAULT_WHOSE_TURN;
+};
+
+const setGambaWhoseTurn = (val) => {
+    THE_WINDOW.localStorage.setItem(_GAMBA_WHOSE_TURN_KEY, val);
+    _GAMBA_WHOSE_TURN = val;
+};
+
+const isYourTurn = () => {
+    const turn = THE_WINDOW.localStorage.getItem(_GAMBA_WHOSE_TURN_KEY);
+    return (turn !== null ? turn : _GAMBA_DEFAULT_WHOSE_TURN) === 'yours';
+};
+
 // ------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -143,6 +167,7 @@ _GAMBA_THEIR_POINTS  = getGambaTheirPoints();
 _GAMBA_POT = getGambaPot();
 _GAMBA_YOUR_BET = getGambaYourBet();
 _GAMBA_THEIR_BET = getGambaTheirBet();
+_GAMBA_WHOSE_TURN = getGambaWhoseTurn();
 
 // ------------------------------------------------------------------------------------------------------------------------------
 
