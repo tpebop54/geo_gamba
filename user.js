@@ -520,25 +520,29 @@ const createGambaMenu = () => {
 
     // Split round info into two rows
     const roundRow1 = document.createElement('div');
-    roundRow1.id = 'gamba-menu-round-row1';
+    roundRow1.classList.add('gamba-menu-round-row');
 
     const roundRow2 = document.createElement('div');
-    roundRow2.id = 'gamba-menu-round-row2';
+    roundRow2.classList.add('gamba-menu-round-row');
 
     const anteDiv = document.createElement('span');
     anteDiv.id = 'gamba-menu-ante';
+    anteDiv.classList.add('gamba-round-info-div');
     anteDiv.textContent = `Ante: ${_GAMBA_ANTE}`;
 
     const currentBetDiv = document.createElement('span');
     currentBetDiv.id = 'gamba-menu-currentbet';
+    currentBetDiv.classList.add('gamba-round-info-div');
     currentBetDiv.textContent = `Current Bet: ${_GAMBA_CURRENT_BET}`;
 
     const yourBetDiv = document.createElement('span');
     yourBetDiv.id = 'gamba-menu-yourbet';
+    yourBetDiv.classList.add('gamba-round-info-div');
     yourBetDiv.textContent = `Your Bet: ${_GAMBA_YOUR_BET}`;
 
     const theirBetDiv = document.createElement('span');
     theirBetDiv.id = 'gamba-menu-theirbet';
+    theirBetDiv.classList.add('gamba-round-info-div');
     theirBetDiv.textContent = `Their Bet: ${_GAMBA_THEIR_BET}`;
 
     roundRow1.appendChild(anteDiv);
@@ -810,7 +814,7 @@ const _STYLING = `
         background: rgba(30,30,30,0.85);
         text-align: center;
     }
-    #gamba-menu-round-row1, #gamba-menu-round-row2 {
+    .gamba-menu-round-row {
         display: flex;
         justify-content: center;
         align-items: center;
@@ -818,6 +822,15 @@ const _STYLING = `
         margin-bottom: 2px;
         color: white;
         font-size: 12px;
+    }
+    .gamba-round-info-div {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        color: white;
+        font-size: 12px;
+        width: 100px;
     }
 `;
 
