@@ -390,10 +390,14 @@ const _onAnte = (evt) => {
     btn.classList.add('clicked');
     setTimeout(() => btn.classList.remove('clicked'), 120);
     const anteAmount = _GAMBA_DEFAULT_ANTE;
-    const newPot = getGambaPot() + anteAmount;
+    let myPoints = getGambaMyPoints();
+    let actualAnte = Math.min(anteAmount, myPoints);
+    setGambaMyPoints(myPoints - actualAnte);
+    const newPot = getGambaPot() + actualAnte;
     setGambaPot(newPot);
+    THE_WINDOW.updateGambaPointsDisplay();
     THE_WINDOW.updateGambaPotDisplay();
-    sendChat(`ante ${anteAmount}`);
+    sendChat(`ante ${actualAnte}`);
 };
 const _onRaise = (evt) => {
     const btn = evt.currentTarget;
