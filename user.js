@@ -254,7 +254,6 @@ const PLAYER_ACTIONS = {
     call: ['call'],
     fold: ['fold'],
     raise: ['raise'],
-    allin: ['allin', 'all in', 'all-in'],
 };
 
 const GAME_MASTER_ACTIONS = {
@@ -490,12 +489,6 @@ const _onFold = (evt) => {
     setTimeout(() => btn.classList.remove('clicked'), 120);
     sendChat('fold');
 };
-const _onAllIn = (evt) => {
-    const btn = evt.currentTarget;
-    btn.classList.add('clicked');
-    setTimeout(() => btn.classList.remove('clicked'), 120);
-    console.log('All-in button clicked');
-};
 
 const createGambaMenu = () => {
     if (document.getElementById('gamba-menu')) return;
@@ -554,7 +547,6 @@ const createGambaMenu = () => {
 
     [
         { label: 'Raise', id: 'gamba-btn-raise', callback: _onRaise },
-        { label: 'All-in', id: 'gamba-btn-allin', callback: _onAllIn },
         { label: 'Fold', id: 'gamba-btn-fold', callback: _onFold },
     ].forEach(({ label, id, callback }) => {
         const btn = document.createElement('button');
@@ -839,14 +831,6 @@ const _STYLING = `
     }
     #gamba-btn-fold:hover {
         background: #b71c1c;
-    }
-    #gamba-btn-allin {
-        background: #ffd700;
-        color: #222;
-    }
-    #gamba-btn-allin:hover {
-        background: #ffe066;
-        color: #222;
     }
     #gamba-raise-input-row {
         display: flex;
