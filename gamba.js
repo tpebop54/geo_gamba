@@ -188,7 +188,7 @@ const getPlayAgainButton = () => {
     return document.querySelector(``);
 };
 
-const sendChat = (text) => {
+const sendChat = (text) => { // TODO: this is broken
     setTimeout(() => {
         const chatInput = getChatInput();
         chatInput.value = text;
@@ -251,26 +251,18 @@ const fetchMatchData = async () => {
 
 // User action menu =============================================================================================================
 
-const _onKnock = (evt) => {
-    const btn = evt.currentTarget;
-    btn.classList.add('clicked');
-    setTimeout(() => btn.classList.remove('clicked'), 120);
-    sendChat('knock');
-    console.log('Knock button clicked');
-};
-
 // Create draggable Gamba menu
 let _GAMBA_MENU, _GAMBA_MENU_DRAGGING = false, _GAMBA_MENU_DRAGGING_OFFSET_X, _GAMBA_MENU_DRAGGING_OFFSET_Y;
 
-const clickBtn = (evt) => {
+const _clickBtn = (evt) => {
     const btn = evt.currentTarget;
     btn.classList.add('clicked');
     setTimeout(() => btn.classList.remove('clicked'), 120);
     return btn;
 };
 
-const _onAnte = (evt) => {
-    clickBtn(evt);
+const onAnte = (evt) => {
+    _clickBtn(evt);
     const anteAmount = _GAMBA_DEFAULT_ANTE;
     let myStack = getGambaMyStack();
     let actualAnte = Math.min(anteAmount, myStack);
@@ -281,8 +273,17 @@ const _onAnte = (evt) => {
     THE_WINDOW.updateGambaPotDisplay();
     sendChat(`ante ${actualAnte}`);
 };
-const _onCall = (evt) => {
-    clickBtn(evt);
+
+const onKnock = (evt) => {
+    const btn = evt.currentTarget;
+    btn.classList.add('clicked');
+    setTimeout(() => btn.classList.remove('clicked'), 120);
+    sendChat('knock');
+    console.log('Knock button clicked');
+};
+
+const onCall = (evt) => {
+    _clickBtn(evt);
     const theirBet = getGambTheirBet();
     const myBet = getGambaMyBet();
     const myStack = getGambaMyStack();
@@ -299,8 +300,9 @@ const _onCall = (evt) => {
     THE_WINDOW.updateGambaStackDisplay();
     sendChat('call');
 };
-const _onRaise = (evt) => {
-    clickBtn(evt);
+
+const onRaise = (evt) => {
+    _clickBtn(evt);
 
     const oldDiv = document.getElementById('gamba-raise-input-row');
     if (oldDiv) oldDiv.remove();
@@ -364,8 +366,8 @@ const _onRaise = (evt) => {
     btnRow2.parentNode.insertBefore(raiseDiv, btnRow2.nextSibling);
 };
 
-const _onFold = (evt) => {
-    clickBtn(evt);
+const onFold = (evt) => {
+    _clickBtn(evt);
     sendChat('fold');
 };
 
@@ -406,9 +408,9 @@ const createGambaMenu = () => {
     btnRow2.classList.add('gamba-menu-buttons');
 
     [
-        { label: 'Ante', id: 'gamba-btn-ante', callback: _onAnte },
-        { label: 'Knock', id: 'gamba-btn-knock', callback: _onKnock },
-        { label: 'Call', id: 'gamba-btn-call', callback: _onCall },
+        { label: 'Ante', id: 'gamba-btn-ante', callback: onAnte },
+        { label: 'Knock', id: 'gamba-btn-knock', callback: onKnock },
+        { label: 'Call', id: 'gamba-btn-call', callback: onCall },
     ].forEach(({ label, id, callback }) => {
         const btn = document.createElement('button');
         btn.className = 'gamba-menu-btn';
@@ -419,8 +421,8 @@ const createGambaMenu = () => {
     });
 
     [
-        { label: 'Raise', id: 'gamba-btn-raise', callback: _onRaise },
-        { label: 'Fold', id: 'gamba-btn-fold', callback: _onFold },
+        { label: 'Raise', id: 'gamba-btn-raise', callback: onRaise },
+        { label: 'Fold', id: 'gamba-btn-fold', callback: onFold },
     ].forEach(({ label, id, callback }) => {
         const btn = document.createElement('button');
         btn.className = 'gamba-menu-btn';
