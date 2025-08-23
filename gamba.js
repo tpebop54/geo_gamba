@@ -31,26 +31,17 @@ const _GAMBA_WHOSE_TURN_KEY = 'gamba_whose_turn';
 const _GAMBA_MY_STACK_KEY = 'gamba_my_stack';
 const _GAMBA_THEIR_STACK_KEY = 'gamba_their_stack';
 const _GAMBA_ANTE_KEY = 'gamba_ante';
-const _GAMBA_MAX_BET_KEY = 'gamba_max_bet';
-const _GAMBA_MY_BET_KEY = 'gamba_my_bet';
-const _GAMBA_THEIR_BET_KEY = 'gamba_their_bet';
+const _GAMBA_MAX_STAKE_KEY = 'gamba_max_stake';
+const _GAMBA_MY_STAKE_KEY = 'gamba_my_stake';
+const _GAMBA_THEIR_STAKE_KEY = 'gamba_their_stake';
 const _GAMBA_POT_KEY = 'gamba_pot';
 
 const _GAMBA_DEFAULT_WHOSE_TURN = 'mine';
 const _GAMBA_DEFAULT_ANTE = 50;
 const _GAMBA_DEFAULT_STACK = 1000;
-const _GAMBA_DEFAULT_BET = _GAMBA_DEFAULT_ANTE * 2; // TODO: revisit (team gamba)
-const _GAMBA_DEFAULT_MAX_BET = 300;
+const _GAMBA_DEFAULT_STAKE = _GAMBA_DEFAULT_ANTE * 2; // TODO: revisit (team gamba)
+const _GAMBA_DEFAULT_MAX_STAKE = 300;
 const _GAMBA_DEFAULT_POT = 0;
-
-let _GAMBA_WHOSE_TURN = getGambaWhoseTurn();
-let _GAMBA_ANTE = getGambaAnte();
-let _GAMBA_MY_STACK = getGambaMyStack();
-let _GAMBA_THEIR_STACK = getGambaTheirStack();
-let _GAMBA_MAX_BET = getGambaMaxBet();
-let _GAMBA_POT = getGambaPot();
-let _GAMBA_MY_BET = getGambaMyBet();
-let _GAMBA_THEIR_BET = getGambaTheirBet();
 
 // ------------------------------------------------------------------------------------------------------------------------------
 
@@ -59,29 +50,29 @@ let _GAMBA_THEIR_BET = getGambaTheirBet();
 
 // localStorage getters and setters. ============================================================================================
 
-const _GAMBA_DEFAULT_MY_BET = 0;
-const _GAMBA_DEFAULT_THEIR_BET = 0;
+const _GAMBA_DEFAULT_MY_STAKE = 0;
+const _GAMBA_DEFAULT_THEIR_STAKE = 0;
 
-const getGambaMyBet = () => {
-    const val = THE_WINDOW.localStorage.getItem(_GAMBA_MY_BET_KEY);
-    return val !== null ? parseInt(val, 10) : _GAMBA_DEFAULT_MY_BET;
+const getGambaMyStake = () => {
+    const val = THE_WINDOW.localStorage.getItem(_GAMBA_MY_STAKE_KEY);
+    return val !== null ? parseInt(val, 10) : _GAMBA_DEFAULT_MY_STAKE;
 };
 
-const setGambaMyBet = (val) => {
+const setGambaMyStake = (val) => {
     val = parseInt(Number(val));
-    THE_WINDOW.localStorage.setItem(_GAMBA_MY_BET_KEY, val);
-    _GAMBA_MY_BET = val;
+    THE_WINDOW.localStorage.setItem(_GAMBA_MY_STAKE_KEY, val);
+    _GAMBA_MY_STAKE = val;
 };
 
-const getGambaTheirBet = () => {
-    const val = THE_WINDOW.localStorage.getItem(_GAMBA_THEIR_BET_KEY);
-    return val !== null ? parseInt(val, 10) : _GAMBA_DEFAULT_THEIR_BET;
+const getGambaTheirStake = () => {
+    const val = THE_WINDOW.localStorage.getItem(_GAMBA_THEIR_STAKE_KEY);
+    return val !== null ? parseInt(val, 10) : _GAMBA_DEFAULT_THEIR_STAKE;
 };
 
-const setGambaTheirBet = (val) => {
+const setGambaTheirStake = (val) => {
     val = parseInt(Number(val));
-    THE_WINDOW.localStorage.setItem(_GAMBA_THEIR_BET_KEY, val);
-    _GAMBA_THEIR_BET = val;
+    THE_WINDOW.localStorage.setItem(_GAMBA_THEIR_STAKE_KEY, val);
+    _GAMBA_THEIR_STAKE = val;
 };
 
 const getGambaPot = () => {
@@ -95,15 +86,15 @@ const setGambaPot = (val) => {
     _GAMBA_POT = val;
 };
 
-const getGambaMaxBet = () => {
-    const val = THE_WINDOW.localStorage.getItem(_GAMBA_MAX_BET_KEY);
-    return val !== null ? parseInt(val, 10) : _GAMBA_DEFAULT_MAX_BET;
+const getGambaMaxStake = () => {
+    const val = THE_WINDOW.localStorage.getItem(_GAMBA_MAX_STAKE_KEY);
+    return val !== null ? parseInt(val, 10) : _GAMBA_DEFAULT_MAX_STAKE;
 };
 
-const setGambaMaxBet = (val) => {
+const setGambaMaxStake = (val) => {
     val = parseInt(Number(val));
-    THE_WINDOW.localStorage.setItem(_GAMBA_MAX_BET_KEY, val);
-    _GAMBA_MAX_BET = val;
+    THE_WINDOW.localStorage.setItem(_GAMBA_MAX_STAKE_KEY, val);
+    _GAMBA_MAX_STAKE = val;
 };
 
 const getGambaAnte = () => {
@@ -159,17 +150,16 @@ const isMyTurn = () => {
 
 
 
-
 // Globals, which will be used to store the state for this session (will get reloaded from localStorage on page load). ==========
 
-_GAMBA_ANTE = getGambaAnte();
-_GAMBA_MAX_BET = getGambaMaxBet();
-_GAMBA_MY_STACK = getGambaMyStack();
-_GAMBA_THEIR_STACK = getGambaTheirStack();
-_GAMBA_POT = getGambaPot();
-_GAMBA_MY_BET = getGambaMyBet();
-_GAMBA_THEIR_BET = getGambaTheirBet();
-_GAMBA_WHOSE_TURN = getGambaWhoseTurn();
+let _GAMBA_WHOSE_TURN = getGambaWhoseTurn();
+let _GAMBA_ANTE = getGambaAnte();
+let _GAMBA_MY_STACK = getGambaMyStack();
+let _GAMBA_THEIR_STACK = getGambaTheirStack();
+let _GAMBA_MAX_STAKE = getGambaMaxStake();
+let _GAMBA_POT = getGambaPot();
+let _GAMBA_MY_STAKE = getGambaMyStake();
+let _GAMBA_THEIR_STAKE = getGambaTheirStake();
 
 // ------------------------------------------------------------------------------------------------------------------------------
 
@@ -302,7 +292,7 @@ const onAnte = (evt) => {
     const anteAmount = _GAMBA_DEFAULT_ANTE;
     let ante = Math.min(anteAmount, getGambaMyStack());
     setGambaMyStack(getGambaMyStack() - ante);
-    setGambaMyBet(getGambaMyBet() + ante);
+    setGambaMyStake(getGambaMyStake() + ante);
     setGambaPot(getGambaPot() + ante);
     THE_WINDOW.updateGambaMyStackDisplay();
     THE_WINDOW.updateGambaPotDisplay();
@@ -319,17 +309,17 @@ const onKnock = (evt) => {
 
 const onCall = (evt) => {
     _clickBtn(evt);
-    const theirBet = getGambaTheirBet();
-    const myBet = getGambaMyBet();
+    const theirStake = getGambaTheirStake();
+    const myStake = getGambaMyStake();
     const myStack = getGambaMyStack();
-    let diff = theirBet - myBet;
+    let diff = theirStake - myStake;
     if (diff <= 0) return;
     let toAdd = Math.min(diff, myStack);
-    setGambaMyBet(myBet + toAdd);
+    setGambaMyStake(myStake + toAdd);
     setGambaMyStack(myStack - toAdd);
     const newPot = getGambaPot() + toAdd;
     setGambaPot(newPot);
-    THE_WINDOW.updateGambaMyBetDisplay();
+    THE_WINDOW.updateGambaMyStakeDisplay();
     THE_WINDOW.updateGambaMyStackDisplay();
     THE_WINDOW.updateGambaPotDisplay();
     sendChat('call');
@@ -372,9 +362,9 @@ const onRaise = (evt) => {
     input.addEventListener('input', () => {
         const val = parseInt(input.value, 10);
         const myStack = getGambaMyStack();
-        const myBet = getGambaMyBet();
-        const maxBet = getGambaMaxBet();
-        const maxRaise = Math.min(myStack, maxBet - myBet);
+        const myStake = getGambaMyStake();
+        const maxStake = getGambaMaxStake();
+        const maxRaise = Math.min(myStack, maxStake - myStake);
         checkBtn.disabled = isNaN(val) || val < 1 || val > maxRaise;
         checkBtn.style.background = checkBtn.disabled ? 'gray' : 'green';
     });
@@ -383,15 +373,15 @@ const onRaise = (evt) => {
         const val = parseInt(input.value, 10);
         if (isNaN(val) || val < 1) return;
         let myStack = getGambaMyStack();
-        let myBet = getGambaMyBet();
-        let maxBet = getGambaMaxBet();
-        let raiseAmount = Math.min(val, myStack, maxBet - myBet);
+        let myStake = getGambaMyStake();
+        let maxStake = getGambaMaxStake();
+        let raiseAmount = Math.min(val, myStack, maxStake - myStake);
         setGambaMyStack(myStack - raiseAmount);
-        setGambaMyBet(myBet + raiseAmount);
+        setGambaMyStake(myStake + raiseAmount);
         const newPot = getGambaPot() + raiseAmount;
         setGambaPot(newPot);
         THE_WINDOW.updateGambaMyStackDisplay();
-        THE_WINDOW.updateGambaMyBetDisplay();
+        THE_WINDOW.updateGambaMyStakeDisplay();
         THE_WINDOW.updateGambaPotDisplay();
         sendChat(`raise ${raiseAmount}`);
         raiseDiv.remove();
@@ -503,25 +493,25 @@ const createGambaMenu = () => {
     anteDiv.classList.add('gamba-round-info-div');
     anteDiv.textContent = `Ante: ${_GAMBA_ANTE}`;
 
-    const maxBetDiv = document.createElement('span');
-    maxBetDiv.id = 'gamba-menu-maxbet';
-    maxBetDiv.classList.add('gamba-round-info-div');
-    maxBetDiv.textContent = `Max. Bet: ${_GAMBA_MAX_BET}`;
+    const maxStakeDiv = document.createElement('span');
+    maxStakeDiv.id = 'gamba-menu-maxsteak';
+    maxStakeDiv.classList.add('gamba-round-info-div');
+    maxStakeDiv.textContent = `Max. Stake: ${_GAMBA_MAX_STAKE}`;
 
-    const myBetDiv = document.createElement('span');
-    myBetDiv.id = 'gamba-menu-mybet';
-    myBetDiv.classList.add('gamba-round-info-div');
-    myBetDiv.textContent = `My Bet: ${_GAMBA_MY_BET}`;
+    const myStakeDiv = document.createElement('span');
+    myStakeDiv.id = 'gamba-menu-mystake';
+    myStakeDiv.classList.add('gamba-round-info-div');
+    myStakeDiv.textContent = `My Stake: ${_GAMBA_MY_STAKE}`;
 
-    const theirBetDiv = document.createElement('span');
-    theirBetDiv.id = 'gamba-menu-their-bet';
-    theirBetDiv.classList.add('gamba-round-info-div');
-    theirBetDiv.textContent = `Their Bet: ${_GAMBA_THEIR_BET}`;
+    const theirStakeDiv = document.createElement('span');
+    theirStakeDiv.id = 'gamba-menu-their-stake';
+    theirStakeDiv.classList.add('gamba-round-info-div');
+    theirStakeDiv.textContent = `Their Stake: ${_GAMBA_THEIR_STAKE}`;
 
     roundRow.appendChild(anteDiv);
-    roundRow.appendChild(maxBetDiv);
-    roundRow.appendChild(myBetDiv);
-    roundRow.appendChild(theirBetDiv);
+    roundRow.appendChild(maxStakeDiv);
+    roundRow.appendChild(myStakeDiv);
+    roundRow.appendChild(theirStakeDiv);
     contentDiv.appendChild(roundRow);
 
     const potDiv = document.createElement('div');
@@ -537,17 +527,17 @@ const createGambaMenu = () => {
         _GAMBA_ANTE = getGambaAnte();
         anteDiv.textContent = `Ante: ${_GAMBA_ANTE}`;
     };
-    THE_WINDOW.updateGambaMaxBetDisplay = () => {
-        _GAMBA_MAX_BET = getGambaMaxBet();
-        maxBetDiv.textContent = `Max. Bet: ${_GAMBA_MAX_BET}`;
+    THE_WINDOW.updateGambaMaxStakeDisplay = () => {
+        _GAMBA_MAX_STAKE = getGambaMaxStake();
+        maxStakeDiv.textContent = `Max. Stake: ${_GAMBA_MAX_STAKE}`;
     };
-    THE_WINDOW.updateGambaMyBetDisplay = () => {
-        _GAMBA_MY_BET = getGambaMyBet();
-        myBetDiv.textContent = `My Bet: ${_GAMBA_MY_BET}`;
+    THE_WINDOW.updateGambaMyStakeDisplay = () => {
+        _GAMBA_MY_STAKE = getGambaMyStake();
+        myStakeDiv.textContent = `My Stake: ${_GAMBA_MY_STAKE}`;
     };
-    THE_WINDOW.updateGambTheirBetDisplay = () => {
-        _GAMBA_THEIR_BET = getGambaTheirBet();
-        theirBetDiv.textContent = `Their Bet: ${_GAMBA_THEIR_BET}`;
+    THE_WINDOW.updateGambaTheirStakeDisplay = () => {
+        _GAMBA_THEIR_STAKE = getGambaTheirStake();
+        theirStakeDiv.textContent = `Their Stake: ${_GAMBA_THEIR_STAKE}`;
     };
     THE_WINDOW.updateGambaPotDisplay = () => {
         _GAMBA_POT = getGambaPot();
@@ -914,9 +904,9 @@ const clearState = () => {
     setGambaWhoseTurn(_GAMBA_DEFAULT_WHOSE_TURN);
     setGambaMyStack(_GAMBA_DEFAULT_STACK);
     setGambaTheirStack(_GAMBA_DEFAULT_STACK);
-    setGambaMaxBet(_GAMBA_DEFAULT_MAX_BET);
-    setGambaMyBet(_GAMBA_DEFAULT_MY_BET);
-    setGambaTheirBet(_GAMBA_DEFAULT_THEIR_BET);
+    setGambaMaxStake(_GAMBA_DEFAULT_MAX_STAKE);
+    setGambaMyStake(_GAMBA_DEFAULT_MY_STAKE);
+    setGambaTheirStake(_GAMBA_DEFAULT_THEIR_STAKE);
     setGambaPot(_GAMBA_DEFAULT_POT);
 };
 
