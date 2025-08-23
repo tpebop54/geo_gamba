@@ -403,21 +403,18 @@ const _onRaise = (evt) => {
 
     const raiseDiv = document.createElement('div');
     raiseDiv.id = 'gamba-raise-input-row';
-    // ...existing code...
 
     const input = document.createElement('input');
     input.id = 'gamba-raise-input';
     input.type = 'number';
     input.min = '1';
     input.placeholder = 'Raise by';
-    // ...existing code...
     raiseDiv.appendChild(input);
 
     const checkBtn = document.createElement('button');
     checkBtn.id = 'gamba-raise-check-btn';
     checkBtn.classList.add('gamba-raise-button');
     checkBtn.innerHTML = '&#x2713';
-    // ...existing code...
     checkBtn.disabled = true;
     raiseDiv.appendChild(checkBtn);
 
@@ -425,7 +422,6 @@ const _onRaise = (evt) => {
     xBtn.id = 'gamba-raise-cancel-btn';
     xBtn.classList.add('gamba-raise-button');
     xBtn.innerHTML = '&#10006';
-    // ...existing code...
     xBtn.onclick = () => {
         raiseDiv.remove();
     };
@@ -499,11 +495,11 @@ const createGambaMenu = () => {
 
     const btnRow1 = document.createElement('div');
     btnRow1.id = 'gamba-menu-buttons-row1';
-    // ...existing code...
+    btnRow1.classList.add('gamba-menu-buttons');
 
     const btnRow2 = document.createElement('div');
     btnRow2.id = 'gamba-menu-buttons-row2';
-    // ...existing code...
+    btnRow2.classList.add('gamba-menu-buttons');
 
     [
         { label: 'Ante', id: 'gamba-btn-ante', callback: _onAnte },
@@ -533,11 +529,9 @@ const createGambaMenu = () => {
     _GAMBA_MENU.appendChild(btnRow1);
     _GAMBA_MENU.appendChild(btnRow2);
 
-    // Turn indicator row
     const turnRow = document.createElement('div');
     turnRow.id = 'gamba-menu-turn-row';
     turnRow.classList.add('gamba-menu-round-row');
-    // ...existing code...
     _GAMBA_MENU.appendChild(turnRow);
 
     const updateTurnRow = () => {
@@ -703,6 +697,7 @@ watchRoundEnd();
 const _STYLING = `
     #gamba-menu {
         position: fixed;
+        width: 300px;
         top: 20px;
         left: 20px;
         z-index: 9999;
@@ -725,12 +720,12 @@ const _STYLING = `
         font-weight: bold;
         font-size: 16px;
         margin-bottom: 10px;
-        color: #fff;
+        color: white;
         cursor: inherit;
         text-align: center;
         width: 100%;
     }
-    #gamba-menu-buttons {
+    .gamba-menu-buttons {
         display: flex;
         gap: 8px;
         justify-content: center;
@@ -765,13 +760,13 @@ const _STYLING = `
         font-size: 15px;
         cursor: pointer;
         transition: background 0.2s, transform 0.1s;
-        color: #fff;
+        color: white;
         outline: none;
         width: 72px;
     }
     .gamba-menu-btn:active {
         transform: scale(0.95);
-        box-shadow: 0 0 0 2px #fff2 inset;
+        box-shadow: 0 0 0 2px white2 inset;
     }
     #gamba-btn-ante {
         background: #beb80c;
@@ -830,11 +825,17 @@ const _STYLING = `
         -moz-appearance: textfield;
     }
     .gamba-raise-button {
-        color: #fff;
+        color: white;
         cursor: pointer;
     }
+    #gamba-menu-turn-row {
+        color: white;
+        font-weight: bold;
+        font-size: 18px;
+        margin: 5px 0;
+    }
     #gamba-menu-pot {
-        color: #fff;
+        color: white;
         font-weight: bold;
         font-size: 18px;
         margin-top: 10px;
