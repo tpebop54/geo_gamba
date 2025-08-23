@@ -73,7 +73,7 @@ const setGambaMyBet = (val) => {
     _GAMBA_MY_BET = val;
 };
 
-const getGambTheirBet = () => {
+const getGambaTheirBet = () => {
     const val = THE_WINDOW.localStorage.getItem(_GAMBA_THEIR_BET_KEY);
     return val !== null ? parseInt(val, 10) : _GAMBA_DEFAULT_THEIR_BET;
 };
@@ -168,7 +168,7 @@ _GAMBA_MY_STACK = getGambaMyStack();
 _GAMBA_THEIR_STACK = getGambaTheirStack();
 _GAMBA_POT = getGambaPot();
 _GAMBA_MY_BET = getGambaMyBet();
-_GAMBA_THEIR_BET = getGambTheirBet();
+_GAMBA_THEIR_BET = getGambaTheirBet();
 _GAMBA_WHOSE_TURN = getGambaWhoseTurn();
 
 // ------------------------------------------------------------------------------------------------------------------------------
@@ -319,7 +319,7 @@ const onKnock = (evt) => {
 
 const onCall = (evt) => {
     _clickBtn(evt);
-    const theirBet = getGambTheirBet();
+    const theirBet = getGambaTheirBet();
     const myBet = getGambaMyBet();
     const myStack = getGambaMyStack();
     let diff = theirBet - myBet;
@@ -546,7 +546,7 @@ const createGambaMenu = () => {
         myBetDiv.textContent = `My Bet: ${_GAMBA_MY_BET}`;
     };
     THE_WINDOW.updateGambTheirBetDisplay = () => {
-        _GAMBA_THEIR_BET = getGambTheirBet();
+        _GAMBA_THEIR_BET = getGambaTheirBet();
         theirBetDiv.textContent = `Their Bet: ${_GAMBA_THEIR_BET}`;
     };
     THE_WINDOW.updateGambaPotDisplay = () => {
