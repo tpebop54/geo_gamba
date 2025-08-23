@@ -600,18 +600,21 @@ const initGamba = async () => {
 // Round events and watchers, done by watching DOM elements appear and disappear. ===============================================
 
 let _ROUND_STARTING_WRAPPER = null;
-// TODO: detectors for round end and game end.
+
+const onGameStart = () => {
+    console.log('onGameStart');
+};
 
 const onRoundStart = () => {
-    debugger;
+    console.log('onRoundStart');
 };
 
 const onRoundEnd = () => {
-    debugger;
+    console.log('onRoundEnd');
 };
 
 const onGameEnd = () => {
-    debugger;   
+    console.log('onGameEnd');
 };
 
 const watchRoundEnd = () => {
@@ -626,6 +629,7 @@ const watchRoundEnd = () => {
     };
 
     const observer = new MutationObserver(() => {
+        onRoundStart();
         onGameEnd();
         prepNewRound();
     });
