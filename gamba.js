@@ -585,29 +585,11 @@ const getChats = () => {
 };
 
 const initGamba = async () => {
-
     _GAMBA_MATCH_DATA = await fetchMatchData();
     console.log(_GAMBA_MATCH_DATA);
 
     _GAMBA_USERS = await usersFromLiveChallenge(_GAMBA_MATCH_DATA);
     console.log(_GAMBA_USERS);
-
-    _GAMBA_CHATS = getChats();
-
-    const readChats = () => {
-        const now = Date.now();
-        if (now - _GAMBA_CHAT_LAST_READ > 250) {
-            _GAMBA_CHAT_LAST_READ = now;
-        } else {
-            return;
-        }
-        if (chatLog) {
-            _GAMBA_CHATS = getChats();
-        }
-    };
-
-    const observer = new MutationObserver(readChats);
-    observer.observe(document.body, { childList: true, subtree: true });
 };
 
 // ------------------------------------------------------------------------------------------------------------------------------
@@ -618,9 +600,18 @@ const initGamba = async () => {
 // Round events and watchers, done by watching DOM elements appear and disappear. ===============================================
 
 let _ROUND_STARTING_WRAPPER = null;
+// TODO: detectors for round end and game end.
 
 const onRoundStart = () => {
     debugger;
+};
+
+const onRoundEnd = () => {
+    debugger;
+};
+
+const onGameEnd = () => {
+    debugger;   
 };
 
 const watchRoundEnd = () => {
@@ -634,12 +625,8 @@ const watchRoundEnd = () => {
         }
     };
 
-    const onEndGame = () => {
-        console.log('onEndGame');
-    };
-
     const observer = new MutationObserver(() => {
-        onEndGame();
+        onGameEnd();
         prepNewRound();
     });
     observer.observe(document.body, { childList: true, subtree: true });
