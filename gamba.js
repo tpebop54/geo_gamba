@@ -269,7 +269,7 @@ const onAnte = (evt) => {
     setGambaMyStack(myStack - actualAnte);
     const newPot = getGambaPot() + actualAnte;
     setGambaPot(newPot);
-    THE_WINDOW.updateGambaStackDisplay();
+    THE_WINDOW.updateGambaMyStackDisplay();
     THE_WINDOW.updateGambaPotDisplay();
     sendChat(`ante ${actualAnte}`);
 };
@@ -294,10 +294,9 @@ const onCall = (evt) => {
     setGambaMyStack(myStack - toAdd);
     const newPot = getGambaPot() + toAdd;
     setGambaPot(newPot);
-    THE_WINDOW.updateGambaPotDisplay();
     THE_WINDOW.updateGambaMyBetDisplay();
-    THE_WINDOW.updateGambTheirBetDisplay();
-    THE_WINDOW.updateGambaStackDisplay();
+    THE_WINDOW.updateGambaMyStackDisplay();
+    THE_WINDOW.updateGambaPotDisplay();
     sendChat('call');
 };
 
@@ -379,19 +378,12 @@ const createGambaMenu = () => {
     // Create a header row for title and toggle button
     const headerDiv = document.createElement('div');
     headerDiv.id = 'gamba-menu-header';
-    headerDiv.style.display = 'grid';
-    headerDiv.style.gridTemplateColumns = '1fr auto';
-    headerDiv.style.alignItems = 'center';
-    headerDiv.style.width = '100%';
-    headerDiv.style.position = 'relative';
+    // ...existing code...
 
     const titleDiv = document.createElement('div');
     titleDiv.id = 'gamba-menu-title';
     titleDiv.textContent = 'Geo Gamba';
-    titleDiv.style.textAlign = 'center';
-    titleDiv.style.display = 'flex';
-    titleDiv.style.alignItems = 'center';
-    titleDiv.style.justifyContent = 'center';
+    // ...existing code...
 
     // Toggle button
     const toggleBtn = document.createElement('button');
@@ -399,15 +391,7 @@ const createGambaMenu = () => {
     toggleBtn.className = 'gamba-menu-toggle-btn';
     toggleBtn.setAttribute('aria-label', 'Toggle menu');
     toggleBtn.innerHTML = '&#9654;'; // right triangle
-    toggleBtn.style.position = 'absolute';
-    toggleBtn.style.right = '0';
-    toggleBtn.style.top = '50%';
-    toggleBtn.style.transform = 'translateY(-50%)';
-    toggleBtn.style.background = 'none';
-    toggleBtn.style.border = 'none';
-    toggleBtn.style.color = 'white';
-    toggleBtn.style.fontSize = '22px';
-    toggleBtn.style.cursor = 'pointer';
+    // ...existing code...
 
     headerDiv.appendChild(titleDiv);
     headerDiv.appendChild(toggleBtn);
