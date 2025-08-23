@@ -375,29 +375,23 @@ const createGambaMenu = () => {
     _GAMBA_MENU = document.createElement('div');
     _GAMBA_MENU.id = 'gamba-menu';
 
-    // Create a header row for title and toggle button
     const headerDiv = document.createElement('div');
     headerDiv.id = 'gamba-menu-header';
-    // ...existing code...
 
     const titleDiv = document.createElement('div');
     titleDiv.id = 'gamba-menu-title';
     titleDiv.textContent = 'Geo Gamba';
-    // ...existing code...
 
-    // Toggle button
     const toggleBtn = document.createElement('button');
     toggleBtn.id = 'gamba-menu-toggle';
     toggleBtn.className = 'gamba-menu-toggle-btn';
     toggleBtn.setAttribute('aria-label', 'Toggle menu');
     toggleBtn.innerHTML = '&#9654;'; // right triangle
-    // ...existing code...
 
     headerDiv.appendChild(titleDiv);
     headerDiv.appendChild(toggleBtn);
     _GAMBA_MENU.appendChild(headerDiv);
 
-    // Content wrapper for collapsible content
     const contentDiv = document.createElement('div');
     contentDiv.id = 'gamba-menu-content';
 
@@ -426,29 +420,20 @@ const createGambaMenu = () => {
     btnRow2.id = 'gamba-menu-buttons-row2';
     btnRow2.classList.add('gamba-menu-buttons');
 
-    [
-        { label: 'Ante', id: 'gamba-btn-ante', callback: onAnte },
-        { label: 'Knock', id: 'gamba-btn-knock', callback: onKnock },
-        { label: 'Call', id: 'gamba-btn-call', callback: onCall },
-    ].forEach(({ label, id, callback }) => {
+    const buttons = [
+        { label: 'Ante', id: 'gamba-btn-ante', callback: onAnte, row: 1 },
+        { label: 'Knock', id: 'gamba-btn-knock', callback: onKnock, row: 1 },
+        { label: 'Call', id: 'gamba-btn-call', callback: onCall, row: 1 },
+        { label: 'Raise', id: 'gamba-btn-raise', callback: onRaise, row: 2 },
+        { label: 'Fold', id: 'gamba-btn-fold', callback: onFold, row: 2 },
+    ];
+    for (const { label, id, callback, row } of buttons) {
         const btn = document.createElement('button');
         btn.className = 'gamba-menu-btn';
         btn.id = id;
         btn.textContent = label;
         btn.onclick = callback;
-        btnRow1.appendChild(btn);
-    });
-
-    [
-        { label: 'Raise', id: 'gamba-btn-raise', callback: onRaise },
-        { label: 'Fold', id: 'gamba-btn-fold', callback: onFold },
-    ].forEach(({ label, id, callback }) => {
-        const btn = document.createElement('button');
-        btn.className = 'gamba-menu-btn';
-        btn.id = id;
-        btn.textContent = label;
-        btn.onclick = callback;
-        btnRow2.appendChild(btn);
+        (row === 1 ? btnRow1 : btnRow2).appendChild(btn);
     });
 
     contentDiv.appendChild(btnRow1);
@@ -699,16 +684,15 @@ const _STYLING = `
         flex-direction: column;
         align-items: center;
     }
-    #gamba-menu.grabbing {
-        cursor: grabbing !important;
-    }
     #gamba-menu-header {
         display: grid;
         grid-template-columns: 1fr auto;
         align-items: center;
         width: 100%;
         position: relative;
-        margin-bottom: 10px;
+        height: 48px;
+        min-height: 40px;
+        top: -5px;
     }
     #gamba-menu-title {
         font-size: 24px !important;
@@ -722,11 +706,12 @@ const _STYLING = `
         display: flex;
         align-items: center;
         justify-content: center;
-        height: 40px;
-        min-height: 32px;
+        height: 100%;
+        min-height: 40px;
     }
     #gamba-menu-toggle {
-        position: static;
+        position: absolute;
+        right: 5px;
         background: none;
         border: none;
         color: white;
@@ -734,9 +719,6 @@ const _STYLING = `
         cursor: pointer;
         padding: 0 6px;
         z-index: 1;
-    }
-    #gamba-menu-toggle:focus {
-        outline: 2px solid #ffd700;
     }
     #gamba-menu-content {
         width: 100%;
@@ -752,6 +734,8 @@ const _STYLING = `
         align-items: center;
         justify-content: center;
         width: 100%; 
+        position: relative;
+        top: -6px;
     }
     .gamba-menu-stack {
         color: #ffd700;
@@ -818,7 +802,6 @@ const _STYLING = `
         display: flex;
         justify-content: center;
         align-items: center;
-        gap: 16px;
         color: white;
         font-size: 12px;
         margin: 10px 0;
