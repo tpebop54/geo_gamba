@@ -691,7 +691,6 @@ const _STYLING = `
     #gamba-menu-title {
         font-size: 24px !important;
         font-weight: bold;
-        font-size: 16px;
         color: white;
         cursor: inherit;
         text-align: center;
@@ -702,10 +701,10 @@ const _STYLING = `
         justify-content: center;
         height: 100%;
         min-height: 40px;
+        padding-left: 14px;
     }
     #gamba-menu-toggle {
-        position: absolute;
-        right: 5px;
+        position: static;
         background: none;
         border: none;
         color: white;
@@ -716,8 +715,6 @@ const _STYLING = `
     }
     #gamba-menu-content {
         width: 100%;
-        display: flex;
-        justify-content: center;
     }
     .gamba-menu-buttons {
         display: flex;
@@ -828,6 +825,8 @@ const _STYLING = `
         font-weight: bold;
         font-size: 18px;
         margin-bottom: 10px;
+        display: flex;
+        justify-content: center;
     }
     #gamba-menu-pot {
         color: lightgreen;
@@ -840,10 +839,10 @@ const _STYLING = `
         background: rgba(30,30,30,0.85);
         text-align: center;
         text-shadow: 
-            0 0 5px #fff,
-            0 0 10px #fff,
-            0 0 15px #fff,
-            0 0 20px #fff;
+            0 0 1px #fff,
+            0 0 0px #F3B,
+            0 0px 6px #F3C,
+            0 0 1px #FE8
     }
     #gamba-menu-round-row {
         display: flex;
