@@ -188,13 +188,27 @@ const getPlayAgainButton = () => {
     return document.querySelector(``);
 };
 
-const sendChat = (text) => { // TODO: this is broken
+const sendChat = (text) => {
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', code: 'Enter', bubbles: true }));
     setTimeout(() => {
         const chatInput = getChatInput();
-        chatInput.value = text;
+        
+        const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set; // Specific to React apps.
+        nativeInputValueSetter.call(chatInput, text);
+        
+        chatInput.dispatchEvent(new Event('input', { bubbles: true }));
         chatInput.focus();
-        const enterEvent = new KeyboardEvent('keydown', { key: 'Enter', code: 'Enter', bubbles: true });
-        chatInput.dispatchEvent(enterEvent);
+        
+        setTimeout(() => {
+            const enterEvent = new KeyboardEvent('keydown', { 
+                key: 'Enter', 
+                code: 'Enter',
+                keyCode: 13,
+                bubbles: true,
+                cancelable: true
+            });
+            chatInput.dispatchEvent(enterEvent);
+        }, 100);
     }, 100);
 };
 
