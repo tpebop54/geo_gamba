@@ -287,15 +287,29 @@ const _clickBtn = (evt) => {
     return btn;
 };
 
+const updateMine = (diff) => {
+    setGambaMyStack(getGambaMyStack() + diff);
+    setGambaMyStake(getGambaMyStake() - diff);
+    setGambaPot(getGambaPot() - diff);
+    THE_WINDOW.updateGambaMyStackDisplay();
+    THE_WINDOW.updateGambaMyStakeDisplay();
+    THE_WINDOW.updateGambaPotDisplay();
+};
+
+const updateTheirs = (diff) => {
+    setGambaTheirStack(getGambaTheirStack() + diff);
+    setGambaTheirStake(getGambaTheirStake() - diff);
+    setGambaPot(getGambaPot() - diff);
+    THE_WINDOW.updateGambaTheirStackDisplay();
+    THE_WINDOW.updateGambaTheirStakeDisplay();
+    THE_WINDOW.updateGambaPotDisplay();
+};
+
 const onAnte = (evt) => {
     _clickBtn(evt);
     const anteAmount = _GAMBA_DEFAULT_ANTE;
     let ante = Math.min(anteAmount, getGambaMyStack());
-    setGambaMyStack(getGambaMyStack() - ante);
-    setGambaMyStake(getGambaMyStake() + ante);
-    setGambaPot(getGambaPot() + ante);
-    THE_WINDOW.updateGambaMyStackDisplay();
-    THE_WINDOW.updateGambaPotDisplay();
+    updateMine(-ante);
     sendChat(`ante ${ante}`);
 };
 
@@ -344,7 +358,7 @@ const onRaise = (evt) => {
     raiseDiv.appendChild(input);
 
     const checkBtn = document.createElement('button');
-    checkBtn.id = 'gamba-raise-check-btn';
+    checkBtn.id = 'gamba-raise-confirm-btn';
     checkBtn.classList.add('gamba-raise-button');
     checkBtn.innerHTML = '&#x2713';
     checkBtn.disabled = true;
@@ -873,7 +887,6 @@ const _STYLING = `
         display: flex;
         justify-content: center;
         align-items: center;
-        gap: 16px;
         margin-bottom: 2px;
         color: white;
         font-size: 12px;
