@@ -249,77 +249,8 @@ const fetchMatchData = async () => {
 
 
 
-// Gamba gameplay ===============================================================================================================
-
-let _GAMBA_USERS = null;
-let _GAMBA_MATCH_DATA = null;
-let _GAMBA_CHAT_LAST_READ = -Infinity;
-
-const _GAMBA_PLAYER_ACTIONS = new Set('ante', 'knock', 'call', 'fold', 'raise');
-const _GAMBA_MASTER_ACTIONS = new Set('set ante', 'set max', 'set blink');
-
-const parseChatMessage = (msg) => {
-    const username = msg.querySelector('span[class^="chat-message_nick__"]').innerText.toLowerCase();
-    const text = msg.querySelector('span[class^="chat-message_messageText__"]').innerText.toLowerCase();
-    const parts = text.split(' ').map(part => part.trim()).filter(part => part.length > 0);
-    return { username, text, parts };
-};
-
-const getChats = () => {
-    const chatLog = getChatLog();
-    if (!chatLog) {
-        return [];
-    }
-    const msgElements = chatLog.querySelectorAll('div[class^="chat-message_normalMessageRoot__"');
-
-    const chats = [];
-    for (const element of msgElements) {
-        const chat = parseChatMessage(element);
-        chats.push(chat);
-    }
-    return chats;
-};
-
-const initGamba = async () => {
-
-    _GAMBA_MATCH_DATA = await fetchMatchData();
-    console.log(_GAMBA_MATCH_DATA);
-
-    _GAMBA_USERS = await usersFromLiveChallenge(_GAMBA_MATCH_DATA);
-    console.log(_GAMBA_USERS);
-
-    _GAMBA_CHATS = getChats();
-
-    const readChats = () => {
-        const now = Date.now();
-        if (now - _GAMBA_CHAT_LAST_READ > 250) {
-            _GAMBA_CHAT_LAST_READ = now;
-        } else {
-            return;
-        }
-        if (chatLog) {
-            _GAMBA_CHATS = getChats();
-        }
-    };
-
-    const observer = new MutationObserver(readChats);
-    observer.observe(document.body, { childList: true, subtree: true });
-};
-
-if (document.readyState !== 'loading') {
-    initGamba();
-} else {
-    document.addEventListener('DOMContentLoaded', async () => {
-        initGamba();
-    });
-}
-
-// ------------------------------------------------------------------------------------------------------------------------------
-
-
-
-
 // User action menu =============================================================================================================
+
 const _onKnock = (evt) => {
     const btn = evt.currentTarget;
     btn.classList.add('clicked');
@@ -369,7 +300,7 @@ const _onCall = (evt) => {
     sendChat('call');
 };
 const _onRaise = (evt) => {
-    const btn = clickBtn(evt);
+    clickBtn(evt);
 
     const oldDiv = document.getElementById('gamba-raise-input-row');
     if (oldDiv) oldDiv.remove();
@@ -434,7 +365,7 @@ const _onRaise = (evt) => {
 };
 
 const _onFold = (evt) => {
-    const btn = clickBtn(evt);
+    clickBtn(evt);
     sendChat('fold');
 };
 
@@ -616,14 +547,68 @@ const createGambaMenu = () => {
     });
 };
 
-if (document.readyState !== 'loading') {
-    createGambaMenu();
-} else {
-    document.addEventListener('DOMContentLoaded', createGambaMenu);
-}
-
 // ------------------------------------------------------------------------------------------------------------------------------
 
+
+
+// Gamba gameplay and chat parsing ==============================================================================================
+
+let _GAMBA_USERS = null;
+let _GAMBA_MATCH_DATA = null;
+let _GAMBA_CHAT_LAST_READ = -Infinity;
+
+const _GAMBA_PLAYER_ACTIONS = new Set(['ante', 'knock', 'call', 'fold', 'raise']);
+const _GAMBA_MASTER_ACTIONS = new Set(['set ante', 'set max', 'set blink']);
+
+const parseChatMessage = (msg) => {
+    const username = msg.querySelector('span[class^="chat-message_nick__"]').innerText.toLowerCase();
+    const text = msg.querySelector('span[class^="chat-message_messageText__"]').innerText.toLowerCase();
+    const parts = text.split(' ').map(part => part.trim()).filter(part => part.length > 0);
+    return { username, text, parts };
+};
+
+const getChats = () => {
+    const chatLog = getChatLog();
+    if (!chatLog) {
+        return [];
+    }
+    const msgElements = chatLog.querySelectorAll('div[class^="chat-message_normalMessageRoot__"');
+
+    const chats = [];
+    for (const element of msgElements) {
+        const chat = parseChatMessage(element);
+        chats.push(chat);
+    }
+    return chats;
+};
+
+const initGamba = async () => {
+
+    _GAMBA_MATCH_DATA = await fetchMatchData();
+    console.log(_GAMBA_MATCH_DATA);
+
+    _GAMBA_USERS = await usersFromLiveChallenge(_GAMBA_MATCH_DATA);
+    console.log(_GAMBA_USERS);
+
+    _GAMBA_CHATS = getChats();
+
+    const readChats = () => {
+        const now = Date.now();
+        if (now - _GAMBA_CHAT_LAST_READ > 250) {
+            _GAMBA_CHAT_LAST_READ = now;
+        } else {
+            return;
+        }
+        if (chatLog) {
+            _GAMBA_CHATS = getChats();
+        }
+    };
+
+    const observer = new MutationObserver(readChats);
+    observer.observe(document.body, { childList: true, subtree: true });
+};
+
+// ------------------------------------------------------------------------------------------------------------------------------
 
 
 
@@ -843,6 +828,12 @@ GM_addStyle(_STYLING);
 
 // ------------------------------------------------------------------------------------------------------------------------------
 
+
+
+
+
+// Global event handling ========================================================================================================
+
 const clearState = () => {
     setGambaAnte(_GAMBA_DEFAULT_ANTE);
     setGambaWhoseTurn(_GAMBA_DEFAULT_WHOSE_TURN);
@@ -867,3 +858,13 @@ document.addEventListener('keydown', (evt) => {
         debugger
     }
 });
+
+if (document.readyState !== 'loading') {
+    initGamba();
+    createGambaMenu();
+} else {
+    document.addEventListener('DOMContentLoaded', async () => {
+        initGamba();
+        createGambaMenu();
+    });
+}
