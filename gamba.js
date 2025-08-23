@@ -206,7 +206,7 @@ const getChatLog = () => {
 
 
 
-// Player and game master info ========================================================================================================
+// Game and player info ===============================================================================================================
 
 const getUserInfo = async (userId) => {
     try {
@@ -243,17 +243,20 @@ const fetchMatchData = async () => {
     return data;
 };
 
-const PLAYER_ACTIONS = {
-    call: ['call'],
-    fold: ['fold'],
-    raise: ['raise'],
-};
 
-const GAME_MASTER_ACTIONS = {
-    ante: ['ante'],
-    max: ['max', 'maximum'],
-    blink: ['blink'],
-};
+// ------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+// Gamba gameplay ===============================================================================================================
+
+let _GAMBA_USERS = null;
+let _GAMBA_MATCH_DATA = null;
+let _GAMBA_CHAT_LAST_READ = -Infinity;
+
+const _GAMBA_PLAYER_ACTIONS = new Set('ante', 'knock', 'call', 'fold', 'raise');
+const _GAMBA_MASTER_ACTIONS = new Set('set ante', 'set max', 'set blink');
 
 const parseChatMessage = (msg) => {
     const username = msg.querySelector('span[class^="chat-message_nick__"]').innerText.toLowerCase();
@@ -274,32 +277,10 @@ const getChats = () => {
         const chat = parseChatMessage(element);
         chats.push(chat);
     }
-    return chats
+    return chats;
 };
-
-const setupGlobalKeyBindings = () => {
-    document.addEventListener('keydown', (evt) => {
-        if (evt.ctrlKey && evt.shiftKey && evt.key === '<') {
-            (() => { debugger; })();
-        }
-    });
-};
-
-// ------------------------------------------------------------------------------------------------------------------------------
-
-
-
-
-// Gamba gameplay ===============================================================================================================
-
-let _GAMBA_USERS = null;
-let _GAMBA_MATCH_DATA = null;
-let _GAMBA_CHATS = null;
-let _GAMBA_CHAT_LOG = null;
-let _GAMBA_CHAT_LAST_READ = -Infinity;
 
 const initGamba = async () => {
-    setupGlobalKeyBindings();
 
     _GAMBA_MATCH_DATA = await fetchMatchData();
     console.log(_GAMBA_MATCH_DATA);
@@ -308,27 +289,20 @@ const initGamba = async () => {
     console.log(_GAMBA_USERS);
 
     _GAMBA_CHATS = getChats();
-    console.log(_GAMBA_CHATS);
 
-    const readChat = () => {
-        if (!_GAMBA_CHAT_LOG) {
-            _GAMBA_CHAT_LOG = getChatLog();
-            if (!_GAMBA_CHAT_LOG) {
-                return;
-            }
-        }
-        if (Date.now() - _GAMBA_CHAT_LAST_READ > 250) {
-            _GAMBA_CHAT_LAST_READ = Date.now();
+    const readChats = () => {
+        const now = Date.now();
+        if (now - _GAMBA_CHAT_LAST_READ > 250) {
+            _GAMBA_CHAT_LAST_READ = now;
         } else {
             return;
         }
-        if (_GAMBA_CHAT_LOG) {
+        if (chatLog) {
             _GAMBA_CHATS = getChats();
-            console.log(_GAMBA_CHATS);
         }
     };
 
-    const observer = new MutationObserver(readChat);
+    const observer = new MutationObserver(readChats);
     observer.observe(document.body, { childList: true, subtree: true });
 };
 
@@ -357,10 +331,27 @@ const _onKnock = (evt) => {
 // Create draggable Gamba menu
 let _GAMBA_MENU, _GAMBA_MENU_DRAGGING = false, _GAMBA_MENU_DRAGGING_OFFSET_X, _GAMBA_MENU_DRAGGING_OFFSET_Y;
 
-const _onCall = (evt) => {
+const clickBtn = (evt) => {
     const btn = evt.currentTarget;
     btn.classList.add('clicked');
     setTimeout(() => btn.classList.remove('clicked'), 120);
+    return btn;
+};
+
+const _onAnte = (evt) => {
+    clickBtn(evt);
+    const anteAmount = _GAMBA_DEFAULT_ANTE;
+    let myStack = getGambaMyStack();
+    let actualAnte = Math.min(anteAmount, myStack);
+    setGambaMyStack(myStack - actualAnte);
+    const newPot = getGambaPot() + actualAnte;
+    setGambaPot(newPot);
+    THE_WINDOW.updateGambaStackDisplay();
+    THE_WINDOW.updateGambaPotDisplay();
+    sendChat(`ante ${actualAnte}`);
+};
+const _onCall = (evt) => {
+    clickBtn(evt);
     const theirBet = getGambTheirBet();
     const myBet = getGambaMyBet();
     const myStack = getGambaMyStack();
@@ -377,24 +368,8 @@ const _onCall = (evt) => {
     THE_WINDOW.updateGambaStackDisplay();
     sendChat('call');
 };
-const _onAnte = (evt) => {
-    const btn = evt.currentTarget;
-    btn.classList.add('clicked');
-    setTimeout(() => btn.classList.remove('clicked'), 120);
-    const anteAmount = _GAMBA_DEFAULT_ANTE;
-    let myStack = getGambaMyStack();
-    let actualAnte = Math.min(anteAmount, myStack);
-    setGambaMyStack(myStack - actualAnte);
-    const newPot = getGambaPot() + actualAnte;
-    setGambaPot(newPot);
-    THE_WINDOW.updateGambaStackDisplay();
-    THE_WINDOW.updateGambaPotDisplay();
-    sendChat(`ante ${actualAnte}`);
-};
 const _onRaise = (evt) => {
-    const btn = evt.currentTarget;
-    btn.classList.add('clicked');
-    setTimeout(() => btn.classList.remove('clicked'), 120);
+    const btn = clickBtn(evt);
 
     const oldDiv = document.getElementById('gamba-raise-input-row');
     if (oldDiv) oldDiv.remove();
@@ -459,9 +434,7 @@ const _onRaise = (evt) => {
 };
 
 const _onFold = (evt) => {
-    const btn = evt.currentTarget;
-    btn.classList.add('clicked');
-    setTimeout(() => btn.classList.remove('clicked'), 120);
+    const btn = clickBtn(evt);
     sendChat('fold');
 };
 
