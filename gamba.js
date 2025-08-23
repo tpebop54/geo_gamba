@@ -204,16 +204,16 @@ const sendChat = (text) => {
     document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', code: 'Enter', bubbles: true }));
     setTimeout(() => {
         const chatInput = getChatInput();
-        
+
         const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set; // Specific to React apps.
         nativeInputValueSetter.call(chatInput, text);
-        
+
         chatInput.dispatchEvent(new Event('input', { bubbles: true }));
         chatInput.focus();
-        
+
         setTimeout(() => {
-            const enterEvent = new KeyboardEvent('keydown', { 
-                key: 'Enter', 
+            const enterEvent = new KeyboardEvent('keydown', {
+                key: 'Enter',
                 code: 'Enter',
                 keyCode: 13,
                 bubbles: true,
@@ -856,8 +856,40 @@ const _STYLING = `
         -moz-appearance: textfield;
     }
     .gamba-raise-button {
+        border: none;
+        border-radius: 10px;
+        width: 26px;
+        height: 25px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        margin: 0 4px;
         color: white;
         cursor: pointer;
+        transition: background 0.2s, transform 0.1s, box-shadow 0.1s;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        outline: none;
+    }
+    #gamba-raise-input-row {
+        margin-left: 10px;
+    }
+    .gamba-raise-button:active {
+        transform: scale(0.92);
+        box-shadow: 0 0 0 2px #fff2 inset;
+        filter: brightness(0.95);
+    }
+    #gamba-raise-confirm-btn {
+        background: #43a047;
+    }
+    #gamba-raise-confirm-btn:active {
+        background: #388e3c;
+    }
+    #gamba-raise-cancel-btn {
+        background: #e53935;
+    }
+    #gamba-raise-cancel-btn:active {
+        background: #b71c1c;
     }
     #gamba-menu-turn-row {
         color: lightgreen;
