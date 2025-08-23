@@ -434,10 +434,20 @@ const createGambaMenu = () => {
         btn.textContent = label;
         btn.onclick = callback;
         (row === 1 ? btnRow1 : btnRow2).appendChild(btn);
-    });
-
+    };
     contentDiv.appendChild(btnRow1);
     contentDiv.appendChild(btnRow2);
+
+    const updateButtonsEnabled = () => {
+        const enabled = isMyTurn();
+        for (const btnRow of [btnRow1, btnRow2]) {
+            for (const button of btnRow.children) {
+                button.disabled = !enabled;
+            }
+        }
+    };
+    updateButtonsEnabled();
+    setInterval(updateButtonsEnabled, 250);
 
     const turnRow = document.createElement('div');
     turnRow.id = 'gamba-menu-turn-row';
@@ -447,26 +457,11 @@ const createGambaMenu = () => {
     const updateTurnRow = () => {
         turnRow.textContent = isMyTurn() ? 'My Turn' : 'Their Turn';
     };
-    setInterval(updateTurnRow, 250);
     updateTurnRow();
+    setInterval(updateTurnRow, 250);
 
-    const roundRow1 = document.createElement('div');
-    roundRow1.id = 'gamba-menu-round-row1';
-    const updateBtnRowEnabled = () => {
-        const enabled = isMyTurn();
-        [btnRow1, btnRow2].forEach(row => {
-            Array.from(row.children).forEach(btn => {
-                btn.disabled = !enabled;
-            });
-        });
-    };
-    setInterval(updateBtnRowEnabled, 250);
-    updateBtnRowEnabled();
-    roundRow1.classList.add('gamba-menu-round-row');
-
-    const roundRow2 = document.createElement('div');
-    roundRow2.id = 'gamba-menu-round-row2';
-    roundRow2.classList.add('gamba-menu-round-row');
+    const roundRow = document.createElement('div');
+    roundRow.id = 'gamba-menu-round-row';
 
     const anteDiv = document.createElement('span');
     anteDiv.id = 'gamba-menu-ante';
@@ -488,12 +483,11 @@ const createGambaMenu = () => {
     theirBetDiv.classList.add('gamba-round-info-div');
     theirBetDiv.textContent = `Their Bet: ${_GAMBA_THEIR_BET}`;
 
-    roundRow1.appendChild(anteDiv);
-    roundRow1.appendChild(maxBetDiv);
-    roundRow2.appendChild(myBetDiv);
-    roundRow2.appendChild(theirBetDiv);
-    contentDiv.appendChild(roundRow1);
-    contentDiv.appendChild(roundRow2);
+    roundRow.appendChild(anteDiv);
+    roundRow.appendChild(maxBetDiv);
+    roundRow.appendChild(myBetDiv);
+    roundRow.appendChild(theirBetDiv);
+    contentDiv.appendChild(roundRow);
 
     const potDiv = document.createElement('div');
     potDiv.id = 'gamba-menu-pot';
@@ -845,7 +839,7 @@ const _STYLING = `
         background: rgba(30,30,30,0.85);
         text-align: center;
     }
-    .gamba-menu-round-row {
+    #gamba-menu-round-row {
         display: flex;
         justify-content: center;
         align-items: center;
