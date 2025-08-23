@@ -376,28 +376,63 @@ const createGambaMenu = () => {
     _GAMBA_MENU = document.createElement('div');
     _GAMBA_MENU.id = 'gamba-menu';
 
+    // Create a header row for title and toggle button
+    const headerDiv = document.createElement('div');
+    headerDiv.id = 'gamba-menu-header';
+    headerDiv.style.display = 'grid';
+    headerDiv.style.gridTemplateColumns = '1fr auto';
+    headerDiv.style.alignItems = 'center';
+    headerDiv.style.width = '100%';
+    headerDiv.style.position = 'relative';
+
     const titleDiv = document.createElement('div');
     titleDiv.id = 'gamba-menu-title';
     titleDiv.textContent = 'Geo Gamba';
-    _GAMBA_MENU.appendChild(titleDiv);
+    titleDiv.style.textAlign = 'center';
+    titleDiv.style.display = 'flex';
+    titleDiv.style.alignItems = 'center';
+    titleDiv.style.justifyContent = 'center';
+
+    // Toggle button
+    const toggleBtn = document.createElement('button');
+    toggleBtn.id = 'gamba-menu-toggle';
+    toggleBtn.className = 'gamba-menu-toggle-btn';
+    toggleBtn.setAttribute('aria-label', 'Toggle menu');
+    toggleBtn.innerHTML = '&#9654;'; // right triangle
+    toggleBtn.style.position = 'absolute';
+    toggleBtn.style.right = '0';
+    toggleBtn.style.top = '50%';
+    toggleBtn.style.transform = 'translateY(-50%)';
+    toggleBtn.style.background = 'none';
+    toggleBtn.style.border = 'none';
+    toggleBtn.style.color = 'white';
+    toggleBtn.style.fontSize = '22px';
+    toggleBtn.style.cursor = 'pointer';
+
+    headerDiv.appendChild(titleDiv);
+    headerDiv.appendChild(toggleBtn);
+    _GAMBA_MENU.appendChild(headerDiv);
+
+    // Content wrapper for collapsible content
+    const contentDiv = document.createElement('div');
+    contentDiv.id = 'gamba-menu-content';
 
     const myStackDiv = document.createElement('div');
     myStackDiv.id = 'gamba-menu-my-stack';
     myStackDiv.classList.add('gamba-menu-stack');
-    myStackDiv.textContent = `My Stack: ${_GAMBA_MY_STACK}`;
-    _GAMBA_MENU.appendChild(myStackDiv);
+    myStackDiv.textContent = `My Points: ${_GAMBA_MY_STACK}`;
 
     const theirStackDiv = document.createElement('div');
     theirStackDiv.id = 'gamba-menu-their-stack';
     theirStackDiv.classList.add('gamba-menu-stack');
-    theirStackDiv.textContent = `Their Stack:\n${_GAMBA_THEIR_STACK}`;
+    theirStackDiv.textContent = `Their Points: ${_GAMBA_THEIR_STACK}`;
 
     const stackRow = document.createElement('div');
     stackRow.id = 'gamba-stack-row';
     stackRow.appendChild(myStackDiv);
     stackRow.appendChild(theirStackDiv);
 
-    _GAMBA_MENU.appendChild(stackRow);
+    contentDiv.appendChild(stackRow);
 
     const btnRow1 = document.createElement('div');
     btnRow1.id = 'gamba-menu-buttons-row1';
@@ -432,13 +467,13 @@ const createGambaMenu = () => {
         btnRow2.appendChild(btn);
     });
 
-    _GAMBA_MENU.appendChild(btnRow1);
-    _GAMBA_MENU.appendChild(btnRow2);
+    contentDiv.appendChild(btnRow1);
+    contentDiv.appendChild(btnRow2);
 
     const turnRow = document.createElement('div');
     turnRow.id = 'gamba-menu-turn-row';
     turnRow.classList.add('gamba-menu-round-row');
-    _GAMBA_MENU.appendChild(turnRow);
+    contentDiv.appendChild(turnRow);
 
     const updateTurnRow = () => {
         turnRow.textContent = isMyTurn() ? 'My Turn' : 'Their Turn';
@@ -488,13 +523,13 @@ const createGambaMenu = () => {
     roundRow1.appendChild(maxBetDiv);
     roundRow2.appendChild(myBetDiv);
     roundRow2.appendChild(theirBetDiv);
-    _GAMBA_MENU.appendChild(roundRow1);
-    _GAMBA_MENU.appendChild(roundRow2);
+    contentDiv.appendChild(roundRow1);
+    contentDiv.appendChild(roundRow2);
 
     const potDiv = document.createElement('div');
     potDiv.id = 'gamba-menu-pot';
     potDiv.textContent = `Pot: ${_GAMBA_POT}`;
-    _GAMBA_MENU.appendChild(potDiv);
+    contentDiv.appendChild(potDiv);
 
     THE_WINDOW.updateGambaMyStackDisplay = () => {
         _GAMBA_MY_STACK = getGambaMyStack();
@@ -521,6 +556,23 @@ const createGambaMenu = () => {
         potDiv.textContent = `Pot: ${_GAMBA_POT}`;
     };
     THE_WINDOW.setPot = setGambaPot;
+
+    _GAMBA_MENU.appendChild(contentDiv);
+
+    // Toggle logic
+    let expanded = true;
+    toggleBtn.onclick = () => {
+        expanded = !expanded;
+        if (expanded) {
+            contentDiv.style.display = '';
+            toggleBtn.innerHTML = '&#9660;'; // down triangle
+        } else {
+            contentDiv.style.display = 'none';
+            toggleBtn.innerHTML = '&#9654;'; // right triangle
+        }
+    };
+    // Set initial state
+    toggleBtn.innerHTML = '&#9660;'; // down triangle
 
     document.body.appendChild(_GAMBA_MENU);
 
@@ -648,7 +700,7 @@ watchRoundEnd();
 const _STYLING = `
     #gamba-menu {
         position: fixed;
-        width: 300px;
+        width: 350px;
         top: 20px;
         left: 20px;
         z-index: 9999;
@@ -666,14 +718,43 @@ const _STYLING = `
     #gamba-menu.grabbing {
         cursor: grabbing !important;
     }
+    #gamba-menu-header {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        align-items: center;
+        width: 100%;
+        position: relative;
+        margin-bottom: 10px;
+    }
     #gamba-menu-title {
         font-size: 24px !important;
         font-weight: bold;
         font-size: 16px;
-        margin-bottom: 10px;
         color: white;
         cursor: inherit;
         text-align: center;
+        width: 100%;
+        margin-bottom: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 40px;
+        min-height: 32px;
+    }
+    #gamba-menu-toggle {
+        position: static;
+        background: none;
+        border: none;
+        color: white;
+        font-size: 22px;
+        cursor: pointer;
+        padding: 0 6px;
+        z-index: 1;
+    }
+    #gamba-menu-toggle:focus {
+        outline: 2px solid #ffd700;
+    }
+    #gamba-menu-content {
         width: 100%;
     }
     .gamba-menu-buttons {
@@ -695,7 +776,7 @@ const _STYLING = `
         text-align: center;
         width: 100%;
         font-size: 18px;
-        margin-bottom: 18px;
+        margin-bottom: 6px;
         color: #80e77d;
     }
     #gamba-menu-buttons {
