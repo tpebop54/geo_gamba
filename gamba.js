@@ -716,6 +716,8 @@ const _STYLING = `
     }
     #gamba-menu-content {
         width: 100%;
+        display: flex;
+        justify-content: center;
     }
     .gamba-menu-buttons {
         display: flex;
@@ -822,22 +824,26 @@ const _STYLING = `
         cursor: pointer;
     }
     #gamba-menu-turn-row {
-        color: white;
+        color: lightgreen;
         font-weight: bold;
         font-size: 18px;
-        margin: 5px 0;
+        margin-bottom: 10px;
     }
     #gamba-menu-pot {
-        color: white;
+        color: lightgreen;
         font-weight: bold;
-        font-size: 18px;
+        font-size: 24px;
         margin-top: 10px;
         margin-bottom: 4px;
-        border: 2px solid #ffd700;
         border-radius: 6px;
         padding: 6px 18px;
         background: rgba(30,30,30,0.85);
         text-align: center;
+        text-shadow: 
+            0 0 5px #fff,
+            0 0 10px #fff,
+            0 0 15px #fff,
+            0 0 20px #fff;
     }
     #gamba-menu-round-row {
         display: flex;
