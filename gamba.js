@@ -435,51 +435,10 @@ const createGambaMenu = () => {
     resetBtn.title = "WARNING: this will reset your page's state. Pressing this may throw you out of sync with other players in the game.";
     resetBtn.innerHTML = '&#10006;'; // Unicode X
     resetBtn.onclick = () => {
-        // Custom yes/no alert with warning
-        const confirmDiv = document.createElement('div');
-        confirmDiv.style.position = 'fixed';
-        confirmDiv.style.top = '50%';
-        confirmDiv.style.left = '50%';
-        confirmDiv.style.transform = 'translate(-50%, -50%)';
-        confirmDiv.style.background = 'rgba(30,30,30,0.98)';
-        confirmDiv.style.color = 'white';
-        confirmDiv.style.padding = '28px 32px';
-        confirmDiv.style.borderRadius = '12px';
-        confirmDiv.style.zIndex = '99999';
-        confirmDiv.style.boxShadow = '0 2px 16px rgba(0,0,0,0.3)';
-        confirmDiv.style.textAlign = 'center';
-        confirmDiv.innerHTML = '<div style="font-size:16px;margin-bottom:18px;">WARNING: This will reset your page\'s state and may throw you out of sync with other players in the game.<br><br>Are you sure you want to perform a full reset?</div>';
-        const yesBtn = document.createElement('button');
-        yesBtn.textContent = 'Yes';
-        yesBtn.style.background = '#43a047';
-        yesBtn.style.color = 'white';
-        yesBtn.style.border = 'none';
-        yesBtn.style.borderRadius = '8px';
-        yesBtn.style.fontSize = '16px';
-        yesBtn.style.padding = '8px 22px';
-        yesBtn.style.margin = '0 12px';
-        yesBtn.style.cursor = 'pointer';
-        yesBtn.onclick = () => {
+        if (window.confirm("WARNING: This will reset your page's state and may throw you out of sync with other players in the game.\n\nAre you sure you want to perform a full reset?")) {
             clearState();
-            confirmDiv.remove();
             THE_WINDOW.location.reload();
-        };
-        const noBtn = document.createElement('button');
-        noBtn.textContent = 'No';
-        noBtn.style.background = '#e53935';
-        noBtn.style.color = 'white';
-        noBtn.style.border = 'none';
-        noBtn.style.borderRadius = '8px';
-        noBtn.style.fontSize = '16px';
-        noBtn.style.padding = '8px 22px';
-        noBtn.style.margin = '0 12px';
-        noBtn.style.cursor = 'pointer';
-        noBtn.onclick = () => {
-            confirmDiv.remove();
-        };
-        confirmDiv.appendChild(yesBtn);
-        confirmDiv.appendChild(noBtn);
-        document.body.appendChild(confirmDiv);
+        }
     };
 
     // Place resetBtn on the left, then title, then toggle
@@ -1009,7 +968,29 @@ GM_addStyle(_STYLING);
 // ------------------------------------------------------------------------------------------------------------------------------
 
 
+// ------------------------------------------------------------------------------------------------------------------------------
 
+const clearState = () => {
+    setGambaAnte(_GAMBA_DEFAULT_ANTE);
+    setGambaWhoseTurn(_GAMBA_DEFAULT_WHOSE_TURN);
+    setGambaMyStack(_GAMBA_DEFAULT_STACK);
+    setGambaTheirStack(_GAMBA_DEFAULT_STACK);
+    setGambaMaxBet(_GAMBA_DEFAULT_MAX_BET);
+    setGambaMyBet(_GAMBA_DEFAULT_MY_BET);
+    setGambaTheirBet(_GAMBA_DEFAULT_THEIR_BET);
+    setGambaPot(_GAMBA_DEFAULT_POT);
+};
 
+document.addEventListener('keydown', (evt) => {
+    // Nuclear option to reset if things get messed up.
+    if (evt.ctrlKey && evt.shiftKey && evt.key === '>') {
+        console.log('Full reset');
+        clearState();
+        THE_WINDOW.location.reload();
+    }
 
-// Global event handling ========================================================================================================
+    // Open debugger.
+    if (evt.ctrlKey && evt.shiftKey && evt.key === '<') {
+        debugger
+    }
+});
