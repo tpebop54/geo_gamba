@@ -421,14 +421,30 @@ const createGambaMenu = () => {
     titleDiv.id = 'gamba-menu-title';
     titleDiv.textContent = 'Geo Gamba';
 
+
+    // Toggle button
     const toggleBtn = document.createElement('button');
     toggleBtn.id = 'gamba-menu-toggle';
     toggleBtn.className = 'gamba-menu-toggle-btn';
     toggleBtn.setAttribute('aria-label', 'Toggle menu');
     toggleBtn.innerHTML = '&#9654;'; // right triangle
 
+    // Reset button
+    const resetBtn = document.createElement('button');
+    resetBtn.id = 'gamba-menu-reset';
+    resetBtn.className = 'gamba-menu-reset-btn';
+    resetBtn.setAttribute('aria-label', 'Reset menu');
+    resetBtn.innerHTML = '&#10006;'; // Unicode heavy multiplication x
+    resetBtn.onclick = () => {
+        if (window.confirm('Are you sure you want to reset all values and reload?')) {
+            clearState();
+            THE_WINDOW.location.reload();
+        }
+    };
+
     headerDiv.appendChild(titleDiv);
     headerDiv.appendChild(toggleBtn);
+    headerDiv.appendChild(resetBtn);
     _GAMBA_MENU.appendChild(headerDiv);
 
     const contentDiv = document.createElement('div');
@@ -719,13 +735,38 @@ const _STYLING = `
     }
     #gamba-menu-header {
         display: grid;
-        grid-template-columns: 1fr auto;
+        grid-template-columns: 1fr auto auto;
         align-items: center;
         width: 100%;
         position: relative;
         height: 48px;
         min-height: 40px;
         top: -5px;
+    }
+    #gamba-menu-reset {
+        background: #e53935;
+        border: none;
+        color: white;
+        font-size: 18px;
+        width: 28px;
+        height: 28px;
+        border-radius: 6px;
+        cursor: pointer;
+        margin-left: 6px;
+        transition: background 0.2s, transform 0.1s;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        outline: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    #gamba-menu-reset:hover {
+        background: #b71c1c;
+    }
+    #gamba-menu-reset:active {
+        transform: scale(0.92);
+        box-shadow: 0 0 0 2px #fff2 inset;
+        filter: brightness(0.95);
     }
     #gamba-menu-title {
         font-size: 24px !important;
@@ -909,11 +950,6 @@ const _STYLING = `
         padding: 6px 18px;
         background: rgba(30,30,30,0.85);
         text-align: center;
-        text-shadow: 
-            0 0 1px #fff,
-            0 0 0px #F3B,
-            0 0px 6px #F3C,
-            0 0 1px #FE8
     }
     #gamba-menu-round-row {
         display: flex;
