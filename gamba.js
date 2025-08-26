@@ -427,6 +427,73 @@ const createGambaMenu = () => {
     toggleBtn.setAttribute('aria-label', 'Toggle menu');
     toggleBtn.innerHTML = '&#9654;'; // right triangle
 
+    // Add reset (red X) button, left side, smaller, with tooltip
+    const resetBtn = document.createElement('button');
+    resetBtn.id = 'gamba-menu-reset';
+    resetBtn.className = 'gamba-menu-reset-btn';
+    resetBtn.setAttribute('aria-label', 'Reset Gamba');
+    resetBtn.title = "WARNING: this will reset your page's state. Pressing this may throw you out of sync with other players in the game.";
+    resetBtn.innerHTML = '&#10006;'; // Unicode X
+    resetBtn.style.background = '#e53935';
+    resetBtn.style.color = 'white';
+    resetBtn.style.border = 'none';
+    resetBtn.style.borderRadius = '6px';
+    resetBtn.style.width = '22px';
+    resetBtn.style.height = '22px';
+    resetBtn.style.fontSize = '14px';
+    resetBtn.style.cursor = 'pointer';
+    resetBtn.style.marginRight = '8px';
+    resetBtn.style.marginLeft = '0';
+    resetBtn.onclick = () => {
+        // Custom yes/no alert with warning
+        const confirmDiv = document.createElement('div');
+        confirmDiv.style.position = 'fixed';
+        confirmDiv.style.top = '50%';
+        confirmDiv.style.left = '50%';
+        confirmDiv.style.transform = 'translate(-50%, -50%)';
+        confirmDiv.style.background = 'rgba(30,30,30,0.98)';
+        confirmDiv.style.color = 'white';
+        confirmDiv.style.padding = '28px 32px';
+        confirmDiv.style.borderRadius = '12px';
+        confirmDiv.style.zIndex = '99999';
+        confirmDiv.style.boxShadow = '0 2px 16px rgba(0,0,0,0.3)';
+        confirmDiv.style.textAlign = 'center';
+        confirmDiv.innerHTML = '<div style="font-size:16px;margin-bottom:18px;">WARNING: This will reset your page\'s state and may throw you out of sync with other players in the game.<br><br>Are you sure you want to perform a full reset?</div>';
+        const yesBtn = document.createElement('button');
+        yesBtn.textContent = 'Yes';
+        yesBtn.style.background = '#43a047';
+        yesBtn.style.color = 'white';
+        yesBtn.style.border = 'none';
+        yesBtn.style.borderRadius = '8px';
+        yesBtn.style.fontSize = '16px';
+        yesBtn.style.padding = '8px 22px';
+        yesBtn.style.margin = '0 12px';
+        yesBtn.style.cursor = 'pointer';
+        yesBtn.onclick = () => {
+            clearState();
+            confirmDiv.remove();
+            THE_WINDOW.location.reload();
+        };
+        const noBtn = document.createElement('button');
+        noBtn.textContent = 'No';
+        noBtn.style.background = '#e53935';
+        noBtn.style.color = 'white';
+        noBtn.style.border = 'none';
+        noBtn.style.borderRadius = '8px';
+        noBtn.style.fontSize = '16px';
+        noBtn.style.padding = '8px 22px';
+        noBtn.style.margin = '0 12px';
+        noBtn.style.cursor = 'pointer';
+        noBtn.onclick = () => {
+            confirmDiv.remove();
+        };
+        confirmDiv.appendChild(yesBtn);
+        confirmDiv.appendChild(noBtn);
+        document.body.appendChild(confirmDiv);
+    };
+
+    // Place resetBtn on the left, then title, then toggle
+    headerDiv.appendChild(resetBtn);
     headerDiv.appendChild(titleDiv);
     headerDiv.appendChild(toggleBtn);
     _GAMBA_MENU.appendChild(headerDiv);
@@ -727,6 +794,24 @@ const _STYLING = `
         min-height: 40px;
         top: -5px;
     }
+    #gamba-menu-reset {
+        background: #e53935;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        width: 22px;
+        height: 22px;
+        font-size: 14px;
+        cursor: pointer;
+        margin-right: 8px;
+        margin-left: 0;
+        display: inline-block;
+        vertical-align: middle;
+    }
+    #gamba-menu-toggle {
+        display: inline-block;
+        vertical-align: middle;
+    }
     #gamba-menu-title {
         font-size: 24px !important;
         font-weight: bold;
@@ -938,38 +1023,3 @@ GM_addStyle(_STYLING);
 
 
 // Global event handling ========================================================================================================
-
-const clearState = () => {
-    setGambaAnte(_GAMBA_DEFAULT_ANTE);
-    setGambaWhoseTurn(_GAMBA_DEFAULT_WHOSE_TURN);
-    setGambaMyStack(_GAMBA_DEFAULT_STACK);
-    setGambaTheirStack(_GAMBA_DEFAULT_STACK);
-    setGambaMaxStake(_GAMBA_DEFAULT_MAX_STAKE);
-    setGambaMyStake(_GAMBA_DEFAULT_MY_STAKE);
-    setGambaTheirStake(_GAMBA_DEFAULT_THEIR_STAKE);
-    setGambaPot(_GAMBA_DEFAULT_POT);
-};
-
-document.addEventListener('keydown', (evt) => {
-    // Nuclear option to reset if things get messed up.
-    if (evt.ctrlKey && evt.shiftKey && evt.key === '>') {
-        console.log('Full reset');
-        clearState();
-        THE_WINDOW.location.reload();
-    }
-
-    // Open debugger.
-    if (evt.ctrlKey && evt.shiftKey && evt.key === '<') {
-        debugger
-    }
-});
-
-if (document.readyState !== 'loading') {
-    initGamba();
-    createGambaMenu();
-} else {
-    document.addEventListener('DOMContentLoaded', async () => {
-        initGamba();
-        createGambaMenu();
-    });
-}
