@@ -434,16 +434,6 @@ const createGambaMenu = () => {
     resetBtn.setAttribute('aria-label', 'Reset Gamba');
     resetBtn.title = "WARNING: this will reset your page's state. Pressing this may throw you out of sync with other players in the game.";
     resetBtn.innerHTML = '&#10006;'; // Unicode X
-    resetBtn.style.background = '#e53935';
-    resetBtn.style.color = 'white';
-    resetBtn.style.border = 'none';
-    resetBtn.style.borderRadius = '6px';
-    resetBtn.style.width = '22px';
-    resetBtn.style.height = '22px';
-    resetBtn.style.fontSize = '14px';
-    resetBtn.style.cursor = 'pointer';
-    resetBtn.style.marginRight = '8px';
-    resetBtn.style.marginLeft = '0';
     resetBtn.onclick = () => {
         // Custom yes/no alert with warning
         const confirmDiv = document.createElement('div');
