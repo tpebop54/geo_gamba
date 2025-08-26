@@ -251,7 +251,7 @@ const usersFromLiveChallenge = async (data) => {
         const user = await getUserInfo(userId);
         users.push({
             id: userId,
-            name: user.nick.toLowerCase(),
+            name: user.nick,
         });
     }
     return users;
@@ -427,22 +427,6 @@ const createGambaMenu = () => {
     toggleBtn.setAttribute('aria-label', 'Toggle menu');
     toggleBtn.innerHTML = '&#9654;'; // right triangle
 
-    // Add reset (red X) button, left side, smaller, with tooltip
-    const resetBtn = document.createElement('button');
-    resetBtn.id = 'gamba-menu-reset';
-    resetBtn.className = 'gamba-menu-reset-btn';
-    resetBtn.setAttribute('aria-label', 'Reset Gamba');
-    resetBtn.title = "WARNING: this will reset your page's state. Pressing this may throw you out of sync with other players in the game.";
-    resetBtn.innerHTML = '&#10006;'; // Unicode X
-    resetBtn.onclick = () => {
-        if (window.confirm("WARNING: This will reset your page's state and may throw you out of sync with other players in the game.\n\nAre you sure you want to perform a full reset?")) {
-            clearState();
-            THE_WINDOW.location.reload();
-        }
-    };
-
-    // Place resetBtn on the left, then title, then toggle
-    headerDiv.appendChild(resetBtn);
     headerDiv.appendChild(titleDiv);
     headerDiv.appendChild(toggleBtn);
     _GAMBA_MENU.appendChild(headerDiv);
@@ -743,24 +727,6 @@ const _STYLING = `
         min-height: 40px;
         top: -5px;
     }
-    #gamba-menu-reset {
-        background: #e53935;
-        color: white;
-        border: none;
-        border-radius: 6px;
-        width: 22px;
-        height: 22px;
-        font-size: 14px;
-        cursor: pointer;
-        margin-right: 8px;
-        margin-left: 0;
-        display: inline-block;
-        vertical-align: middle;
-    }
-    #gamba-menu-toggle {
-        display: inline-block;
-        vertical-align: middle;
-    }
     #gamba-menu-title {
         font-size: 24px !important;
         font-weight: bold;
@@ -943,6 +909,11 @@ const _STYLING = `
         padding: 6px 18px;
         background: rgba(30,30,30,0.85);
         text-align: center;
+        text-shadow: 
+            0 0 1px #fff,
+            0 0 0px #F3B,
+            0 0px 6px #F3C,
+            0 0 1px #FE8
     }
     #gamba-menu-round-row {
         display: flex;
@@ -968,16 +939,19 @@ GM_addStyle(_STYLING);
 // ------------------------------------------------------------------------------------------------------------------------------
 
 
-// ------------------------------------------------------------------------------------------------------------------------------
+
+
+
+// Global event handling ========================================================================================================
 
 const clearState = () => {
     setGambaAnte(_GAMBA_DEFAULT_ANTE);
     setGambaWhoseTurn(_GAMBA_DEFAULT_WHOSE_TURN);
     setGambaMyStack(_GAMBA_DEFAULT_STACK);
     setGambaTheirStack(_GAMBA_DEFAULT_STACK);
-    setGambaMaxBet(_GAMBA_DEFAULT_MAX_BET);
-    setGambaMyBet(_GAMBA_DEFAULT_MY_BET);
-    setGambaTheirBet(_GAMBA_DEFAULT_THEIR_BET);
+    setGambaMaxStake(_GAMBA_DEFAULT_MAX_STAKE);
+    setGambaMyStake(_GAMBA_DEFAULT_MY_STAKE);
+    setGambaTheirStake(_GAMBA_DEFAULT_THEIR_STAKE);
     setGambaPot(_GAMBA_DEFAULT_POT);
 };
 
@@ -994,3 +968,13 @@ document.addEventListener('keydown', (evt) => {
         debugger
     }
 });
+
+if (document.readyState !== 'loading') {
+    initGamba();
+    createGambaMenu();
+} else {
+    document.addEventListener('DOMContentLoaded', async () => {
+        initGamba();
+        createGambaMenu();
+    });
+}
