@@ -251,7 +251,7 @@ const usersFromLiveChallenge = async (data) => {
         const user = await getUserInfo(userId);
         users.push({
             id: userId,
-            name: user.nick,
+            name: user.nick.toLowerCase(),
         });
     }
     return users;
@@ -909,11 +909,6 @@ const _STYLING = `
         padding: 6px 18px;
         background: rgba(30,30,30,0.85);
         text-align: center;
-        text-shadow: 
-            0 0 1px #fff,
-            0 0 0px #F3B,
-            0 0px 6px #F3C,
-            0 0 1px #FE8
     }
     #gamba-menu-round-row {
         display: flex;
