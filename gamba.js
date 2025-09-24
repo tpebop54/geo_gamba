@@ -667,47 +667,71 @@ const initGamba = async () => {
 
 
 
-// Round events and watchers, done by watching DOM elements appear and disappear. ===============================================
+// Global event handling ========================================================================================================
 
-let _ROUND_STARTING_WRAPPER = null;
+// Global variable to track streetview container state
+let _STREETVIEW_CONTAINER = null;
 
-const onGameStart = () => {
-    debugger;
-};
+const watchStreetviewContainer = () => {
+    const checkStreetviewContainer = () => {
+        const streetviewContainer = getStreetviewContainer();
 
-const onRoundStart = () => {
-    debugger;
-};
-
-const onRoundEnd = () => {
-    debugger;
-};
-
-const onGameEnd = () => {
-    debugger;
-};
-
-const watchRoundEnd = () => {
-    const prepNewRound = () => {
-        const roundStartingWrapper = getRoundStartingWrapper();
-        if (roundStartingWrapper) {
-            _ROUND_STARTING_WRAPPER = roundStartingWrapper;
-        } else if (_ROUND_STARTING_WRAPPER) {
-            _ROUND_STARTING_WRAPPER = null; // Wrapper disappeared, new round starting.
+        if (streetviewContainer && !_STREETVIEW_CONTAINER) {
+            _STREETVIEW_CONTAINER = streetviewContainer; // round starting
             onRoundStart();
+        } else if (!streetviewContainer && _STREETVIEW_CONTAINER) {
+            _STREETVIEW_CONTAINER = null; // round ending
+            onRoundEnd();
+        } else if (streetviewContainer) {
+            _STREETVIEW_CONTAINER = streetviewContainer; // round ongoing
         }
     };
 
     const observer = new MutationObserver(() => {
-        onRoundStart();
-        onGameEnd();
-        prepNewRound();
+        checkStreetviewContainer();
     });
     observer.observe(document.body, { childList: true, subtree: true });
-}
-watchRoundEnd();
 
-// ------------------------------------------------------------------------------------------------------------------------------
+    checkStreetviewContainer(); // Check initial state
+};
+watchStreetviewContainer();
+
+const clearState = () => {
+    setGambaAnte(_GAMBA_DEFAULT_ANTE);
+    setGambaWhoseTurn(_GAMBA_DEFAULT_WHOSE_TURN);
+    setGambaMyStack(_GAMBA_DEFAULT_STACK);
+    setGambaTheirStack(_GAMBA_DEFAULT_STACK);
+    setGambaMaxStake(_GAMBA_DEFAULT_MAX_STAKE);
+    setGambaMyStake(_GAMBA_DEFAULT_MY_STAKE);
+    setGambaTheirStake(_GAMBA_DEFAULT_THEIR_STAKE);
+    setGambaPot(_GAMBA_DEFAULT_POT);
+};
+
+document.addEventListener('keydown', (evt) => {
+    // Nuclear option to reset if things get messed up.
+    if (evt.ctrlKey && evt.shiftKey && evt.key === '>') {
+        console.log('Full reset');
+        clearState();
+        THE_WINDOW.location.reload();
+    }
+
+    // Open debugger.
+    if (evt.ctrlKey && evt.shiftKey && evt.key === '<') {
+        debugger
+    }
+});
+
+if (document.readyState !== 'loading') {
+    initGamba();
+    createGambaMenu();
+    watchStreetviewContainer();
+} else {
+    document.addEventListener('DOMContentLoaded', async () => {
+        initGamba();
+        createGambaMenu();
+        watchStreetviewContainer();
+    });
+}
 
 
 
@@ -974,72 +998,3 @@ const _STYLING = `
 GM_addStyle(_STYLING);
 
 // ------------------------------------------------------------------------------------------------------------------------------
-
-
-
-
-
-// Global event handling ========================================================================================================
-
-// Global variable to track streetview container state
-let _STREETVIEW_CONTAINER = null;
-
-const watchStreetviewContainer = () => {
-    const checkStreetviewContainer = () => {
-        const streetviewContainer = getStreetviewContainer();
-
-        if (streetviewContainer && !_STREETVIEW_CONTAINER) {
-            _STREETVIEW_CONTAINER = streetviewContainer; // round starting
-            onRoundStart();
-        } else if (!streetviewContainer && _STREETVIEW_CONTAINER) {
-            _STREETVIEW_CONTAINER = null; // round ending
-            onRoundEnd();
-        } else if (streetviewContainer) {
-            _STREETVIEW_CONTAINER = streetviewContainer; // round ongoing
-        }
-    };
-
-    const observer = new MutationObserver(() => {
-        checkStreetviewContainer();
-    });
-    observer.observe(document.body, { childList: true, subtree: true });
-
-    checkStreetviewContainer(); // Check initial state
-};
-
-const clearState = () => {
-    setGambaAnte(_GAMBA_DEFAULT_ANTE);
-    setGambaWhoseTurn(_GAMBA_DEFAULT_WHOSE_TURN);
-    setGambaMyStack(_GAMBA_DEFAULT_STACK);
-    setGambaTheirStack(_GAMBA_DEFAULT_STACK);
-    setGambaMaxStake(_GAMBA_DEFAULT_MAX_STAKE);
-    setGambaMyStake(_GAMBA_DEFAULT_MY_STAKE);
-    setGambaTheirStake(_GAMBA_DEFAULT_THEIR_STAKE);
-    setGambaPot(_GAMBA_DEFAULT_POT);
-};
-
-document.addEventListener('keydown', (evt) => {
-    // Nuclear option to reset if things get messed up.
-    if (evt.ctrlKey && evt.shiftKey && evt.key === '>') {
-        console.log('Full reset');
-        clearState();
-        THE_WINDOW.location.reload();
-    }
-
-    // Open debugger.
-    if (evt.ctrlKey && evt.shiftKey && evt.key === '<') {
-        debugger
-    }
-});
-
-if (document.readyState !== 'loading') {
-    initGamba();
-    createGambaMenu();
-    watchStreetviewContainer();
-} else {
-    document.addEventListener('DOMContentLoaded', async () => {
-        initGamba();
-        createGambaMenu();
-        watchStreetviewContainer();
-    });
-}
