@@ -180,24 +180,24 @@ const _tryMultiple = (selectors) => { // Different modes, different versions, Ge
     return null;
 };
 
-const getChatInput = () => {
-    return document.querySelector('input[class^="chat-input_textInput__fb1xt"]');
-};
+// // Use this element to detect round starts.
+// const getRoundStartingWrapper = () => {
+//     return document.querySelector(`div[class^="round-starting_wrapper__"]`);
+// };
 
-const getRoundStartingWrapper = () => {
-    return document.querySelector(`div[class^="round-starting_wrapper__"]`);
-};
-
-const getNextRoundButton = () => { // Used to detect when the inter-round screen is active, for each screen that the players will see in different roles. TODO: add game master
+// Use this element to detect round starts and ends.
+const getStreetviewContainer = () => {
     const selectors = [
-        `button[data-qa="play-again-button"]`, // Player, in control of game.
-        `div[class^="waiting-message_roundStatusMessage__"]`, // Player, not in control of game.
+        `div[class^="game_canvas__"]`,
+        `div[class*="game-panorama_panorama__"]`,
+        `div[class*="game_panorama__"]`,
+        `div[aria-label="Street View"]`,
     ];
     return _tryMultiple(selectors);
 };
 
-const getPlayAgainButton = () => {
-    return document.querySelector(``);
+const getChatInput = () => {
+    return document.querySelector('input[class^="chat-input_textInput__fb1xt"]');
 };
 
 const sendChat = (text) => {
