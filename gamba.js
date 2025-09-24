@@ -712,7 +712,6 @@ let _GUESS_BUTTON = null;
 const watchStreetviewContainer = () => {
     const checkStreetviewContainer = () => {
         const streetviewContainer = getStreetviewContainer();
-
         if (streetviewContainer && !_STREETVIEW_CONTAINER) {
             _STREETVIEW_CONTAINER = streetviewContainer; // round starting
             onRoundStart();
@@ -731,11 +730,14 @@ const watchStreetviewContainer = () => {
 };
 watchStreetviewContainer();
 
-// Dummy functions for guess button events
+// User is about to guess.
+// At this point, the button will still be stored from the previous round, but will now be reset with a new listener.
 const onGuessButtonAppeared = () => {
     debugger;
 };
 
+// User made guess.
+// Need to communicate this to the other player so that we can disable their betting functions for the rest of the round.
 const onGuessButtonDisappeared = () => {
     debugger;
 };
@@ -743,32 +745,22 @@ const onGuessButtonDisappeared = () => {
 const watchGuessButton = () => {
     const checkGuessButton = () => {
         const guessButton = getGuessButton();
-
         if (guessButton && !_GUESS_BUTTON) {
-            // Button appeared - add click listener and trigger callback
             _GUESS_BUTTON = guessButton;
-
-            // Add click listener to the button
             _GUESS_BUTTON.addEventListener('click', onGuessButtonDisappeared);
-
             onGuessButtonAppeared();
         } else if (!guessButton && _GUESS_BUTTON) {
-            // Button disappeared - trigger callback
             _GUESS_BUTTON = null;
             onGuessButtonDisappeared();
         } else if (guessButton) {
-            // Button still exists, update reference
-            _GUESS_BUTTON = guessButton;
+            _GUESS_BUTTON = guessButton; // round ongoing
         }
     };
-
     const observer = new MutationObserver(() => {
         checkGuessButton();
     });
     observer.observe(document.body, { childList: true, subtree: true });
-
-    // Check initial state
-    checkGuessButton();
+    checkGuessButton(); // Check initial state
 };
 watchGuessButton();
 
