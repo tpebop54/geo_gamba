@@ -1,7 +1,7 @@
 // ==UserScript==
 
-// @name         Tpebop's GeoGuessr Mods (1.0.0)
-// @description  Various mods to make the game interesting in various ways
+// @name         GeoGamba (1.0.0)
+// @description  Degenerate gambling for GeoGuessr degens.
 // @version      1.0.0
 // @author       tpebop
 // @match        *://*.geoguessr.com/*
@@ -36,7 +36,7 @@ const _GAMBA_MY_STAKE_KEY = 'gamba_my_stake';
 const _GAMBA_THEIR_STAKE_KEY = 'gamba_their_stake';
 const _GAMBA_POT_KEY = 'gamba_pot';
 
-const _GAMBA_DEFAULT_WHOSE_TURN = 'mine';
+const _GAMBA_DEFAULT_WHOSE_TURN = 'mine'; // 'mine' or 'theirs'
 const _GAMBA_DEFAULT_ANTE = 50;
 const _GAMBA_DEFAULT_STACK = 1000;
 const _GAMBA_DEFAULT_STAKE = _GAMBA_DEFAULT_ANTE * 2; // TODO: revisit (team gamba)
@@ -436,15 +436,15 @@ const createGambaMenu = () => {
     resetBtn.setAttribute('aria-label', 'Reset menu');
     resetBtn.innerHTML = '&#10006;'; // Unicode heavy multiplication x
     resetBtn.onclick = () => {
-        if (window.confirm('Are you sure you want to reset all values and reload?')) {
+        if (window.confirm('Are you sure you want to reset all values and reload?\nThis will cause sync issues with other players unless they reset too.')) {
             clearState();
             THE_WINDOW.location.reload();
         }
     };
 
+    headerDiv.appendChild(resetBtn);
     headerDiv.appendChild(titleDiv);
     headerDiv.appendChild(toggleBtn);
-    headerDiv.appendChild(resetBtn);
     _GAMBA_MENU.appendChild(headerDiv);
 
     const contentDiv = document.createElement('div');
@@ -735,24 +735,25 @@ const _STYLING = `
     }
     #gamba-menu-header {
         display: grid;
-        grid-template-columns: 1fr auto auto;
+        grid-template-columns: auto 1fr auto;
         align-items: center;
         width: 100%;
         position: relative;
-        height: 48px;
-        min-height: 40px;
+        height: 36px;
+        min-height: 28px;
         top: -5px;
     }
     #gamba-menu-reset {
         background: #e53935;
         border: none;
         color: white;
-        font-size: 18px;
-        width: 28px;
-        height: 28px;
-        border-radius: 6px;
+        font-size: 14px;
+        width: 20px;
+        height: 20px;
+        border-radius: 5px;
         cursor: pointer;
-        margin-left: 6px;
+        margin-right: 8px;
+        margin-left: 0;
         transition: background 0.2s, transform 0.1s;
         box-shadow: 0 2px 6px rgba(0,0,0,0.15);
         outline: none;
