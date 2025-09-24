@@ -694,15 +694,21 @@ const onRoundStart = () => {
 
 };
 
-const onRoundEnd = () => {
-    // TODO: this is triggered before the other player has guessed.
+const onRoundEnd = async () => {
+    const matchData = await fetchMatchData();
     debugger;
 };
 
-const onFirstPlayerGuess = () => {
+// User is about to guess.
+// At this point, the button will still be stored from the previous round, but will now be reset with a new listener.
+const onGuessButtonAppeared = () => {
+    debugger;
 };
 
-const onSecondPlayerGuess = () => {
+// User made guess.
+// Need to communicate this to the other player so that we can disable their betting functions for the rest of the round.
+const onGuessButtonDisappeared = () => {
+    debugger;
 };
 
 // Global variables used to track game phase for both players.
@@ -729,18 +735,6 @@ const watchStreetviewContainer = () => {
     checkStreetviewContainer(); // Check initial state
 };
 watchStreetviewContainer();
-
-// User is about to guess.
-// At this point, the button will still be stored from the previous round, but will now be reset with a new listener.
-const onGuessButtonAppeared = () => {
-    debugger;
-};
-
-// User made guess.
-// Need to communicate this to the other player so that we can disable their betting functions for the rest of the round.
-const onGuessButtonDisappeared = () => {
-    debugger;
-};
 
 const watchGuessButton = () => {
     const checkGuessButton = () => {
