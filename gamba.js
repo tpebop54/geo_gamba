@@ -20,6 +20,19 @@
 // live-challenge - https://game-server.geoguessr.com/api/live-challenge/40d4df74-bfe3-4f5b-93a4-0099ee427d3b
 // maps - https://www.geoguessr.com/api/maps/world
 
+// GAME LOGIC
+// - User 1 is the user who creates the game. User 2 joins.
+// - We are now in the lobby. The "Start Game" button is visible to User 1. Betting is now open via the chat, via the buttons.
+// - Both players must click "Ante". Ante is now disabled and the rest of the buttons are active except for Fold.
+// - User 1 clicks Start Game.
+// - Betting is now open, with betting rules specified below.
+// - A user makes their guess. This sends a chat message and disables betting for the otheer user.
+// - The other user makes their guess.
+// - The round concludes. On the round or game end screen, we will have access to the scores that the user got.
+// - Hijack the score screen to show the results from the gamba.
+// - If a user won the game, display it, and they can then go abort the game.
+// - If the game has not concluded, re-open the gamba menu with the same logic as the start menu.
+
 
 const THE_WINDOW = unsafeWindow || window;
 
@@ -180,11 +193,6 @@ const _tryMultiple = (selectors) => { // Different modes, different versions, Ge
     return null;
 };
 
-// // Use this element to detect round starts.
-// const getRoundStartingWrapper = () => {
-//     return document.querySelector(`div[class^="round-starting_wrapper__"]`);
-// };
-
 // Use this element to detect round starts and ends.
 const getStreetviewContainer = () => {
     const selectors = [
@@ -194,6 +202,16 @@ const getStreetviewContainer = () => {
         `div[aria-label="Street View"]`,
     ];
     return _tryMultiple(selectors);
+};
+
+// Use this to send a message that concludes the round for the submitter.
+const getGuessButton = () => {
+    return document.querySelector(`button[class^="button_button__"]`);
+};
+
+// Use this to detect the game lobby prior to starting the game (party mode).
+const getGameStartButton = () => {
+    return document.querySelector(`button[data-qa^="party-start-game-button"]`);
 };
 
 const getChatInput = () => {
@@ -434,7 +452,7 @@ const createGambaMenu = () => {
     resetBtn.id = 'gamba-menu-reset';
     resetBtn.className = 'gamba-menu-reset-btn';
     resetBtn.setAttribute('aria-label', 'Reset menu');
-    resetBtn.innerHTML = '&#10006;'; // Unicode heavy multiplication x
+    resetBtn.innerHTML = '↻;';
     resetBtn.onclick = () => {
         if (window.confirm('Are you sure you want to reset all values and reload?\nThis will cause sync issues with other players unless they reset too.')) {
             clearState();
@@ -668,6 +686,15 @@ const initGamba = async () => {
 
 
 // Global event handling ========================================================================================================
+
+const onRoundStart = () => {
+    debugger;
+};
+
+const onRoundEnd = () => {
+    // TODO: this is triggered before the other player has guessed.
+    debugger;
+};
 
 // Global variable to track streetview container state
 let _STREETVIEW_CONTAINER = null;
