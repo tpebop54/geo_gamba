@@ -672,19 +672,19 @@ const initGamba = async () => {
 let _ROUND_STARTING_WRAPPER = null;
 
 const onGameStart = () => {
-    console.log('onGameStart');
+    debugger;
 };
 
 const onRoundStart = () => {
-    console.log('onRoundStart');
+    debugger;
 };
 
 const onRoundEnd = () => {
-    console.log('onRoundEnd');
+    debugger;
 };
 
 const onGameEnd = () => {
-    console.log('onGameEnd');
+    debugger;
 };
 
 const watchRoundEnd = () => {
@@ -981,6 +981,32 @@ GM_addStyle(_STYLING);
 
 // Global event handling ========================================================================================================
 
+// Global variable to track streetview container state
+let _STREETVIEW_CONTAINER = null;
+
+const watchStreetviewContainer = () => {
+    const checkStreetviewContainer = () => {
+        const streetviewContainer = getStreetviewContainer();
+
+        if (streetviewContainer && !_STREETVIEW_CONTAINER) {
+            _STREETVIEW_CONTAINER = streetviewContainer; // round starting
+            onRoundStart();
+        } else if (!streetviewContainer && _STREETVIEW_CONTAINER) {
+            _STREETVIEW_CONTAINER = null; // round ending
+            onRoundEnd();
+        } else if (streetviewContainer) {
+            _STREETVIEW_CONTAINER = streetviewContainer; // round ongoing
+        }
+    };
+
+    const observer = new MutationObserver(() => {
+        checkStreetviewContainer();
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    checkStreetviewContainer(); // Check initial state
+};
+
 const clearState = () => {
     setGambaAnte(_GAMBA_DEFAULT_ANTE);
     setGambaWhoseTurn(_GAMBA_DEFAULT_WHOSE_TURN);
@@ -1009,9 +1035,11 @@ document.addEventListener('keydown', (evt) => {
 if (document.readyState !== 'loading') {
     initGamba();
     createGambaMenu();
+    watchStreetviewContainer();
 } else {
     document.addEventListener('DOMContentLoaded', async () => {
         initGamba();
         createGambaMenu();
+        watchStreetviewContainer();
     });
 }
