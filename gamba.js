@@ -50,11 +50,10 @@ const _GAMBA_THEIR_STAKE_KEY = 'gamba_their_stake';
 const _GAMBA_POT_KEY = 'gamba_pot';
 
 const _GAMBA_DEFAULT_WHOSE_TURN = 'mine'; // 'mine' or 'theirs'
-const _GAMBA_DEFAULT_ANTE = 50;
-const _GAMBA_DEFAULT_STACK = 1000;
-const _GAMBA_DEFAULT_STAKE = _GAMBA_DEFAULT_ANTE * 2; // TODO: revisit (team gamba)
-const _GAMBA_DEFAULT_MAX_STAKE = 300;
-const _GAMBA_DEFAULT_POT = 0;
+const _GAMBA_DEFAULT_STACK = 1000; // How many points each player starts with.
+const _GAMBA_DEFAULT_ANTE = 50; // Ante on round 1. This increases as the game goes.
+const _GAMBA_DEFAULT_MAX_STAKE = 300; // The maximum amount a player can stake.
+const _GAMBA_DEFAULT_POT = 0; // Default starting pot.
 
 // ------------------------------------------------------------------------------------------------------------------------------
 
@@ -206,7 +205,7 @@ const getStreetviewContainer = () => {
 
 // Use this to send a message that concludes the round for the submitter.
 const getGuessButton = () => {
-    return document.querySelector(`button[class^="button_button__"]`);
+    return document.querySelector(`button[data-qa^="perform-guess"]`);
 };
 
 // Use this to detect the game lobby prior to starting the game (party mode).
@@ -687,8 +686,12 @@ const initGamba = async () => {
 
 // Global event handling ========================================================================================================
 
+_I_HAVE_GUESSED = false;
+_THEY_HAVE_GUESSED = false;
+
 const onRoundStart = () => {
     debugger;
+
 };
 
 const onRoundEnd = () => {
@@ -696,8 +699,15 @@ const onRoundEnd = () => {
     debugger;
 };
 
-// Global variable to track streetview container state
+const onFirstPlayerGuess = () => {
+};
+
+const onSecondPlayerGuess = () => {
+};
+
+// Global variables used to track game phase for both players.
 let _STREETVIEW_CONTAINER = null;
+let _GUESS_BUTTON = null;
 
 const watchStreetviewContainer = () => {
     const checkStreetviewContainer = () => {
@@ -713,15 +723,54 @@ const watchStreetviewContainer = () => {
             _STREETVIEW_CONTAINER = streetviewContainer; // round ongoing
         }
     };
-
     const observer = new MutationObserver(() => {
         checkStreetviewContainer();
     });
     observer.observe(document.body, { childList: true, subtree: true });
-
     checkStreetviewContainer(); // Check initial state
 };
 watchStreetviewContainer();
+
+// Dummy functions for guess button events
+const onGuessButtonAppeared = () => {
+    debugger;
+};
+
+const onGuessButtonDisappeared = () => {
+    debugger;
+};
+
+const watchGuessButton = () => {
+    const checkGuessButton = () => {
+        const guessButton = getGuessButton();
+
+        if (guessButton && !_GUESS_BUTTON) {
+            // Button appeared - add click listener and trigger callback
+            _GUESS_BUTTON = guessButton;
+
+            // Add click listener to the button
+            _GUESS_BUTTON.addEventListener('click', onGuessButtonDisappeared);
+
+            onGuessButtonAppeared();
+        } else if (!guessButton && _GUESS_BUTTON) {
+            // Button disappeared - trigger callback
+            _GUESS_BUTTON = null;
+            onGuessButtonDisappeared();
+        } else if (guessButton) {
+            // Button still exists, update reference
+            _GUESS_BUTTON = guessButton;
+        }
+    };
+
+    const observer = new MutationObserver(() => {
+        checkGuessButton();
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    // Check initial state
+    checkGuessButton();
+};
+watchGuessButton();
 
 const clearState = () => {
     setGambaAnte(_GAMBA_DEFAULT_ANTE);
@@ -752,16 +801,15 @@ if (document.readyState !== 'loading') {
     initGamba();
     createGambaMenu();
     watchStreetviewContainer();
+    watchGuessButton();
 } else {
     document.addEventListener('DOMContentLoaded', async () => {
         initGamba();
         createGambaMenu();
         watchStreetviewContainer();
+        watchGuessButton();
     });
 }
-
-
-
 
 
 // Styling ======================================================================================================================
